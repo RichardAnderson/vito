@@ -8,12 +8,12 @@ use App\Actions\Server\RebootServer;
 use App\Actions\Server\TransferServer;
 use App\Actions\Server\Update;
 use App\Exceptions\SSHError;
-use App\Helpers\QueryBuilder;
 use App\Http\Resources\ServerLogResource;
 use App\Http\Resources\ServerProviderResource;
 use App\Http\Resources\ServerResource;
 use App\Models\Server;
 use App\Models\ServerProvider;
+use App\Tables\ServersTable;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
@@ -38,13 +38,11 @@ class ServerController extends Controller
 
         $this->authorize('viewAny', [Server::class, $project]);
 
-        $servers = QueryBuilder::for($project->servers())
-            ->searchableFields(['name', 'ip_address'])
-            ->query()
-            ->simplePaginate(config('web.pagination_size'), pageName: 'serversPage');
+        $result = ServersTable::make($project)->render();
 
         return Inertia::render('servers/index', [
-            'servers' => ServerResource::collection($servers),
+            'tableConfig' => $result->config(),
+            'servers' => $result->data(),
             'public_key' => __('servers.create.public_key_text', ['public_key' => get_public_key_content()]),
             'server_providers' => ServerProviderResource::collection(ServerProvider::getByProjectId($project->id, user())->get()),
         ]);
