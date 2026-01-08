@@ -1,9 +1,9 @@
 import { Head, usePage } from '@inertiajs/react';
 
 import { PaginatedData, type Configs } from '@/types';
+import { TableConfig } from '@/types/table';
 
-import { DataTable } from '@/components/data-table';
-import { columns } from '@/pages/servers/components/columns';
+import { DynamicTable } from '@/components/dynamic-table';
 import { Server } from '@/types/server';
 import Heading from '@/components/heading';
 import CreateServer from '@/pages/servers/components/create-server';
@@ -13,6 +13,7 @@ import Layout from '@/layouts/app/layout';
 import { BookOpenIcon, PlusIcon } from 'lucide-react';
 
 type Page = {
+  tableConfig: TableConfig;
   servers: PaginatedData<Server>;
   public_key: string;
   configs: Configs;
@@ -42,7 +43,7 @@ export default function Servers() {
             </CreateServer>
           </div>
         </div>
-        <DataTable columns={columns} paginatedData={page.props.servers} searchable />
+        <DynamicTable<Server> config={page.props.tableConfig} paginatedData={page.props.servers} />
       </Container>
     </Layout>
   );
