@@ -37,30 +37,31 @@ abstract class AbstractTable implements Arrayable
      */
     public function render(): TableResult
     {
-        // 1. Build base query
+        // 1. Resolve columns (including plugin columns)
+        $columns = $this->columns();
+        $columns = $this->executeColumnHooks($columns);
+
+        // 2. Build base query
         $query = $this->query();
 
-        // 2. Apply search/sort
+        // 3. Apply search/sort (using resolved columns for searchable/sortable fields)
         $defaultSort = $this->defaultSort();
         $query = QueryBuilder::for($query)
-            ->searchableFields($this->searchableFields())
+            ->searchableFields($this->getSearchableFields($columns))
+            ->sortableFields($this->getSortableFields($columns))
             ->sortable($defaultSort['field'], $defaultSort['direction'])
             ->query();
 
-        // 3. Execute query hooks
+        // 4. Execute query hooks
         $query = $this->executeQueryHooks($query);
 
-        // 4. Paginate & execute
+        // 5. Paginate & execute
         $paginator = $query->simplePaginate($this->perPage(), pageName: $this->pageName());
 
-        // 5. Execute data hooks
+        // 6. Execute data hooks
         /** @var Collection<int, array<string, mixed>> $data */
         $data = collect($paginator->items())->map(fn ($row) => $row->toArray());
         $data = $this->executeDataHooks($data);
-
-        // 6. Execute column hooks
-        $columns = $this->columns();
-        $columns = $this->executeColumnHooks($columns);
 
         // 7. Filter data to only fields used by columns
         $data = $this->filterDataToColumns($data, $columns);
@@ -79,10 +80,37 @@ abstract class AbstractTable implements Arrayable
      */
     public function searchableFields(): array
     {
-        return collect($this->columns())
+        return $this->getSearchableFields($this->columns());
+    }
+
+    /**
+     * Get searchable fields from a resolved columns array.
+     * Uses the searchField if specified, otherwise falls back to accessor.
+     *
+     * @param  array<Column>  $columns
+     * @return array<string>
+     */
+    protected function getSearchableFields(array $columns): array
+    {
+        return collect($columns)
             ->filter(fn (Column $column) => $column->searchable)
-            ->map(fn (Column $column) => $column->accessor)
+            ->map(fn (Column $column) => $column->getSearchField())
             ->values()
+            ->all();
+    }
+
+    /**
+     * Get sortable fields mapping from a resolved columns array.
+     * Returns a mapping of accessor => sortField for all sortable columns.
+     *
+     * @param  array<Column>  $columns
+     * @return array<string, string>
+     */
+    protected function getSortableFields(array $columns): array
+    {
+        return collect($columns)
+            ->filter(fn (Column $column) => $column->sortable)
+            ->mapWithKeys(fn (Column $column) => [$column->accessor => $column->getSortField()])
             ->all();
     }
 

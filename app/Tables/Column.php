@@ -12,6 +12,8 @@ class Column implements Arrayable
     /**
      * @param  array<string>  $linkParams
      * @param  array<string>  $fields  Database fields this column requires
+     * @param  string|null  $sortField  Database field to use for sorting (defaults to accessor)
+     * @param  string|null  $searchField  Database field to use for searching (defaults to accessor)
      */
     public function __construct(
         public readonly string $accessor,
@@ -24,6 +26,8 @@ class Column implements Arrayable
         public readonly ?string $colorAccessor = null,
         public readonly bool $hidden = false,
         public readonly array $fields = [],
+        public readonly ?string $sortField = null,
+        public readonly ?string $searchField = null,
     ) {}
 
     public static function text(string $accessor, string $label): self
@@ -101,6 +105,9 @@ class Column implements Arrayable
         );
     }
 
+    /**
+     * Set whether this column is sortable.
+     */
     public function sortable(bool $sortable = true): self
     {
         return new self(
@@ -114,9 +121,14 @@ class Column implements Arrayable
             colorAccessor: $this->colorAccessor,
             hidden: $this->hidden,
             fields: $this->fields,
+            sortField: $this->sortField,
+            searchField: $this->searchField,
         );
     }
 
+    /**
+     * Set whether this column is searchable.
+     */
     public function searchable(bool $searchable = true): self
     {
         return new self(
@@ -130,9 +142,14 @@ class Column implements Arrayable
             colorAccessor: $this->colorAccessor,
             hidden: $this->hidden,
             fields: $this->fields,
+            sortField: $this->sortField,
+            searchField: $this->searchField,
         );
     }
 
+    /**
+     * Set whether this column is hidden.
+     */
     public function hidden(bool $hidden = true): self
     {
         return new self(
@@ -146,7 +163,67 @@ class Column implements Arrayable
             colorAccessor: $this->colorAccessor,
             hidden: $hidden,
             fields: $this->fields,
+            sortField: $this->sortField,
+            searchField: $this->searchField,
         );
+    }
+
+    /**
+     * Set the database field to use for sorting (useful for computed columns).
+     */
+    public function sortUsing(string $field): self
+    {
+        return new self(
+            accessor: $this->accessor,
+            label: $this->label,
+            type: $this->type,
+            sortable: $this->sortable,
+            searchable: $this->searchable,
+            linkRoute: $this->linkRoute,
+            linkParams: $this->linkParams,
+            colorAccessor: $this->colorAccessor,
+            hidden: $this->hidden,
+            fields: $this->fields,
+            sortField: $field,
+            searchField: $this->searchField,
+        );
+    }
+
+    /**
+     * Set the database field to use for searching (useful for computed columns).
+     */
+    public function searchUsing(string $field): self
+    {
+        return new self(
+            accessor: $this->accessor,
+            label: $this->label,
+            type: $this->type,
+            sortable: $this->sortable,
+            searchable: $this->searchable,
+            linkRoute: $this->linkRoute,
+            linkParams: $this->linkParams,
+            colorAccessor: $this->colorAccessor,
+            hidden: $this->hidden,
+            fields: $this->fields,
+            sortField: $this->sortField,
+            searchField: $field,
+        );
+    }
+
+    /**
+     * Get the field to use for sorting.
+     */
+    public function getSortField(): string
+    {
+        return $this->sortField ?? $this->accessor;
+    }
+
+    /**
+     * Get the field to use for searching.
+     */
+    public function getSearchField(): string
+    {
+        return $this->searchField ?? $this->accessor;
     }
 
     /**
@@ -164,6 +241,7 @@ class Column implements Arrayable
             'linkParams' => $this->linkParams,
             'colorAccessor' => $this->colorAccessor,
             'hidden' => $this->hidden,
+            'sortField' => $this->getSortField(),
         ];
     }
 }

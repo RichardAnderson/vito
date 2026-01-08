@@ -9,6 +9,13 @@ class QueryBuilder
 {
     protected array $searchableFields = [];
 
+    /**
+     * Mapping of column accessor to database field for sorting.
+     *
+     * @var array<string, string>
+     */
+    protected array $sortableFields = [];
+
     protected ?string $sortBy = null;
 
     protected ?string $sortDir = null;
@@ -27,6 +34,18 @@ class QueryBuilder
         return $this;
     }
 
+    /**
+     * Set the sortable fields mapping (accessor => database field).
+     *
+     * @param  array<string, string>  $fields
+     */
+    public function sortableFields(array $fields): self
+    {
+        $this->sortableFields = $fields;
+
+        return $this;
+    }
+
     public function sortable(?string $defaultSortBy, ?string $defaultSortDir): self
     {
         if (request()->has('sort_by') && request()->has('sort_dir')) {
@@ -35,7 +54,8 @@ class QueryBuilder
 
             $dir = strtolower($sortDir) === 'asc' ? 'asc' : 'desc';
 
-            $this->sortBy = $sortBy;
+            // Map accessor to actual database field if mapping exists
+            $this->sortBy = $this->sortableFields[$sortBy] ?? $sortBy;
             $this->sortDir = $dir;
         } elseif ($defaultSortBy && $defaultSortDir) {
             $this->sortBy = $defaultSortBy;
