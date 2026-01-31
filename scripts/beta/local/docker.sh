@@ -110,9 +110,9 @@ generate_compose() {
 [www]
 user = vito
 group = vito
-listen = /run/php/php-fpm.sock
-listen.owner = vito
-listen.group = vito
+listen = /run/php/php8.4-fpm.sock
+listen.owner = www-data
+listen.group = www-data
 listen.mode = 0660
 pm = dynamic
 pm.max_children = 5
@@ -144,14 +144,14 @@ SUPEOF
 
     # Create startup script that creates vito user before running start.sh
     log "Creating startup wrapper script..."
-    cat > "${config_dir}/start-wrapper.sh" <<WRAPEOF
+    cat > "${config_dir}/start-wrapper.sh" <<'WRAPEOF'
 #!/bin/bash
 # Create vito user with matching UID/GID from host
-groupadd -g ${vito_gid} vito 2>/dev/null || true
-useradd -u ${vito_uid} -g ${vito_gid} -M -s /bin/false vito 2>/dev/null || true
+groupadd -g ${VITO_GID} vito 2>/dev/null || true
+useradd -u ${VITO_UID} -g ${VITO_GID} -M -s /bin/false vito 2>/dev/null || true
 
-# Fix storage ownership for vito user
-chown -R vito:vito /var/www/html/storage /var/www/html/bootstrap/cache
+# Modify start.sh to use vito instead of www-data for storage ownership
+sed -i 's/www-data:www-data/vito:vito/g' /start.sh
 
 # Run original start script
 exec /start.sh
@@ -170,6 +170,8 @@ services:
       PASSWORD: "${admin_password}"
       APP_KEY: "${app_key}"
       APP_URL: "${app_url}"
+      VITO_UID: "${vito_uid}"
+      VITO_GID: "${vito_gid}"
     volumes:
       - vito-storage:/var/www/html/storage
       - /run/vito-root.sock:/run/vito-root.sock
