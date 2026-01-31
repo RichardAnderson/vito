@@ -1,7 +1,7 @@
 #!/bin/bash
 # =============================================================================
-# Version Check and Display Utility
-# Usage: ./versions.sh [--check] [--json]
+# Version Check and Display Utility (Docker-based Installation)
+# Usage: ./versions.sh [--json]
 # =============================================================================
 set -e
 
@@ -9,115 +9,150 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${SCRIPT_DIR}/common.sh"
 
 # =============================================================================
+# Configuration
+# =============================================================================
+CONTAINER_NAME="${CONTAINER_NAME:-vito}"
+
+# =============================================================================
 # Version Display Functions
 # =============================================================================
 
+get_docker_image_version() {
+    if docker inspect "${CONTAINER_NAME}" &>/dev/null; then
+        local image
+        image=$(docker inspect --format='{{.Config.Image}}' "${CONTAINER_NAME}" 2>/dev/null)
+        local image_id
+        image_id=$(docker inspect --format='{{.Image}}' "${CONTAINER_NAME}" 2>/dev/null | cut -c8-19)
+        echo "${image} (${image_id})"
+    else
+        echo ""
+    fi
+}
+
+get_container_status() {
+    if docker inspect "${CONTAINER_NAME}" &>/dev/null; then
+        docker inspect --format='{{.State.Status}}' "${CONTAINER_NAME}" 2>/dev/null
+    else
+        echo "not found"
+    fi
+}
+
+get_container_health() {
+    if docker inspect "${CONTAINER_NAME}" &>/dev/null; then
+        docker inspect --format='{{.State.Health.Status}}' "${CONTAINER_NAME}" 2>/dev/null || echo "no healthcheck"
+    else
+        echo ""
+    fi
+}
+
 show_versions() {
-    local format="${1:-text}"
-
     echo ""
-    echo "Installed Component Versions"
-    echo "============================="
+    echo "Vito Installation Status"
+    echo "========================="
     echo ""
 
-    local components=("frankenphp" "php" "node" "composer" "redis")
+    # Docker container
+    local docker_image
+    docker_image=$(get_docker_image_version)
+    local container_status
+    container_status=$(get_container_status)
+    local container_health
+    container_health=$(get_container_health)
 
-    for component in "${components[@]}"; do
-        local version
-        version=$(get_installed_version "${component}")
-
-        if [[ -n "${version}" ]]; then
-            printf "  %-12s %s\n" "${component}:" "${version}"
-        else
-            printf "  %-12s %s\n" "${component}:" "(not installed)"
-        fi
-    done
+    if [[ -n "${docker_image}" ]]; then
+        printf "  %-18s %s\n" "Docker Image:" "${docker_image}"
+        printf "  %-18s %s\n" "Container Status:" "${container_status}"
+        printf "  %-18s %s\n" "Container Health:" "${container_health}"
+    else
+        printf "  %-18s %s\n" "Docker Container:" "(not running)"
+    fi
 
     echo ""
-    echo "Version files stored in: ${VITO_VERSIONS}"
+
+    # Vito root service
+    local vito_service_version
+    vito_service_version=$(get_installed_version "vito-root-service")
+    if [[ -n "${vito_service_version}" ]]; then
+        printf "  %-18s %s\n" "Vito Root Service:" "${vito_service_version}"
+    else
+        printf "  %-18s %s\n" "Vito Root Service:" "(not installed)"
+    fi
+
+    # Socket status
+    if [[ -S "/run/vito-root.sock" ]]; then
+        printf "  %-18s %s\n" "Root Socket:" "active"
+    else
+        printf "  %-18s %s\n" "Root Socket:" "not found"
+    fi
+
+    echo ""
+
+    # Web server
+    if systemctl is-active --quiet nginx 2>/dev/null; then
+        printf "  %-18s %s\n" "Web Server:" "nginx (active)"
+    elif systemctl is-active --quiet caddy 2>/dev/null; then
+        printf "  %-18s %s\n" "Web Server:" "caddy (active)"
+    else
+        printf "  %-18s %s\n" "Web Server:" "(not detected)"
+    fi
+
     echo ""
 }
 
 show_versions_json() {
-    echo "{"
-    echo "  \"versions\": {"
+    local docker_image
+    docker_image=$(get_docker_image_version)
+    local container_status
+    container_status=$(get_container_status)
+    local container_health
+    container_health=$(get_container_health)
+    local vito_service_version
+    vito_service_version=$(get_installed_version "vito-root-service")
+    local socket_active="false"
+    [[ -S "/run/vito-root.sock" ]] && socket_active="true"
 
-    local components=("frankenphp" "php" "node" "composer" "redis")
-    local count=${#components[@]}
-    local i=0
-
-    for component in "${components[@]}"; do
-        local version
-        version=$(get_installed_version "${component}")
-        ((i++))
-
-        if [[ $i -lt $count ]]; then
-            echo "    \"${component}\": \"${version:-null}\","
-        else
-            echo "    \"${component}\": \"${version:-null}\""
-        fi
-    done
-
-    echo "  },"
-    echo "  \"versions_path\": \"${VITO_VERSIONS}\""
-    echo "}"
-}
-
-check_for_updates() {
-    echo ""
-    echo "Version Comparison"
-    echo "=================="
-    echo ""
-
-    # Define target versions (these would typically come from environment or config)
-    local target_frankenphp="${FRANKENPHP_VERSION:-1.11.1}"
-    local target_php="${PHP_VERSION:-8.4.17}"
-    local target_node="${NODE_VERSION:-20.18.1}"
-    local target_composer="${COMPOSER_VERSION:-2.8.4}"
-    local target_redis="${REDIS_VERSION:-7.4.2}"
-
-    check_component "frankenphp" "${target_frankenphp}"
-    check_component "php" "${target_php}"
-    check_component "node" "${target_node}"
-    check_component "composer" "${target_composer}"
-    check_component "redis" "${target_redis}"
-
-    echo ""
-}
-
-check_component() {
-    local name="$1"
-    local target="$2"
-
-    local installed
-    installed=$(get_installed_version "${name}")
-
-    if [[ -z "${installed}" ]]; then
-        printf "  %-12s %-15s -> %-15s  %s\n" "${name}:" "(not installed)" "${target}" "[INSTALL NEEDED]"
-    elif [[ "${installed}" != "${target}" ]]; then
-        printf "  %-12s %-15s -> %-15s  %s\n" "${name}:" "${installed}" "${target}" "[UPDATE NEEDED]"
-    else
-        printf "  %-12s %-15s                    %s\n" "${name}:" "${installed}" "[OK]"
+    local webserver="null"
+    if systemctl is-active --quiet nginx 2>/dev/null; then
+        webserver="nginx"
+    elif systemctl is-active --quiet caddy 2>/dev/null; then
+        webserver="caddy"
     fi
+
+    cat <<EOF
+{
+  "docker": {
+    "image": "${docker_image:-null}",
+    "status": "${container_status}",
+    "health": "${container_health:-null}"
+  },
+  "vito_root_service": {
+    "version": "${vito_service_version:-null}",
+    "socket_active": ${socket_active}
+  },
+  "webserver": "${webserver}"
+}
+EOF
 }
 
 # =============================================================================
 # Main
 # =============================================================================
 main() {
-    local action="show"
     local format="text"
 
     # Parse arguments
     while [[ $# -gt 0 ]]; do
         case "$1" in
-            --check)
-                action="check"
-                shift
-                ;;
             --json)
                 format="json"
                 shift
+                ;;
+            --help|-h)
+                echo "Usage: $0 [--json]"
+                echo ""
+                echo "Options:"
+                echo "  --json    Output in JSON format"
+                exit 0
                 ;;
             *)
                 shift
@@ -125,18 +160,11 @@ main() {
         esac
     done
 
-    case "${action}" in
-        show)
-            if [[ "${format}" == "json" ]]; then
-                show_versions_json
-            else
-                show_versions
-            fi
-            ;;
-        check)
-            check_for_updates
-            ;;
-    esac
+    if [[ "${format}" == "json" ]]; then
+        show_versions_json
+    else
+        show_versions
+    fi
 }
 
 # Run if executed directly (not sourced)

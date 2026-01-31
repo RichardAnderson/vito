@@ -1,12 +1,16 @@
 #!/bin/bash
 # =============================================================================
-# Component Update Script
-# Usage: ./update.sh [component] --version=x.x.x
-#        ./update.sh all  (updates all components to configured versions)
+# Vito Update Script (Docker-based Installation)
+# Usage: ./update.sh [component]
+#
+# Components:
+#   docker       - Pull latest Docker image and restart container
+#   vito-service - Update vito-root-service binary
+#   all          - Update all components
 #
 # Examples:
-#   ./update.sh php --version=8.4.18
-#   ./update.sh frankenphp --version=1.12.0
+#   ./update.sh docker
+#   ./update.sh vito-service --version=v1.0.0
 #   ./update.sh all
 # =============================================================================
 set -e
@@ -15,103 +19,99 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${SCRIPT_DIR}/common.sh"
 
 # =============================================================================
-# Default Versions (override with environment variables or --version flag)
+# Configuration
 # =============================================================================
-DEFAULT_FRANKENPHP_VERSION="${FRANKENPHP_VERSION:-1.11.1}"
-DEFAULT_PHP_VERSION="${PHP_VERSION:-8.4.17}"
-DEFAULT_NODE_VERSION="${NODE_VERSION:-20.18.1}"
-DEFAULT_COMPOSER_VERSION="${COMPOSER_VERSION:-2.8.4}"
-DEFAULT_REDIS_VERSION="${REDIS_VERSION:-7.4.2}"
+VITO_DATA_DIR="${VITO_DATA_DIR:-/opt/vito}"
+COMPOSE_FILE="${COMPOSE_FILE:-${VITO_DATA_DIR}/docker-compose.local.yml}"
 
 # =============================================================================
 # Update Functions
 # =============================================================================
 
-update_component() {
-    local component="$1"
-    local version="$2"
+update_docker() {
+    log "Updating Vito Docker image..."
 
-    case "${component}" in
-        frankenphp)
-            log "Updating FrankenPHP to ${version}..."
-            bash "${SCRIPT_DIR}/frankenphp.sh" --version="${version}" --force
-            ;;
-        php)
-            log "Updating PHP CLI to ${version}..."
-            bash "${SCRIPT_DIR}/php.sh" --version="${version}" --force
-            ;;
-        node|nodejs)
-            log "Updating Node.js to ${version}..."
-            bash "${SCRIPT_DIR}/nodejs.sh" --version="${version}" --force
-            ;;
-        composer)
-            log "Updating Composer to ${version}..."
-            bash "${SCRIPT_DIR}/composer.sh" --version="${version}" --force
-            ;;
-        redis)
-            log "Updating Redis to ${version}..."
-            bash "${SCRIPT_DIR}/redis.sh" --version="${version}" --force --configure
-            ;;
-        vito-service)
-            log "Updating Vito Root Service to ${version}..."
-            bash "${SCRIPT_DIR}/vito-service.sh" --version="${version}" --force
-            ;;
-        *)
-            log_error "Unknown component: ${component}"
-            log_error "Valid components: frankenphp, php, node, composer, redis, vito-service"
-            return 1
-            ;;
-    esac
+    # Check if compose file exists
+    if [[ ! -f "${COMPOSE_FILE}" ]]; then
+        log_error "Compose file not found: ${COMPOSE_FILE}"
+        return 1
+    fi
+
+    # Pull latest image
+    log "Pulling latest image..."
+    docker compose -f "${COMPOSE_FILE}" pull
+
+    # Restart container with new image
+    log "Restarting container..."
+    docker compose -f "${COMPOSE_FILE}" up -d
+
+    # Wait for healthy
+    log "Waiting for container to be healthy..."
+    bash "${SCRIPT_DIR}/docker.sh" wait 120
+
+    log_success "Docker container updated"
+}
+
+update_vito_service() {
+    local version="${1:-latest}"
+
+    log "Updating vito-root-service to ${version}..."
+    bash "${SCRIPT_DIR}/vito-service.sh" --version="${version}" --force
+
+    log_success "Vito root service updated"
 }
 
 update_all() {
     log "Updating all components..."
     echo ""
 
-    update_component "frankenphp" "${DEFAULT_FRANKENPHP_VERSION}"
-    update_component "php" "${DEFAULT_PHP_VERSION}"
-    update_component "node" "${DEFAULT_NODE_VERSION}"
-    update_component "composer" "${DEFAULT_COMPOSER_VERSION}"
-    update_component "redis" "${DEFAULT_REDIS_VERSION}"
+    update_docker
+    update_vito_service "latest"
 
     echo ""
     log_success "All components updated"
 }
 
-restart_services() {
-    log "Restarting services..."
-    bash "${SCRIPT_DIR}/systemd.sh" --restart
+show_versions() {
+    echo "Current Versions:"
+    echo ""
+
+    # Docker image
+    if docker inspect vito &>/dev/null; then
+        local image_id
+        image_id=$(docker inspect --format='{{.Image}}' vito 2>/dev/null | cut -c8-19)
+        echo "  Docker Image: vitodeploy/vito (${image_id})"
+    else
+        echo "  Docker Image: (container not running)"
+    fi
+
+    # Vito root service
+    if [[ -f "${VITO_VERSIONS}/vito-root-service.version" ]]; then
+        echo "  Vito Service: $(cat "${VITO_VERSIONS}/vito-root-service.version")"
+    else
+        echo "  Vito Service: (unknown)"
+    fi
+
+    echo ""
 }
 
 show_usage() {
-    echo "Usage: $0 <component> --version=x.x.x"
-    echo "       $0 all"
+    echo "Usage: $0 <component> [options]"
     echo ""
     echo "Components:"
-    echo "  frankenphp    - FrankenPHP web server"
-    echo "  php           - PHP CLI"
-    echo "  node          - Node.js"
-    echo "  composer      - PHP Composer"
-    echo "  redis         - Redis server"
-    echo "  vito-service  - Vito root service"
-    echo "  all           - Update all components to configured versions"
+    echo "  docker       - Pull latest Docker image and restart container"
+    echo "  vito-service - Update vito-root-service binary"
+    echo "  all          - Update all components"
+    echo "  versions     - Show current versions"
     echo ""
     echo "Options:"
-    echo "  --version=x.x.x  - Specify version to install"
-    echo "  --restart        - Restart services after update"
+    echo "  --version=x.x.x  - Specify version for vito-service"
     echo ""
     echo "Examples:"
-    echo "  $0 php --version=8.4.18"
-    echo "  $0 frankenphp --version=1.12.0 --restart"
-    echo "  $0 vito-service --version=v1.0.0"
-    echo "  $0 all --restart"
-    echo ""
-    echo "Environment variables for 'all' command:"
-    echo "  FRANKENPHP_VERSION  (default: ${DEFAULT_FRANKENPHP_VERSION})"
-    echo "  PHP_VERSION         (default: ${DEFAULT_PHP_VERSION})"
-    echo "  NODE_VERSION        (default: ${DEFAULT_NODE_VERSION})"
-    echo "  COMPOSER_VERSION    (default: ${DEFAULT_COMPOSER_VERSION})"
-    echo "  REDIS_VERSION       (default: ${DEFAULT_REDIS_VERSION})"
+    echo "  $0 docker                          # Pull latest image"
+    echo "  $0 vito-service --version=v1.0.0   # Update to specific version"
+    echo "  $0 all                             # Update everything"
+    echo "  $0 versions                        # Show current versions"
     echo ""
 }
 
@@ -120,8 +120,7 @@ show_usage() {
 # =============================================================================
 main() {
     local component=""
-    local version=""
-    local do_restart="N"
+    local version="latest"
 
     # Parse arguments
     while [[ $# -gt 0 ]]; do
@@ -133,10 +132,6 @@ main() {
             --version)
                 version="$2"
                 shift 2
-                ;;
-            --restart)
-                do_restart="Y"
-                shift
                 ;;
             --help|-h)
                 show_usage
@@ -156,20 +151,25 @@ main() {
         exit 1
     fi
 
-    if [[ "${component}" == "all" ]]; then
-        update_all
-    else
-        if [[ -z "${version}" ]]; then
-            log_error "Version is required for single component update"
-            log_error "Usage: $0 ${component} --version=x.x.x"
+    case "${component}" in
+        docker)
+            update_docker
+            ;;
+        vito-service)
+            update_vito_service "${version}"
+            ;;
+        all)
+            update_all
+            ;;
+        versions)
+            show_versions
+            ;;
+        *)
+            log_error "Unknown component: ${component}"
+            log_error "Valid components: docker, vito-service, all"
             exit 1
-        fi
-        update_component "${component}" "${version}"
-    fi
-
-    if [[ "${do_restart}" == "Y" ]]; then
-        restart_services
-    fi
+            ;;
+    esac
 }
 
 # Run if executed directly (not sourced)
