@@ -146,14 +146,40 @@ SUPEOF
     log "Creating startup wrapper script..."
     cat > "${config_dir}/start-wrapper.sh" <<'WRAPEOF'
 #!/bin/bash
+set -e
+
+echo "=== Vito Container Startup ==="
+
 # Create vito user with matching UID/GID from host
+echo "Creating vito user (UID=${VITO_UID}, GID=${VITO_GID})..."
 groupadd -g ${VITO_GID} vito 2>/dev/null || true
 useradd -u ${VITO_UID} -g ${VITO_GID} -M -s /bin/false vito 2>/dev/null || true
 
+# Verify vito user was created
+if ! id vito &>/dev/null; then
+    echo "ERROR: Failed to create vito user"
+    exit 1
+fi
+echo "Vito user created: $(id vito)"
+
 # Modify start.sh to use vito instead of www-data for storage ownership
+echo "Patching start.sh to use vito user..."
 sed -i 's/www-data:www-data/vito:vito/g' /start.sh
 
-# Run original start script
+# Pre-fix storage permissions before start.sh runs
+# This ensures the volume has correct ownership even if it persisted from a previous run
+echo "Setting storage permissions..."
+chown -R vito:vito /var/www/html/storage /var/www/html/bootstrap/cache 2>/dev/null || true
+chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache 2>/dev/null || true
+
+# Ensure database file exists and has correct permissions
+if [ -f /var/www/html/storage/database.sqlite ]; then
+    chown vito:vito /var/www/html/storage/database.sqlite
+    chmod 664 /var/www/html/storage/database.sqlite
+    echo "Database file permissions fixed"
+fi
+
+echo "=== Running start.sh ==="
 exec /start.sh
 WRAPEOF
     chmod +x "${config_dir}/start-wrapper.sh"
