@@ -304,18 +304,15 @@ download_scripts() {
 # Locate or Download Scripts
 # =============================================================================
 setup_scripts() {
-    # First, check if scripts exist relative to this script (local development)
+    # Check if scripts exist relative to this script (local development)
     local script_path
     script_path="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
     if [[ -d "${script_path}/local" && -f "${script_path}/local/docker.sh" ]]; then
         SCRIPTS_DIR="${script_path}/local"
         log "Using local scripts from: ${SCRIPTS_DIR}"
-    elif [[ -d "${VITO_DATA_DIR}/scripts/beta/local" && -f "${VITO_DATA_DIR}/scripts/beta/local/docker.sh" ]]; then
-        SCRIPTS_DIR="${VITO_DATA_DIR}/scripts/beta/local"
-        log "Using cached scripts from: ${SCRIPTS_DIR}"
     else
-        # Download scripts from GitHub
+        # Always download latest scripts from GitHub
         download_scripts
     fi
 
