@@ -583,10 +583,13 @@ configure_firewall
 start_docker_container
 
 # Step 9: Wait for container to be healthy
-wait_for_container
+if ! wait_for_container; then
+    log "Container may still be starting. Continuing with remaining steps..."
+    sleep 10
+fi
 
 # Step 10: Obtain SSL certificate (if applicable)
-obtain_ssl_certificate
+obtain_ssl_certificate || log "SSL certificate step failed or skipped"
 
 # Step 11: Create local server entry
 create_local_server
