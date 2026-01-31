@@ -70,14 +70,16 @@ build_image() {
         build_args+=("--no-cache")
     fi
 
-    # Check for Dockerfile
-    if [[ ! -f "${source_dir}/Dockerfile" ]]; then
-        log_error "Dockerfile not found in ${source_dir}"
+    # Check for Dockerfile in docker/ directory
+    local dockerfile_path="${source_dir}/docker/Dockerfile"
+    if [[ ! -f "${dockerfile_path}" ]]; then
+        log_error "Dockerfile not found at ${dockerfile_path}"
         return 1
     fi
 
+    # Build from repo root with Dockerfile in docker/ directory
     cd "${source_dir}"
-    docker build "${build_args[@]}" .
+    docker build "${build_args[@]}" -f "${dockerfile_path}" .
 
     log_success "Docker image built: ${tag}"
 }
