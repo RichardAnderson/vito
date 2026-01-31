@@ -215,30 +215,37 @@ detect_architecture() {
 }
 
 # =============================================================================
-# Docker Check
+# Docker Installation and Check
 # =============================================================================
+install_docker() {
+    log "Installing Docker..."
+
+    # Install Docker using the official convenience script
+    curl -fsSL https://get.docker.com | sh
+
+    # Start and enable Docker
+    systemctl start docker
+    systemctl enable docker
+
+    log_success "Docker installed successfully"
+}
+
 check_docker() {
     log "Checking Docker installation..."
 
     if ! command -v docker &>/dev/null; then
-        log_error "Docker is not installed"
-        echo ""
-        echo "Please install Docker first:"
-        echo "  https://docs.docker.com/engine/install/"
-        echo ""
-        echo "Quick install for Ubuntu:"
-        echo "  curl -fsSL https://get.docker.com | sh"
-        echo ""
-        exit 1
+        log "Docker is not installed. Installing..."
+        install_docker
     fi
 
     if ! docker info &>/dev/null; then
-        log_error "Docker daemon is not running"
-        echo ""
-        echo "Please start Docker:"
-        echo "  sudo systemctl start docker"
-        echo ""
-        exit 1
+        log "Docker daemon is not running. Starting..."
+        systemctl start docker
+        sleep 2
+        if ! docker info &>/dev/null; then
+            log_error "Failed to start Docker daemon"
+            exit 1
+        fi
     fi
 
     if ! docker compose version &>/dev/null; then
@@ -329,9 +336,14 @@ setup_vito_user() {
     # Generate a random password for the vito user
     VITO_USER_PASSWORD="${VITO_USER_PASSWORD:-$(openssl rand -base64 12)}"
 
+    # Use a high UID to avoid conflicts with container users (ubuntu=1000, www-data=33, etc.)
+    VITO_UID="${VITO_UID:-59123}"
+    VITO_GID="${VITO_GID:-59123}"
+
     if ! id "vito" &>/dev/null; then
-        # Create vito user
-        useradd -m -s /bin/bash vito
+        # Create vito group and user with specific UID/GID
+        groupadd -g "${VITO_GID}" vito
+        useradd -u "${VITO_UID}" -g "${VITO_GID}" -m -s /bin/bash vito
         echo "vito:${VITO_USER_PASSWORD}" | chpasswd
 
         # Setup passwordless sudo
@@ -341,7 +353,7 @@ vito ALL=(ALL) NOPASSWD: ALL
 EOF
         chmod 440 /etc/sudoers.d/vito
 
-        log_success "Created vito user with sudo access"
+        log_success "Created vito user (UID=${VITO_UID}) with sudo access"
     else
         log "Vito user already exists"
     fi
