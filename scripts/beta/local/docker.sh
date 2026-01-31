@@ -86,11 +86,79 @@ generate_compose() {
         app_key="base64:$(openssl rand -base64 32)"
     fi
 
-    log "Generating docker-compose.local.yml..."
+    # Get vito user's UID and GID for socket authentication
+    local vito_uid vito_gid
+    vito_uid=$(id -u vito 2>/dev/null) || vito_uid=""
+    vito_gid=$(id -g vito 2>/dev/null) || vito_gid=""
 
-    # Ensure directory exists
+    if [[ -z "${vito_uid}" || -z "${vito_gid}" ]]; then
+        log_error "vito user not found. Please create it first: sudo useradd --system --no-create-home vito"
+        return 1
+    fi
+
+    log "Generating docker-compose.local.yml (PHP will run as vito ${vito_uid}:${vito_gid})..."
+
+    # Ensure directories exist
+    local config_dir
+    config_dir="$(dirname "${output_file}")/config"
     mkdir -p "$(dirname "${output_file}")"
+    mkdir -p "${config_dir}"
 
+    # Create PHP-FPM pool config that runs as vito user
+    log "Creating PHP-FPM config for vito user..."
+    cat > "${config_dir}/php-fpm-vito.conf" <<'FPMEOF'
+[www]
+user = vito
+group = vito
+listen = /run/php/php-fpm.sock
+listen.owner = vito
+listen.group = vito
+listen.mode = 0660
+pm = dynamic
+pm.max_children = 5
+pm.start_servers = 2
+pm.min_spare_servers = 1
+pm.max_spare_servers = 3
+FPMEOF
+
+    # Create supervisord config that runs worker as vito
+    log "Creating supervisord config for vito user..."
+    cat > "${config_dir}/supervisord-vito.conf" <<'SUPEOF'
+[supervisord]
+nodaemon=true
+user=root
+logfile=/var/log/supervisor/supervisord.log
+pidfile=/var/run/supervisord.pid
+redirect_stderr=true
+
+[program:worker]
+user=vito
+autostart=1
+autorestart=1
+numprocs=1
+command=/usr/bin/php /var/www/html/artisan horizon
+redirect_stderr=true
+stdout_logfile=/var/www/html/storage/logs/worker.log
+stopwaitsecs=3600
+SUPEOF
+
+    # Create startup script that creates vito user before running start.sh
+    log "Creating startup wrapper script..."
+    cat > "${config_dir}/start-wrapper.sh" <<WRAPEOF
+#!/bin/bash
+# Create vito user with matching UID/GID from host
+groupadd -g ${vito_gid} vito 2>/dev/null || true
+useradd -u ${vito_uid} -g ${vito_gid} -M -s /bin/false vito 2>/dev/null || true
+
+# Fix storage ownership for vito user
+chown -R vito:vito /var/www/html/storage /var/www/html/bootstrap/cache
+
+# Run original start script
+exec /start.sh
+WRAPEOF
+    chmod +x "${config_dir}/start-wrapper.sh"
+
+    # Create docker-compose with mounted configs
     cat > "${output_file}" <<EOF
 services:
   vito:
@@ -105,11 +173,15 @@ services:
     volumes:
       - vito-storage:/var/www/html/storage
       - /run/vito-root.sock:/run/vito-root.sock
+      - ${config_dir}/php-fpm-vito.conf:/etc/php/8.4/fpm/pool.d/www.conf:ro
+      - ${config_dir}/supervisord-vito.conf:/etc/supervisor/conf.d/supervisord.conf:ro
+      - ${config_dir}/start-wrapper.sh:/start-wrapper.sh:ro
     ports:
       - "127.0.0.1:8080:80"
     extra_hosts:
       - "host.docker.internal:host-gateway"
     restart: unless-stopped
+    command: ["/start-wrapper.sh"]
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost/up"]
       interval: 10s
@@ -124,6 +196,7 @@ EOF
 
     chmod 600 "${output_file}"
     log_success "Compose file generated: ${output_file}"
+    log "Config files created in: ${config_dir}"
 }
 
 # =============================================================================
