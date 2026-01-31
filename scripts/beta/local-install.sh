@@ -324,6 +324,33 @@ setup_scripts() {
 }
 
 # =============================================================================
+# Vito User Setup
+# =============================================================================
+setup_vito_user() {
+    log "Setting up vito user..."
+
+    # Generate a random password for the vito user
+    VITO_USER_PASSWORD="${VITO_USER_PASSWORD:-$(openssl rand -base64 12)}"
+
+    if ! id "vito" &>/dev/null; then
+        # Create vito user
+        useradd -m -s /bin/bash vito
+        echo "vito:${VITO_USER_PASSWORD}" | chpasswd
+
+        # Setup passwordless sudo
+        cat > /etc/sudoers.d/vito <<EOF
+# Vito user can run any command without password
+vito ALL=(ALL) NOPASSWD: ALL
+EOF
+        chmod 440 /etc/sudoers.d/vito
+
+        log_success "Created vito user with sudo access"
+    else
+        log "Vito user already exists"
+    fi
+}
+
+# =============================================================================
 # Build Docker Image from Source
 # =============================================================================
 build_local_image() {
@@ -527,38 +554,41 @@ log "Installing system prerequisites..."
 apt-get update
 apt-get install -y curl openssl git
 
-# Step 1: Install vito-root-service
+# Step 1: Setup vito user
+setup_vito_user
+
+# Step 2: Install vito-root-service
 install_vito_root_service
 
-# Step 2: Install web server
+# Step 3: Install web server
 install_webserver
 
-# Step 3: Get Docker image (build or pull)
+# Step 4: Get Docker image (build or pull)
 if [[ "${BUILD_LOCAL}" == "Y" ]]; then
     build_local_image
 else
     pull_docker_image
 fi
 
-# Step 4: Generate docker-compose.yml
+# Step 5: Generate docker-compose.yml
 generate_docker_compose
 
-# Step 5: Configure web server as reverse proxy
+# Step 6: Configure web server as reverse proxy
 configure_webserver
 
-# Step 6: Configure firewall
+# Step 7: Configure firewall
 configure_firewall
 
-# Step 7: Start container
+# Step 8: Start container
 start_docker_container
 
-# Step 8: Wait for container to be healthy
+# Step 9: Wait for container to be healthy
 wait_for_container
 
-# Step 9: Obtain SSL certificate (if applicable)
+# Step 10: Obtain SSL certificate (if applicable)
 obtain_ssl_certificate
 
-# Step 10: Create local server entry
+# Step 11: Create local server entry
 create_local_server
 
 # =============================================================================
