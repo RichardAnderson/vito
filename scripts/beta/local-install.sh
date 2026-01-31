@@ -511,6 +511,9 @@ obtain_ssl_certificate() {
 
 create_local_server() {
     log "Creating local server entry in Vito..."
+    VITO_DOMAIN="${VITO_DOMAIN}" \
+    ENABLE_SSL="${ENABLE_SSL}" \
+    WEBSERVER="${WEBSERVER}" \
     bash "${SCRIPTS_DIR}/docker.sh" create-server || true
 }
 

@@ -212,10 +212,30 @@ wait_for_healthy() {
 # Local Server Creation
 # =============================================================================
 create_local_server() {
+    local domain="${VITO_DOMAIN:-localhost}"
+    local ssl_enabled="${ENABLE_SSL:-N}"
+    local webserver="${WEBSERVER:-nginx}"
+
     log "Creating local server entry in Vito..."
 
+    # Determine the host IP that the container can reach
+    local host_ip="host.docker.internal"
+
+    # Build nginx flag
+    local nginx_flag="N"
+    if [[ "${webserver}" == "nginx" ]]; then
+        nginx_flag="Y"
+    fi
+
     # Execute artisan command inside the container to create local server
-    if docker exec "${CONTAINER_NAME}" php artisan local:create-server 2>/dev/null; then
+    if docker exec "${CONTAINER_NAME}" php artisan servers:create-local \
+        "${host_ip}" \
+        --name="localhost" \
+        --domain="${domain}" \
+        --ports="22,80,443" \
+        --nginx="${nginx_flag}" \
+        --ssl="${ssl_enabled}" \
+        2>/dev/null; then
         log_success "Local server created"
         return 0
     else
