@@ -493,7 +493,7 @@ start_docker_container() {
 
 wait_for_container() {
     log "Waiting for container to be healthy..."
-    bash "${SCRIPTS_DIR}/docker.sh" wait 120
+    bash "${SCRIPTS_DIR}/docker.sh" wait 240
 }
 
 obtain_ssl_certificate() {

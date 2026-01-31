@@ -218,8 +218,21 @@ create_local_server() {
 
     log "Creating local server entry in Vito..."
 
-    # Determine the host IP that the container can reach
-    local host_ip="host.docker.internal"
+    # Get the server's main public IP address
+    local host_ip
+    host_ip=$(ip route get 1.1.1.1 2>/dev/null | awk '{print $7; exit}')
+
+    # Fallback: try hostname -I
+    if [[ -z "${host_ip}" ]]; then
+        host_ip=$(hostname -I 2>/dev/null | awk '{print $1}')
+    fi
+
+    if [[ -z "${host_ip}" ]]; then
+        log "Could not determine server IP address"
+        return 1
+    fi
+
+    log "Using server IP: ${host_ip}"
 
     # Build nginx flag
     local nginx_flag="N"
@@ -234,12 +247,11 @@ create_local_server() {
         --domain="${domain}" \
         --ports="22,80,443" \
         --nginx="${nginx_flag}" \
-        --ssl="${ssl_enabled}" \
-        2>/dev/null; then
+        --ssl="${ssl_enabled}"; then
         log_success "Local server created"
         return 0
     else
-        log "Local server may already exist or command not available"
+        log "Local server may already exist or command failed"
         return 0
     fi
 }
