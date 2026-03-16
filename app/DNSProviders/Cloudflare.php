@@ -129,44 +129,37 @@ class Cloudflare extends AbstractDNSProvider
 
     public function getRecords(string $domainId): array
     {
-        try {
-            $response = $this->getClient()->get("zones/{$domainId}/dns_records", [
-                'per_page' => 100,
-            ]);
+        $response = $this->getClient()->get("zones/{$domainId}/dns_records", [
+            'per_page' => 100,
+        ]);
 
-            if (! $response->successful()) {
-                Log::error('Failed to fetch Cloudflare DNS records', ['domainId' => $domainId, 'response' => $response->json()]);
-
-                return [];
-            }
-
-            return collect($response->json('result'))->map(function (array $record) {
-                return [
-                    'id' => $record['id'],
-                    'type' => $record['type'],
-                    'name' => $record['name'],
-                    'content' => $record['content'],
-                    'ttl' => $record['ttl'],
-                    'proxied' => $record['proxied'],
-                    'priority' => $record['type'] === 'MX' && ! empty($record['priority']) ? $record['priority'] : null,
-                    'created_on' => $record['created_on'],
-                    'modified_on' => $record['modified_on'],
-                ];
-            })->toArray();
-        } catch (Throwable $e) {
-            Log::error('Cloudflare getRecords exception', ['error' => $e->getMessage()]);
-
-            return [];
+        if (! $response->successful()) {
+            Log::error('Failed to fetch Cloudflare DNS records', ['domainId' => $domainId, 'response' => $response->json()]);
+            throw new \RuntimeException('Failed to fetch DNS records: '.($response->json('errors')[0]['message'] ?? 'Unknown error'));
         }
+
+        return collect($response->json('result'))->map(function (array $record) {
+            return [
+                'id' => $record['id'],
+                'type' => $record['type'],
+                'name' => $record['name'],
+                'content' => $record['content'],
+                'ttl' => $record['ttl'],
+                'proxied' => $record['proxied'],
+                'priority' => $record['type'] === 'MX' && ! empty($record['priority']) ? $record['priority'] : null,
+                'created_on' => $record['created_on'],
+                'modified_on' => $record['modified_on'],
+            ];
+        })->toArray();
     }
 
-    public function createRecord(string $domainId, array $input): array
+    public function createRecord(string $domainId, array $recordData): array
     {
         try {
-            $response = $this->getClient()->post("zones/{$domainId}/dns_records", $this->buildPayload($input));
+            $response = $this->getClient()->post("zones/{$domainId}/dns_records", $this->buildPayload($recordData));
 
             if (! $response->successful()) {
-                Log::error('Failed to create Cloudflare DNS record', ['domainId' => $domainId, 'input' => $input, 'response' => $response->json()]);
+                Log::error('Failed to create Cloudflare DNS record', ['domainId' => $domainId, 'input' => $recordData, 'response' => $response->json()]);
                 throw ValidationException::withMessages(['record' => 'Failed to create DNS record: '.($response->json('errors')[0]['message'] ?? 'Unknown error')]);
             }
 
@@ -177,13 +170,13 @@ class Cloudflare extends AbstractDNSProvider
         }
     }
 
-    public function updateRecord(string $domainId, string $recordId, array $input): array
+    public function updateRecord(string $domainId, string $recordId, array $recordData): array
     {
         try {
-            $response = $this->getClient()->put("zones/{$domainId}/dns_records/{$recordId}", $this->buildPayload($input));
+            $response = $this->getClient()->put("zones/{$domainId}/dns_records/{$recordId}", $this->buildPayload($recordData));
 
             if (! $response->successful()) {
-                Log::error('Failed to update Cloudflare DNS record', ['domainId' => $domainId, 'recordId' => $recordId, 'input' => $input, 'response' => $response->json()]);
+                Log::error('Failed to update Cloudflare DNS record', ['domainId' => $domainId, 'recordId' => $recordId, 'input' => $recordData, 'response' => $response->json()]);
                 throw ValidationException::withMessages(['record' => 'Failed to update DNS record: '.($response->json('errors')[0]['message'] ?? 'Unknown error')]);
             }
 
