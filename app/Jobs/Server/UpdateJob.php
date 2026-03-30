@@ -3,6 +3,7 @@
 namespace App\Jobs\Server;
 
 use App\Facades\Notifier;
+use App\Helpers\LocalSocket;
 use App\Models\Server;
 use App\Models\ServerLog;
 use App\Notifications\ServerUpdateFailed;
@@ -24,6 +25,13 @@ class UpdateJob implements ShouldQueue
             $this->server->os()->upgrade();
             $this->server->checkConnection();
             $this->server->checkForUpdates();
+
+            if ($this->server->is_local) {
+                $connection = $this->server->ssh('root');
+                if ($connection instanceof LocalSocket) {
+                    $connection->performUpdate();
+                }
+            }
         });
     }
 
