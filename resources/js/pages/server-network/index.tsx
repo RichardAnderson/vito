@@ -1,12 +1,14 @@
-import { Head, router, usePage } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import { useCallback, useEffect, useState } from 'react';
 import { Server } from '@/types/server';
 import { ServerIpAddress } from '@/types/server-ip';
+import { PrivateNetworkMember } from '@/types/private-network';
 import ServerLayout from '@/layouts/server/layout';
 import HeaderContainer from '@/components/header-container';
 import Heading from '@/components/heading';
 import { Button } from '@/components/ui/button';
-import { BookOpenIcon, MoreVerticalIcon, PlusIcon, RefreshCwIcon } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { BookOpenIcon, ChevronRightIcon, MoreVerticalIcon, PlusIcon, RefreshCwIcon } from 'lucide-react';
 import Container from '@/components/container';
 import { VitoTable } from '@/components/vito-table';
 import Delete from '@/pages/server-network/components/delete';
@@ -23,6 +25,7 @@ export default function ServerNetwork() {
     server: Server;
     ipAddresses: InertiaTableData;
     interfaces: string[];
+    privateNetworks: PrivateNetworkMember[];
   }>();
   const dialog = useDialog();
   const [refreshing, setRefreshing] = useState(false);
@@ -99,6 +102,35 @@ export default function ServerNetwork() {
             );
           }}
         />
+
+        <div className="flex flex-col gap-4">
+          <Heading title="Private networks" description="WireGuard overlay networks this server belongs to" />
+
+          {page.props.privateNetworks.length === 0 ? (
+            <p className="text-muted-foreground text-sm">This server is not a member of any private network.</p>
+          ) : (
+            <div className="flex flex-col gap-2">
+              {page.props.privateNetworks.map((member) => (
+                <Link
+                  key={`member-${member.id}`}
+                  href={route('networks.show', { network: member.private_network_id })}
+                  className="hover:bg-muted/50 flex items-center justify-between rounded-md border p-4"
+                >
+                  <div className="flex flex-col gap-1">
+                    <span className="font-medium">{member.private_network_name}</span>
+                    <span className="text-muted-foreground text-xs">
+                      Overlay IP {member.overlay_ip} · {member.interface}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Badge variant={member.status_color}>{member.status}</Badge>
+                    <ChevronRightIcon className="text-muted-foreground size-4" />
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
       </Container>
     </ServerLayout>
   );

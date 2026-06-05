@@ -2,6 +2,7 @@
 
 namespace App\Tables\Servers;
 
+use App\Models\ServerIpAddress;
 use Forjed\InertiaTable\Column;
 use Forjed\InertiaTable\Columns\ActionsColumn;
 use Forjed\InertiaTable\Columns\EnumColumn;
@@ -15,7 +16,10 @@ class ServerIpAddressTable extends Table
     protected function query(): void
     {
         $this->perPage = config('web.pagination_size');
-        $this->query->orderByDesc('is_primary')->orderBy('ip');
+        $this->query
+            ->with('server.privateNetworkMembers.privateNetwork')
+            ->orderByDesc('is_primary')
+            ->orderBy('ip');
     }
 
     protected function columns(): array
@@ -24,6 +28,13 @@ class ServerIpAddressTable extends Table
             TextColumn::make('ip', 'IP Address')->sortable(),
             EnumColumn::make('family', 'Family')->sortable(),
             TextColumn::make('interface', 'Interface')->fallback('-')->sortable(),
+            TextColumn::make('network', 'Network')
+                ->fallback('-')
+                ->value(fn (ServerIpAddress $ip): ?string => $ip->interface === null ? null : $ip->server
+                    ->privateNetworkMembers
+                    ->firstWhere('interface', $ip->interface)
+                    ?->privateNetwork
+                    ?->name),
             EnumColumn::make('type', 'Type')->sortable(),
             EnumColumn::make('status', 'Status')->sortable(),
             Column::data('id'),

@@ -25,29 +25,38 @@ class ApplyRulesJob implements ShouldQueue
     public function handle(): void
     {
         $this->run("server-{$this->rule->server_id}", function () {
+            $server = $this->rule->server;
+
             /** @var Service $service */
-            $service = $this->rule->server->firewall();
+            $service = $server->firewall();
             /** @var Firewall $handler */
             $handler = $service->handler();
             $handler->applyRules();
 
-            if ($this->rule->status === FirewallRuleStatus::DELETING) {
-                $projectId = $this->rule->server->project_id;
-                $ruleId = $this->rule->id;
-                $this->rule->delete();
+            // applyRules() renders the full non-deleting rule set, so every pending rule on this
+            // server is now live — finalise them all in one pass (lets a single apply settle a
+            // batch of rules created together, e.g. a WireGuard membership's handshake + trust).
+            $deleting = $server->firewallRules()->where('status', FirewallRuleStatus::DELETING)->get();
+            foreach ($deleting as $rule) {
+                $projectId = $server->project_id;
+                $ruleId = $rule->id;
+                $rule->delete();
 
                 SocketEvent::dispatch(new SocketEventDTO(
                     projectId: $projectId,
                     type: 'firewall-rule.deleted',
                     data: ['id' => $ruleId],
                 ));
-
-                return;
             }
 
-            $this->rule->status = FirewallRuleStatus::READY;
-            $this->rule->save();
-            $this->broadcastRuleUpdate();
+            $pending = $server->firewallRules()
+                ->whereIn('status', [FirewallRuleStatus::CREATING, FirewallRuleStatus::UPDATING])
+                ->get();
+            foreach ($pending as $rule) {
+                $rule->status = FirewallRuleStatus::READY;
+                $rule->save();
+                $this->broadcastRule($rule);
+            }
         });
     }
 
@@ -73,14 +82,14 @@ class ApplyRulesJob implements ShouldQueue
         ServerLog::log($this->rule->server, 'apply-firewall-rules-failed', $e->getMessage());
     }
 
-    private function broadcastRuleUpdate(): void
+    private function broadcastRule(FirewallRule $rule): void
     {
-        $this->rule->refresh();
+        $rule->refresh();
 
         SocketEvent::dispatch(new SocketEventDTO(
-            projectId: $this->rule->server->project_id,
+            projectId: $rule->server->project_id,
             type: 'firewall-rule.updated',
-            data: new FirewallRuleResource($this->rule),
+            data: new FirewallRuleResource($rule),
         ));
     }
 }

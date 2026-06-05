@@ -3,11 +3,13 @@
 namespace App\Models;
 
 use App\Actions\Server\CheckConnection;
+use App\Enums\MemberStatus;
 use App\Enums\OperatingSystem;
 use App\Enums\ServerStatus;
 use App\Enums\ServiceStatus;
 use App\Exceptions\SSHError;
 use App\Facades\SSH;
+use App\Jobs\Network\SyncWireguardPeersJob;
 use App\ServerFeatures\ActionInterface;
 use App\SSH\OS\Cron;
 use App\SSH\OS\OS;
@@ -60,6 +62,8 @@ use Throwable;
  * @property Collection<int, DatabaseUser> $databaseUsers
  * @property Collection<int, FirewallRule> $firewallRules
  * @property Collection<int, ServerIpAddress> $ipAddresses
+ * @property Collection<int, PrivateNetworkMember> $privateNetworkMembers
+ * @property Collection<int, PrivateNetwork> $privateNetworks
  * @property Collection<int, CronJob> $cronJobs
  * @property Collection<int, Worker> $queues
  * @property Collection<int, Backup> $backups
@@ -117,11 +121,22 @@ class Server extends AbstractModel
 
     public bool $deleteFromProvider = true;
 
+    /**
+     * @var array<int, int>
+     */
+    public array $wireguardAffectedNetworks = [];
+
     public static function boot(): void
     {
         parent::boot();
 
         static::deleting(function (Server $server): void {
+            $server->wireguardAffectedNetworks = $server->privateNetworkMembers()
+                ->pluck('private_network_id')
+                ->unique()
+                ->values()
+                ->all();
+
             DB::beginTransaction();
             try {
                 $server->sites()->each(function ($site): void {
@@ -158,6 +173,17 @@ class Server extends AbstractModel
                 DB::rollBack();
                 throw $e;
             }
+        });
+
+        static::deleted(function (Server $server): void {
+            PrivateNetwork::query()
+                ->whereIn('id', $server->wireguardAffectedNetworks)
+                ->with('members')
+                ->each(function (PrivateNetwork $network): void {
+                    foreach ($network->members()->where('status', MemberStatus::ACTIVE)->get() as $member) {
+                        dispatch(new SyncWireguardPeersJob($member))->onQueue('ssh');
+                    }
+                });
         });
     }
 
@@ -270,6 +296,24 @@ class Server extends AbstractModel
     public function ipAddresses(): HasMany
     {
         return $this->hasMany(ServerIpAddress::class);
+    }
+
+    /**
+     * @return HasMany<PrivateNetworkMember, covariant $this>
+     */
+    public function privateNetworkMembers(): HasMany
+    {
+        return $this->hasMany(PrivateNetworkMember::class);
+    }
+
+    /**
+     * @return BelongsToMany<PrivateNetwork, covariant $this>
+     */
+    public function privateNetworks(): BelongsToMany
+    {
+        return $this->belongsToMany(PrivateNetwork::class, 'private_network_members')
+            ->withPivot(['overlay_ip', 'interface', 'listen_port', 'public_key', 'endpoint', 'status'])
+            ->withTimestamps();
     }
 
     /**

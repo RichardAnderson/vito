@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Actions\ServerIp\ManageServerIp;
 use App\Actions\ServerIp\RefreshServerIps;
 use App\Exceptions\SSHError;
+use App\Http\Resources\PrivateNetworkMemberResource;
 use App\Models\Server;
 use App\Models\ServerIpAddress;
 use App\Tables\Servers\ServerIpAddressTable;
@@ -34,6 +35,9 @@ class ServerNetworkController extends Controller
                 ->distinct()
                 ->orderBy('interface')
                 ->pluck('interface'),
+            'privateNetworks' => PrivateNetworkMemberResource::collection(
+                $server->privateNetworkMembers()->with('privateNetwork')->get()
+            ),
         ]);
     }
 

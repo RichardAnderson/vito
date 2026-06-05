@@ -19,6 +19,12 @@ class TransferServer
     {
         $this->validate($user, $input);
 
+        if ($server->privateNetworkMembers()->exists()) {
+            throw ValidationException::withMessages([
+                'project_id' => __('Detach the server from its private networks before moving it to another project.'),
+            ]);
+        }
+
         $server->project_id = $input['project_id'];
         $server->save();
 

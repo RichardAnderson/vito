@@ -3,8 +3,8 @@ export interface FirewallRule {
   name: string;
   server_id: number;
   type: string;
-  protocol: string;
-  port: string;
+  protocol: string | null;
+  port: string | null;
   source: string;
   mask: number;
   note: string;

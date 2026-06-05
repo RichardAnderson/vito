@@ -28,6 +28,8 @@ import EditBackup from '@/pages/backups/components/edit-backup';
 import RestoreBackup from '@/pages/backups/components/restore-backup';
 import SiteFeatureAction from '@/pages/site-features/components/feature-action';
 import ServerFeatureAction from '@/pages/server-features/components/feature-action';
+import PrivateNetworkForm from '@/pages/networks/components/form';
+import AddServerToNetwork from '@/pages/networks/components/add-server';
 
 export type DialogControlProps = { open: boolean; onOpenChange: (open: boolean) => void };
 
@@ -73,6 +75,8 @@ export const dialogs = {
   backupRestore: RestoreBackup,
   siteFeatureAction: SiteFeatureAction,
   serverFeatureAction: ServerFeatureAction,
+  privateNetworkForm: PrivateNetworkForm,
+  addServerToNetwork: AddServerToNetwork,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 } as const satisfies Record<string, ComponentType<any>>;
 

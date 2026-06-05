@@ -117,4 +117,12 @@ class Project extends Model
     {
         return $this->hasMany(Domain::class);
     }
+
+    /**
+     * @return HasMany<PrivateNetwork, covariant $this>
+     */
+    public function privateNetworks(): HasMany
+    {
+        return $this->hasMany(PrivateNetwork::class);
+    }
 }

@@ -25,4 +25,12 @@ class FirewallRuleFactory extends Factory
             'note' => 'test',
         ];
     }
+
+    public function any(): static
+    {
+        return $this->state(fn (): array => [
+            'protocol' => 'any',
+            'port' => null,
+        ]);
+    }
 }

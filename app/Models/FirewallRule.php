@@ -9,15 +9,17 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @property int $server_id
+ * @property ?int $private_network_member_id
  * @property string $name
  * @property string $type
- * @property string $protocol
- * @property string $port
+ * @property ?string $protocol
+ * @property ?string $port
  * @property string $source
  * @property ?string $mask
  * @property string $note
  * @property FirewallRuleStatus $status
  * @property Server $server
+ * @property ?PrivateNetworkMember $privateNetworkMember
  */
 class FirewallRule extends AbstractModel
 {
@@ -38,6 +40,7 @@ class FirewallRule extends AbstractModel
 
     protected $casts = [
         'server_id' => 'integer',
+        'private_network_member_id' => 'integer',
         'status' => FirewallRuleStatus::class,
     ];
 
@@ -47,5 +50,13 @@ class FirewallRule extends AbstractModel
     public function server(): BelongsTo
     {
         return $this->belongsTo(Server::class);
+    }
+
+    /**
+     * @return BelongsTo<PrivateNetworkMember, covariant $this>
+     */
+    public function privateNetworkMember(): BelongsTo
+    {
+        return $this->belongsTo(PrivateNetworkMember::class);
     }
 }

@@ -18,9 +18,13 @@ fi
         $source = isset($rule->source) && $rule->source !== null
             ? $rule->source . (isset($rule->mask) && $rule->mask !== null ? '/' . $rule->mask : '')
             : 'any';
+        $isAny = empty($rule->protocol) || $rule->protocol === 'any' || empty($rule->port);
+        $command = $isAny
+            ? "sudo ufw {$rule->type} from {$source} to any"
+            : "sudo ufw {$rule->type} from {$source} to any proto {$rule->protocol} port {$rule->port}";
     @endphp
 
-    if ! sudo ufw {{ $rule->type }} from {{ $source }} to any proto {{ $rule->protocol }} port {{ $rule->port }}; then
+    if ! {{ $command }}; then
         @include('ssh.services.firewall.ufw.restore-rules')
         echo 'VITO_SSH_ERROR' && exit 1
     fi

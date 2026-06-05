@@ -9,6 +9,7 @@ use App\Models\Server;
 use App\Models\Service;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 class Install
 {
@@ -26,6 +27,12 @@ class Install
 
         if (! $input['type']) {
             throw new \InvalidArgumentException("Service type is not defined for $name");
+        }
+
+        if ($input['type'] === \App\Services\Vpn\WireGuard::type()) {
+            throw ValidationException::withMessages([
+                'name' => __('This service is managed through private networks and cannot be installed directly.'),
+            ]);
         }
 
         $service = new Service([
