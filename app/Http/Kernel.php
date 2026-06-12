@@ -98,5 +98,6 @@ class Kernel extends HttpKernel
         'has-project' => HasProjectMiddleware::class,
         'can-see-project' => CanSeeProjectMiddleware::class,
         'must-be-admin' => MustBeAdminMiddleware::class,
+        'page-extensions' => \App\Http\Middleware\AttachPageExtensions::class,
     ];
 }

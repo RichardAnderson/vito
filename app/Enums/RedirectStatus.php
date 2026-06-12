@@ -3,8 +3,9 @@
 namespace App\Enums;
 
 use App\Contracts\VitoEnum;
+use Forjed\InertiaTable\Contracts\HasTableDisplay;
 
-enum RedirectStatus: string implements VitoEnum
+enum RedirectStatus: string implements HasTableDisplay, VitoEnum
 {
     case CREATING = 'creating';
     case READY = 'ready';

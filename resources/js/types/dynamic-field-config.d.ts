@@ -1,6 +1,7 @@
 export interface DynamicFieldConfig {
   type:
     | 'text'
+    | 'hidden'
     | 'password'
     | 'password-with-toggle'
     | 'textarea'
@@ -10,7 +11,8 @@ export interface DynamicFieldConfig {
     | 'alert'
     | 'tooling'
     | 'tooling-picker'
-    | 'tooling-selector';
+    | 'tooling-selector'
+    | 'repeater';
   name: string;
   options?: string[] | { [key: string]: string };
   optionLabels?: { [key: string]: string };
@@ -25,4 +27,5 @@ export interface DynamicFieldConfig {
   };
   className?: string;
   componentProps?: Record<string, unknown>;
+  fields?: DynamicFieldConfig[];
 }

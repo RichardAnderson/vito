@@ -2,8 +2,6 @@
 
 namespace App\Plugins;
 
-use App\Plugins\Interfaces\PluginInterface;
-
 abstract class AbstractPlugin implements PluginInterface
 {
     protected string $name = '';

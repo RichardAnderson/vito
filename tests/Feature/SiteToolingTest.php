@@ -98,14 +98,14 @@ class SiteToolingTest extends TestCase
         $this->get(route('site-tooling', ['server' => $this->server, 'site' => $this->isolatedSite]))
             ->assertOk()
             ->assertInertia(fn (AssertableInertia $assert) => $assert
-                ->component('site-tooling/index')
-                ->where('isolated_user', 'isolated-foo')
-                ->has('sibling_sites', 1)
-                ->where('sibling_sites.0.domain', 'iso-two.test')
-                ->where('installed_versions.node', null)
-                ->where('installed_versions.bun', null)
-                ->where('installed_versions.pnpm', null)
-                ->where('installed_versions.yarn', null)
+                ->component('dynamic/page')
+                ->where('schema.0.children.0.props.isolated_user', 'isolated-foo')
+                ->has('schema.0.children.0.props.sibling_sites', 1)
+                ->where('schema.0.children.0.props.sibling_sites.0.domain', 'iso-two.test')
+                ->where('schema.0.children.0.props.installed_versions.node', null)
+                ->where('schema.0.children.0.props.installed_versions.bun', null)
+                ->where('schema.0.children.0.props.installed_versions.pnpm', null)
+                ->where('schema.0.children.0.props.installed_versions.yarn', null)
             );
     }
 
@@ -427,8 +427,8 @@ class SiteToolingTest extends TestCase
         $this->get(route('site-tooling', ['server' => $this->server, 'site' => $this->isolatedSite]))
             ->assertOk()
             ->assertInertia(fn (AssertableInertia $assert) => $assert
-                ->where('required_tooling.node', 'Node.js')
-                ->missing('required_tooling.bun')
+                ->where('schema.0.children.0.props.required_tooling.node', 'Node.js')
+                ->missing('schema.0.children.0.props.required_tooling.bun')
             );
     }
 

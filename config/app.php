@@ -5,6 +5,7 @@ use App\Providers\DemoServiceProvider;
 use App\Providers\DNSProviderServiceProvider;
 use App\Providers\HorizonServiceProvider;
 use App\Providers\NotificationChannelServiceProvider;
+use App\Providers\PagesServiceProvider;
 use App\Providers\PluginsServiceProvider;
 use App\Providers\RouteServiceProvider;
 use App\Providers\ServerProviderServiceProvider;
@@ -241,6 +242,8 @@ return [
         ServiceTypeServiceProvider::class,
         HorizonServiceProvider::class,
         WorkflowServiceProvider::class,
+        PagesServiceProvider::class,
+        App\Providers\TypeScriptTransformerServiceProvider::class,
     ],
 
     /*

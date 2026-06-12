@@ -2,9 +2,6 @@
 
 namespace App\Actions\Plugins;
 
-use App\Actions\Bootstrap\GetBootstrap;
-use App\DTOs\SocketEventDTO;
-use App\Events\SocketEvent;
 use App\Models\Plugin;
 use App\Models\PluginError;
 use Exception;
@@ -14,7 +11,7 @@ final readonly class EnablePlugin
 {
     public function __construct(
         private GetPluginInstance $getImplementation,
-        private PluginCache $cache,
+        private InvalidatePluginState $invalidateState,
     ) {}
 
     /**
@@ -40,15 +37,9 @@ final readonly class EnablePlugin
             throw new Exception('Unable to enable the plugin, please check the error logs');
         }
 
-        // FIXME: When plguin is faulty, it still returns successful response to the frontend
-
         $plugin->is_enabled = true;
         $plugin->save();
 
-        $this->cache->clear();
-
-        GetBootstrap::forgetVersion();
-        $newVersion = app(GetBootstrap::class)->computeVersion();
-        SocketEvent::dispatch(new SocketEventDTO(0, 'bootstrap.invalidated', ['version' => $newVersion]));
+        $this->invalidateState->handle();
     }
 }

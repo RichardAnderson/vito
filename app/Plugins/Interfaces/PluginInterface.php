@@ -2,19 +2,9 @@
 
 namespace App\Plugins\Interfaces;
 
-interface PluginInterface
-{
-    public function boot(): void;
-
-    public function enable(): void;
-
-    public function disable(): void;
-
-    public function install(): void;
-
-    public function uninstall(): void;
-
-    public function getName(): string;
-
-    public function getDescription(): string;
-}
+/*
+ * Backwards-compatibility shim. PluginInterface moved to App\Plugins\PluginInterface
+ * (flattened per the plugin SDK convention). Kept for one beta cycle so published
+ * plugins importing the old namespace keep resolving. Remove before 4.0 GA.
+ */
+class_alias(\App\Plugins\PluginInterface::class, \App\Plugins\Interfaces\PluginInterface::class);

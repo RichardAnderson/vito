@@ -4,7 +4,7 @@ import { dialogs, type DialogRegistry, type ConsumerProps } from '@/components/d
 
 type DialogAccessor = {
   -readonly [K in keyof DialogRegistry]: {
-    open: (props: ConsumerProps<DialogRegistry[K]>) => void;
+    open: (props: ConsumerProps<DialogRegistry[K]>) => number;
     close: () => void;
   };
 };
@@ -12,7 +12,7 @@ type DialogAccessor = {
 function entryFor<K extends keyof DialogRegistry>(key: K) {
   return {
     open: (props: ConsumerProps<DialogRegistry[K]>) => useDialogStore.getState().open(key, props),
-    close: () => useDialogStore.getState().close(),
+    close: () => useDialogStore.getState().closeTopByKey(key),
   };
 }
 

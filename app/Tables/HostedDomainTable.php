@@ -42,7 +42,7 @@ class HostedDomainTable extends Table
                     value: fn (HostedDomain $hd) => strtoupper($hd->ssl_method->getText()),
                     variant: 'outline',
                 ),
-            Column::make('certificate', 'Certificate'),
+            Column::make('certificate', 'Certificate')->component('certificate-cell'),
             BadgeColumn::make('ssl.expires_at', 'Expires In')
                 ->variant('outline')
                 ->adjust(fn ($data) => $this->daysUntil($data)),
@@ -51,7 +51,9 @@ class HostedDomainTable extends Table
             Column::data('site_id'),
             Column::data('server_id', fn (HostedDomain $hd) => $hd->site->server_id),
             Column::data('type', fn (HostedDomain $hd) => $hd->type->getText()),
+            Column::data('type_value', fn (HostedDomain $hd) => $hd->type->value),
             Column::data('type_color', fn (HostedDomain $hd) => $hd->type->getColor()),
+            Column::data('status_value', fn (HostedDomain $hd) => $hd->status->value),
             Column::data('ssl_id'),
             Column::data('error'),
             Column::data('ssl', fn (HostedDomain $hd) => $hd->ssl ? SslResource::make($hd->ssl) : null),

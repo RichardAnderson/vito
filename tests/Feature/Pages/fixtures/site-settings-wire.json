@@ -1,0 +1,305 @@
+{
+    "schema": [
+        {
+            "id": "site-settings",
+            "type": "page",
+            "children": [
+                {
+                    "id": "details-card",
+                    "type": "card",
+                    "destructive": false,
+                    "children": [
+                        {
+                            "id": "details-card.id",
+                            "type": "card-row",
+                            "display": "copyable"
+                        },
+                        {
+                            "id": "details-card.domain",
+                            "type": "card-row",
+                            "display": "link"
+                        },
+                        {
+                            "id": "details-card.type",
+                            "type": "card-row",
+                            "display": "text"
+                        },
+                        {
+                            "id": "details-card.source-control",
+                            "type": "card-row",
+                            "display": "button",
+                            "button": {
+                                "id": "details-card.source-control.button",
+                                "type": "button",
+                                "variant": "outline",
+                                "dialog": {
+                                    "id": "source-control-dialog",
+                                    "type": "dialog",
+                                    "action": "update-source-control",
+                                    "sheet": false,
+                                    "confirmField": "confirmation",
+                                    "has_form": true,
+                                    "form_fields": []
+                                }
+                            }
+                        },
+                        {
+                            "id": "details-card.repository",
+                            "type": "card-row",
+                            "display": "text"
+                        },
+                        {
+                            "id": "details-card.branch",
+                            "type": "card-row",
+                            "display": "button",
+                            "button": {
+                                "id": "details-card.branch.button",
+                                "type": "button",
+                                "variant": "outline",
+                                "dialog": {
+                                    "id": "branch-dialog",
+                                    "type": "dialog",
+                                    "action": "update-branch",
+                                    "sheet": false,
+                                    "confirmField": "confirmation",
+                                    "has_form": true,
+                                    "form_fields": []
+                                }
+                            }
+                        },
+                        {
+                            "id": "details-card.vhost",
+                            "type": "card-row",
+                            "display": "button",
+                            "button": {
+                                "id": "details-card.vhost.button",
+                                "type": "button",
+                                "variant": "outline",
+                                "dialog": {
+                                    "id": "vhost-dialog",
+                                    "type": "dialog",
+                                    "sheet": true,
+                                    "confirmField": "confirmation",
+                                    "editor": {
+                                        "id": "vhost-editor",
+                                        "type": "code-editor",
+                                        "load": "vhost",
+                                        "readonly": true,
+                                        "language": "nginx"
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            "id": "details-card.vhost-template",
+                            "type": "card-row",
+                            "display": "button",
+                            "button": {
+                                "id": "details-card.vhost-template.button",
+                                "type": "button",
+                                "variant": "outline",
+                                "dialog": {
+                                    "id": "vhost-template-dialog",
+                                    "type": "dialog",
+                                    "sheet": true,
+                                    "confirmField": "confirmation",
+                                    "editor": {
+                                        "id": "vhost-template-editor",
+                                        "type": "code-editor",
+                                        "load": "vhost-template",
+                                        "save": "update-vhost-template",
+                                        "preview": "vhost-preview",
+                                        "reset": "reset-vhost-template",
+                                        "readonly": false,
+                                        "language": "nginx"
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            "id": "details-card.basic-auth",
+                            "type": "card-row",
+                            "display": "button",
+                            "button": {
+                                "id": "details-card.basic-auth.button",
+                                "type": "button",
+                                "variant": "outline",
+                                "dialog": {
+                                    "id": "basic-auth-dialog",
+                                    "type": "dialog",
+                                    "action": "update-basic-auth",
+                                    "sheet": false,
+                                    "confirmField": "confirmation",
+                                    "has_form": true,
+                                    "form_fields": []
+                                }
+                            }
+                        },
+                        {
+                            "id": "details-card.web-directory",
+                            "type": "card-row",
+                            "display": "button",
+                            "button": {
+                                "id": "details-card.web-directory.button",
+                                "type": "button",
+                                "variant": "outline",
+                                "dialog": {
+                                    "id": "web-directory-dialog",
+                                    "type": "dialog",
+                                    "action": "update-web-directory",
+                                    "sheet": false,
+                                    "confirmField": "confirmation",
+                                    "has_form": true,
+                                    "form_fields": []
+                                }
+                            }
+                        },
+                        {
+                            "id": "details-card.path",
+                            "type": "card-row",
+                            "display": "copyable"
+                        },
+                        {
+                            "id": "details-card.php-version",
+                            "type": "card-row",
+                            "display": "button",
+                            "button": {
+                                "id": "details-card.php-version.button",
+                                "type": "button",
+                                "variant": "outline",
+                                "dialog": {
+                                    "id": "php-version-dialog",
+                                    "type": "dialog",
+                                    "action": "update-php-version",
+                                    "sheet": false,
+                                    "confirmField": "confirmation",
+                                    "has_form": true,
+                                    "form_fields": []
+                                }
+                            }
+                        },
+                        {
+                            "id": "details-card.status",
+                            "type": "card-row",
+                            "display": "badge"
+                        },
+                        {
+                            "id": "details-card.created-at",
+                            "type": "card-row",
+                            "display": "text"
+                        }
+                    ]
+                },
+                {
+                    "id": "delete-card",
+                    "type": "card",
+                    "destructive": true,
+                    "children": [
+                        {
+                            "id": "delete-card.delete",
+                            "type": "card-row",
+                            "display": "button",
+                            "button": {
+                                "id": "delete-card.delete.button",
+                                "type": "button",
+                                "variant": "destructive",
+                                "dialog": {
+                                    "id": "delete-dialog",
+                                    "type": "dialog",
+                                    "action": "destroy",
+                                    "sheet": false,
+                                    "confirmField": "domain",
+                                    "has_confirmText": true
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "actions": {
+        "destroy": {
+            "method": "delete",
+            "form_is_null": true
+        },
+        "disable-force-ssl": {
+            "method": "post",
+            "form_is_null": true
+        },
+        "disable-stats": {
+            "method": "post",
+            "form_is_null": true
+        },
+        "enable-force-ssl": {
+            "method": "post",
+            "form_is_null": true
+        },
+        "enable-stats": {
+            "method": "post",
+            "form_is_null": true
+        },
+        "reset-vhost-template": {
+            "method": "post",
+            "form_is_null": true
+        },
+        "update-basic-auth": {
+            "method": "patch",
+            "form_is_null": true
+        },
+        "update-branch": {
+            "method": "patch",
+            "form_is_null": true
+        },
+        "update-php-version": {
+            "method": "patch",
+            "form_is_null": true
+        },
+        "update-port": {
+            "method": "patch",
+            "form_is_null": true
+        },
+        "update-source-control": {
+            "method": "patch",
+            "form_is_null": true
+        },
+        "update-start-command": {
+            "method": "patch",
+            "form_is_null": true
+        },
+        "update-vhost": {
+            "method": "put",
+            "form_is_null": true
+        },
+        "update-vhost-generation": {
+            "method": "patch",
+            "form_is_null": true
+        },
+        "update-vhost-template": {
+            "method": "put",
+            "form_is_null": true
+        },
+        "update-web-directory": {
+            "method": "patch",
+            "form_is_null": true
+        },
+        "update-worker-env": {
+            "method": "patch",
+            "form_is_null": true
+        }
+    },
+    "data": {
+        "vhost": {
+            "method": "get"
+        },
+        "vhost-preview": {
+            "method": "post"
+        },
+        "vhost-template": {
+            "method": "get"
+        },
+        "worker-env": {
+            "method": "get"
+        }
+    }
+}

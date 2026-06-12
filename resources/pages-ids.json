@@ -1,0 +1,97 @@
+{
+    "hosted-domains": {
+        "area": "site",
+        "route": "hosted-domains",
+        "actions": [
+            "check-dns",
+            "deactivate",
+            "destroy",
+            "force-activate",
+            "reactivate",
+            "renew-ssl",
+            "store",
+            "update"
+        ],
+        "data": [
+            "matching-ssls"
+        ]
+    },
+    "redirects": {
+        "area": "site",
+        "route": "redirects",
+        "actions": [
+            "destroy",
+            "store"
+        ],
+        "data": []
+    },
+    "server.poc": {
+        "area": "server",
+        "route": "pages.server.poc",
+        "actions": [
+            "ping"
+        ],
+        "data": [
+            "info"
+        ]
+    },
+    "site-cronjobs": {
+        "area": "site",
+        "route": "cronjobs.site",
+        "actions": [
+            "destroy",
+            "disable",
+            "enable",
+            "store",
+            "update"
+        ],
+        "data": []
+    },
+    "site-settings": {
+        "area": "site",
+        "route": "site-settings",
+        "actions": [
+            "destroy",
+            "disable-force-ssl",
+            "disable-stats",
+            "enable-force-ssl",
+            "enable-stats",
+            "reset-vhost-template",
+            "update-basic-auth",
+            "update-branch",
+            "update-php-version",
+            "update-port",
+            "update-source-control",
+            "update-start-command",
+            "update-vhost",
+            "update-vhost-generation",
+            "update-vhost-template",
+            "update-web-directory",
+            "update-worker-env"
+        ],
+        "data": [
+            "vhost",
+            "vhost-preview",
+            "vhost-template",
+            "worker-env"
+        ]
+    },
+    "site-stats": {
+        "area": "site",
+        "route": "site-stats",
+        "actions": [],
+        "data": []
+    },
+    "site-tooling": {
+        "area": "site",
+        "route": "site-tooling",
+        "actions": [],
+        "data": []
+    },
+    "site-workers": {
+        "area": "site",
+        "route": "workers.site",
+        "actions": [],
+        "data": []
+    }
+}

@@ -4,6 +4,7 @@ import { Link, router } from '@inertiajs/react';
 import { SOCKET_EVENT, type SocketEventData } from '@/stores/socket-store';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
+import CopyableBadge from '@/components/copyable-badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
@@ -48,6 +49,13 @@ function vitoCellRenderer({ row, value, displays, defaultRender }: CellRenderPro
     const display = displays[0];
     const color = display.color_field ? (row[display.color_field] as string) : display.variant;
     return <Badge variant={(color ?? 'default') as 'default'}>{String(value)}</Badge>;
+  }
+
+  if (displays.length === 1 && displays[0].type === 'copyable') {
+    if (value == null || value === '') {
+      return <span className="text-muted-foreground">-</span>;
+    }
+    return <CopyableBadge text={String(value)} />;
   }
 
   if (displays.some((d) => d.type === 'link')) {

@@ -28,6 +28,7 @@
     "react/event-loop": "^1.5",
     "react/socket": "^1.17",
     "spatie/laravel-route-attributes": "^1.24",
+    "spatie/laravel-typescript-transformer": "^3.2",
     "symfony/yaml": "^8.0",
     "tightenco/ziggy": "^2.5"
   },

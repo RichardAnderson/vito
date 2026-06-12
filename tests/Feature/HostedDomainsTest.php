@@ -34,8 +34,9 @@ class HostedDomainsTest extends TestCase
         ]))
             ->assertSuccessful()
             ->assertInertia(fn (AssertableInertia $page) => $page
-                ->component('hosted-domains/index')
-                ->has('hostedDomains.data', 1)
+                ->component('dynamic/page')
+                ->where('area', 'site')
+                ->has('tables:hosted-domains.data', 1)
             );
     }
 

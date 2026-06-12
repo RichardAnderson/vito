@@ -47,7 +47,7 @@ class SiteSettingsProxiedSiteTest extends TestCase
         $this->get(route('site-settings', ['server' => $this->server, 'site' => $this->proxiedSite]))
             ->assertOk()
             ->assertInertia(fn (AssertableInertia $a) => $a
-                ->component('site-settings/index')
+                ->component('dynamic/page')
                 ->where('site.is_proxied_site_type', true)
                 ->where('site.start_command', 'npm start')
                 ->where('site.port', 3000)

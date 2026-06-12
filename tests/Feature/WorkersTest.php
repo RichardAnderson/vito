@@ -39,6 +39,26 @@ class WorkersTest extends TestCase
 
     }
 
+    public function test_see_site_workers(): void
+    {
+        $this->actingAs($this->user);
+
+        Worker::factory()->create([
+            'server_id' => $this->server->id,
+            'site_id' => $this->site->id,
+        ]);
+
+        $this->get(route('workers.site', [
+            'server' => $this->server,
+            'site' => $this->site,
+        ]))
+            ->assertSuccessful()
+            ->assertInertia(fn (AssertableInertia $page) => $page
+                ->component('dynamic/page')
+                ->where('area', 'site')
+                ->has('tables:workers.data', 1));
+    }
+
     public function test_delete_worker(): void
     {
         SSH::fake();

@@ -3,6 +3,8 @@
 namespace App\Actions\Plugins;
 
 use App\Models\PluginError;
+use App\Pages\ExtensionActionRegistry;
+use App\Pages\ExtensionRegistry;
 use Throwable;
 
 final readonly class BootPlugins
@@ -10,6 +12,8 @@ final readonly class BootPlugins
     public function __construct(
         private GetPluginInstance $getInstance,
         private PluginCache $cache,
+        private ExtensionRegistry $extensions,
+        private ExtensionActionRegistry $extensionActions,
     ) {}
 
     public function handle(): void
@@ -20,12 +24,18 @@ final readonly class BootPlugins
         foreach ($plugins as $plugin) {
             try {
                 $instance = $this->getInstance->handle($plugin);
+                $pluginKey = $plugin->name ?? (string) $plugin->id;
+                $this->extensions->setCurrentPlugin($pluginKey);
+                $this->extensionActions->setCurrentPlugin($pluginKey);
                 $instance->boot();
                 $booted[] = $plugin;
             } catch (Throwable $exception) {
                 $plugin->is_enabled = false;
                 $plugin->save();
                 PluginError::createFromException($exception, $plugin);
+            } finally {
+                $this->extensions->resetCurrentPlugin();
+                $this->extensionActions->resetCurrentPlugin();
             }
         }
 

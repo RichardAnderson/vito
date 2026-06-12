@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Enums\RedirectStatus;
+use App\Enums\UserRole;
 use App\Facades\SSH;
 use App\Models\Redirect;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -17,39 +18,14 @@ class RedirectsTest extends TestCase
     {
         $this->actingAs($this->user);
 
-        Redirect::factory()->create([
-            'site_id' => $this->site->id,
-        ]);
+        Redirect::factory()->create(['site_id' => $this->site->id]);
 
-        $this->get(route('redirects', [
-            'server' => $this->server,
-            'site' => $this->site,
-        ]))
+        $this->get(route('redirects', ['server' => $this->server, 'site' => $this->site]))
             ->assertSuccessful()
-            ->assertInertia(fn (AssertableInertia $page) => $page->component('redirects/index'));
-
-    }
-
-    public function test_delete_redirect(): void
-    {
-        SSH::fake();
-
-        $this->actingAs($this->user);
-
-        $redirect = Redirect::factory()->create([
-            'site_id' => $this->site->id,
-        ]);
-
-        $this->delete(route('redirects.destroy', [
-            'server' => $this->server,
-            'site' => $this->site,
-            'redirect' => $redirect,
-        ]))
-            ->assertSessionDoesntHaveErrors();
-
-        $this->assertDatabaseMissing('redirects', [
-            'id' => $redirect->id,
-        ]);
+            ->assertInertia(fn (AssertableInertia $page) => $page
+                ->component('dynamic/page')
+                ->where('area', 'site')
+                ->has('tables:redirects'));
     }
 
     public function test_create_redirect(): void
@@ -58,15 +34,11 @@ class RedirectsTest extends TestCase
 
         $this->actingAs($this->user);
 
-        $this->post(route('redirects.store', [
-            'server' => $this->server,
-            'site' => $this->site,
-        ]), [
+        $this->post(route('redirects.store', ['server' => $this->server, 'site' => $this->site]), [
             'from' => 'some-path',
             'to' => 'https://example.com/redirect',
             'mode' => 301,
-        ])
-            ->assertSessionDoesntHaveErrors();
+        ])->assertSessionDoesntHaveErrors();
 
         $this->assertDatabaseHas('redirects', [
             'from' => 'some-path',
@@ -74,5 +46,45 @@ class RedirectsTest extends TestCase
             'mode' => 301,
             'status' => RedirectStatus::READY,
         ]);
+    }
+
+    public function test_create_redirect_validates(): void
+    {
+        $this->actingAs($this->user);
+
+        $this->post(route('redirects.store', ['server' => $this->server, 'site' => $this->site]), [
+            'from' => '',
+            'to' => 'not-a-url',
+            'mode' => 999,
+        ])->assertSessionHasErrors(['from', 'to', 'mode']);
+    }
+
+    public function test_delete_redirect(): void
+    {
+        SSH::fake();
+
+        $this->actingAs($this->user);
+
+        $redirect = Redirect::factory()->create(['site_id' => $this->site->id]);
+
+        $this->delete(route('redirects.destroy', ['server' => $this->server, 'site' => $this->site]), [
+            'redirect' => $redirect->id,
+        ])->assertSessionDoesntHaveErrors();
+
+        $this->assertDatabaseMissing('redirects', ['id' => $redirect->id]);
+    }
+
+    public function test_create_requires_write_access(): void
+    {
+        $this->server->project->users()->where('user_id', $this->user->id)->update(['role' => UserRole::USER]);
+        $this->user->refresh();
+
+        $this->actingAs($this->user);
+
+        $this->post(route('redirects.store', ['server' => $this->server, 'site' => $this->site]), [
+            'from' => 'some-path',
+            'to' => 'https://example.com/redirect',
+            'mode' => 301,
+        ])->assertForbidden();
     }
 }

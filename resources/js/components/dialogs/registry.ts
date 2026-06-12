@@ -1,6 +1,8 @@
 import type { ComponentType } from 'react';
 import LogViewerDialog from './log-viewer-dialog';
 import ConfirmationDialog from './confirmation-dialog';
+import DynamicDialog from './dynamic-dialog';
+import DynamicPreviewDialog from './dynamic-preview-dialog';
 import StorageProviderEditDialog from '@/pages/storage-providers/components/edit-dialog';
 import PluginLogsDialog from '@/pages/plugins/components/logs-dialog';
 import WorkerLogsDialog from '@/pages/workers/components/logs-dialog';
@@ -18,8 +20,6 @@ import ServerProviderEditDialog from '@/pages/server-providers/components/edit-d
 import DnsProviderEditDialog from '@/pages/dns-providers/components/edit-dialog';
 import NotificationChannelEditDialog from '@/pages/notification-channels/components/edit-dialog';
 import ServiceConfigFileDialog from '@/pages/services/components/config-file-dialog';
-import CreateHostedDomain from '@/pages/hosted-domains/components/create-hosted-domain';
-import EditHostedDomain from '@/pages/hosted-domains/components/edit-hosted-domain';
 import FirewallRuleForm from '@/pages/firewall/components/form';
 import ServerIpForm from '@/pages/server-network/components/form';
 import RecordForm from '@/pages/domains/components/record-form';
@@ -48,6 +48,8 @@ export type DialogControlProps = { open: boolean; onOpenChange: (open: boolean) 
 export const dialogs = {
   logViewer: LogViewerDialog,
   confirm: ConfirmationDialog,
+  dynamicDialog: DynamicDialog,
+  dynamicPreview: DynamicPreviewDialog,
   storageProviderEdit: StorageProviderEditDialog,
   pluginLogs: PluginLogsDialog,
   workerLogs: WorkerLogsDialog,
@@ -65,8 +67,6 @@ export const dialogs = {
   dnsProviderEdit: DnsProviderEditDialog,
   notificationChannelEdit: NotificationChannelEditDialog,
   serviceConfigFile: ServiceConfigFileDialog,
-  createHostedDomain: CreateHostedDomain,
-  editHostedDomain: EditHostedDomain,
   firewallForm: FirewallRuleForm,
   serverIpForm: ServerIpForm,
   dnsRecordForm: RecordForm,

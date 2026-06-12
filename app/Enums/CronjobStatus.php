@@ -3,8 +3,9 @@
 namespace App\Enums;
 
 use App\Contracts\VitoEnum;
+use Forjed\InertiaTable\Contracts\HasTableDisplay;
 
-enum CronjobStatus: string implements VitoEnum
+enum CronjobStatus: string implements HasTableDisplay, VitoEnum
 {
     case CREATING = 'creating';
     case READY = 'ready';

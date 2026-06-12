@@ -6,6 +6,8 @@ use App\Tooling\ToolingInterface;
 
 class DynamicField
 {
+    private ?string $component = null;
+
     public function __construct(
         private string $name,
         private string $type = 'text',
@@ -18,6 +20,8 @@ class DynamicField
         private ?array $link = null,
         private ?string $className = null,
         private ?array $componentProps = null,
+        private ?array $rules = null,
+        private ?array $fields = null,
     ) {}
 
     public static function make(string $name): self
@@ -25,9 +29,14 @@ class DynamicField
         return new self($name);
     }
 
-    public function component(): self
+    /**
+     * Render this field via a registered custom React control. The optional name
+     * keys the frontend control registry; when null the field's name is used.
+     */
+    public function component(?string $name = null): self
     {
         $this->type = 'component';
+        $this->component = $name;
 
         return $this;
     }
@@ -35,6 +44,17 @@ class DynamicField
     public function text(): self
     {
         $this->type = 'text';
+
+        return $this;
+    }
+
+    /**
+     * A non-rendered field whose value is carried in the form payload (e.g. a row id
+     * seeded from table-row context for an edit dialog).
+     */
+    public function hidden(): self
+    {
+        $this->type = 'hidden';
 
         return $this;
     }
@@ -70,6 +90,20 @@ class DynamicField
     public function checkbox(): self
     {
         $this->type = 'checkbox';
+
+        return $this;
+    }
+
+    /**
+     * An array-of-subfields rows editor (e.g. Basic Auth users). Subfields carry
+     * their own rules, validated as `{name}.*.{subfield}` with nested error paths.
+     *
+     * @param  array<int, DynamicField>  $fields
+     */
+    public function repeater(array $fields): self
+    {
+        $this->type = 'repeater';
+        $this->fields = $fields;
 
         return $this;
     }
@@ -211,11 +245,42 @@ class DynamicField
     }
 
     /**
+     * @param  array<int, mixed>  $rules
+     */
+    public function rules(array $rules): self
+    {
+        $this->rules = $rules;
+
+        return $this;
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    /**
+     * @return array<int, mixed>|null
+     */
+    public function getRules(): ?array
+    {
+        return $this->rules;
+    }
+
+    /**
+     * @return array<int, DynamicField>|null
+     */
+    public function getFields(): ?array
+    {
+        return $this->fields;
+    }
+
+    /**
      * @return array<string, mixed>
      */
     public function toArray(): array
     {
-        return [
+        $data = [
             'type' => $this->type,
             'name' => $this->name,
             'label' => $this->label,
@@ -226,7 +291,18 @@ class DynamicField
             'optionLabels' => $this->optionLabels,
             'link' => $this->link,
             'className' => $this->className,
+            'component' => $this->component,
             'componentProps' => $this->componentProps,
         ];
+
+        if ($this->rules !== null) {
+            $data['rules'] = $this->rules;
+        }
+
+        if ($this->fields !== null) {
+            $data['fields'] = array_map(fn (self $field): array => $field->toArray(), $this->fields);
+        }
+
+        return $data;
     }
 }

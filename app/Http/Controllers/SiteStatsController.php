@@ -9,8 +9,6 @@ use App\Models\Site;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
-use Inertia\Response;
 use Spatie\RouteAttributes\Attributes\Get;
 use Spatie\RouteAttributes\Attributes\Middleware;
 use Spatie\RouteAttributes\Attributes\Post;
@@ -20,17 +18,6 @@ use Spatie\RouteAttributes\Attributes\Prefix;
 #[Middleware(['auth', 'has-project'])]
 class SiteStatsController extends Controller
 {
-    #[Get('/', name: 'site-stats')]
-    public function index(Server $server, Site $site): Response
-    {
-        $this->authorize('view', [$site, $server]);
-
-        return Inertia::render('sites/stats', [
-            'hasStatsService' => (bool) $server->service('log_analysis'),
-            'statsEnabled' => $site->statsEnabled(),
-        ]);
-    }
-
     #[Get('/json', name: 'site-stats.json')]
     public function json(Request $request, Server $server, Site $site): JsonResponse
     {

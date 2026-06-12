@@ -72,7 +72,9 @@ class SiteStatsTest extends TestCase
 
         $this->get(route('site-stats', ['server' => $this->server, 'site' => $this->site]))
             ->assertSuccessful()
-            ->assertInertia(fn (AssertableInertia $page) => $page->component('sites/stats')->where('hasStatsService', false));
+            ->assertInertia(fn (AssertableInertia $page) => $page
+                ->component('dynamic/page')
+                ->where('schema.0.children.0.props.hasStatsService', false));
     }
 
     public function test_stats_page_reports_service_installed(): void
@@ -82,7 +84,9 @@ class SiteStatsTest extends TestCase
 
         $this->get(route('site-stats', ['server' => $this->server, 'site' => $this->site]))
             ->assertSuccessful()
-            ->assertInertia(fn (AssertableInertia $page) => $page->where('hasStatsService', true));
+            ->assertInertia(fn (AssertableInertia $page) => $page
+                ->component('dynamic/page')
+                ->where('schema.0.children.0.props.hasStatsService', true));
     }
 
     public function test_conf_renderer_emits_expected_vars(): void

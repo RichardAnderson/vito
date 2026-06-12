@@ -60,9 +60,11 @@ class HandleInertiaRequests extends Middleware
         }
 
         $data = [];
-        if ($request->route('server')) {
-            /** @var Server $server */
-            $server = $request->route('server');
+        $serverParam = $request->route('server');
+        // Framework (schema) page routes carry raw ids rather than implicitly-bound
+        // models, so resolve a scalar to its model; an already-bound model passes through.
+        $server = $serverParam instanceof Server ? $serverParam : ($serverParam ? Server::find($serverParam) : null);
+        if ($server instanceof Server) {
             if ($user && $user->can('view', $server) && $user->current_project_id !== $server->project_id) {
                 $user->current_project_id = $server->project_id;
                 $user->save();
@@ -70,9 +72,9 @@ class HandleInertiaRequests extends Middleware
 
             $data['server'] = ServerResource::make($server);
 
-            if ($request->route('site')) {
-                /** @var Site $site */
-                $site = $request->route('site');
+            $siteParam = $request->route('site');
+            $site = $siteParam instanceof Site ? $siteParam : ($siteParam ? Site::find($siteParam) : null);
+            if ($site instanceof Site) {
                 $site->load('hostedDomains.ssl', 'workers');
                 $data['site'] = SiteResource::make($site);
             }

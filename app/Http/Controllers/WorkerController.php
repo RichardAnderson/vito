@@ -12,7 +12,7 @@ use App\Actions\Worker\SyncWorkerStatuses;
 use App\Actions\Worker\UpdateWorkerEnvironment;
 use App\Actions\Worker\WorkerEnvironmentUpdateResult;
 use App\Helpers\EnvParser;
-use App\Http\Resources\WorkerResource;
+use App\Tables\WorkerTable;
 use App\Models\Server;
 use App\Models\Site;
 use App\Models\Worker;
@@ -34,34 +34,13 @@ use Spatie\RouteAttributes\Attributes\WhereNumber;
 #[Middleware(['auth', 'has-project'])]
 class WorkerController extends Controller
 {
-    #[Get('/workers', name: 'workers')]
+    #[Get('/workers', name: 'workers', middleware: 'page-extensions:workers,server')]
     public function index(Server $server): Response
     {
         $this->authorize('viewAny', [Worker::class, $server]);
 
         return Inertia::render('workers/index', [
-            'workers' => WorkerResource::collection(
-                $server->workers()
-                    ->with('site:id,server_id,type_data')
-                    ->latest()
-                    ->simplePaginate(config('web.pagination_size'))
-            ),
-            'sites' => $server->sites()->select('id', 'domain')->get(),
-        ]);
-    }
-
-    #[Get('/sites/{site}/workers', name: 'workers.site')]
-    public function site(Server $server, Site $site): Response
-    {
-        $this->authorize('viewAny', [Worker::class, $server, $site]);
-
-        return Inertia::render('workers/index', [
-            'workers' => WorkerResource::collection(
-                $site->workers()
-                    ->with('site:id,server_id,type_data')
-                    ->latest()
-                    ->simplePaginate(config('web.pagination_size'))
-            ),
+            'workers' => WorkerTable::make($server->workers())->simplePaginate(),
             'sites' => $server->sites()->select('id', 'domain')->get(),
         ]);
     }

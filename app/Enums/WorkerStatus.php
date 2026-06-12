@@ -3,8 +3,9 @@
 namespace App\Enums;
 
 use App\Contracts\VitoEnum;
+use Forjed\InertiaTable\Contracts\HasTableDisplay;
 
-enum WorkerStatus: string implements VitoEnum
+enum WorkerStatus: string implements HasTableDisplay, VitoEnum
 {
     case RUNNING = 'running';
     case CREATING = 'creating';

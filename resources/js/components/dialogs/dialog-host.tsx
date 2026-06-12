@@ -5,24 +5,34 @@ import { useDialogStore } from '@/stores/dialog-store';
 import { dialogs, type DialogControlProps } from './registry';
 
 export default function DialogHost() {
-  const active = useDialogStore((s) => s.active);
-  const instanceId = useDialogStore((s) => s.instanceId);
+  const stack = useDialogStore((s) => s.stack);
 
   useEffect(() => {
-    return router.on('navigate', () => useDialogStore.getState().close());
+    return router.on('navigate', () => useDialogStore.getState().closeAll());
   }, []);
 
-  if (!active) {
-    return null;
-  }
-
-  const Component = dialogs[active.key] as ComponentType<typeof active.props & DialogControlProps> | undefined;
-
-  if (!Component) {
+  if (stack.length === 0) {
     return null;
   }
 
   return (
-    <Component key={`${active.key}:${instanceId}`} open onOpenChange={(o: boolean) => !o && useDialogStore.getState().close()} {...active.props} />
+    <>
+      {stack.map((entry) => {
+        const Component = dialogs[entry.key] as ComponentType<typeof entry.props & DialogControlProps> | undefined;
+
+        if (!Component) {
+          return null;
+        }
+
+        return (
+          <Component
+            key={entry.id}
+            open
+            onOpenChange={(o: boolean) => !o && useDialogStore.getState().closeById(entry.id)}
+            {...entry.props}
+          />
+        );
+      })}
+    </>
   );
 }

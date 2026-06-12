@@ -27,7 +27,10 @@ class SiteCronjobTest extends TestCase
             'site' => $this->site,
         ]))
             ->assertSuccessful()
-            ->assertInertia(fn (AssertableInertia $page) => $page->component('cronjobs/index'));
+            ->assertInertia(fn (AssertableInertia $page) => $page
+                ->component('dynamic/page')
+                ->where('area', 'site')
+                ->has('tables:cronjobs'));
     }
 
     public function test_delete_site_cronjob(): void
@@ -46,8 +49,7 @@ class SiteCronjobTest extends TestCase
         $this->delete(route('cronjobs.site.destroy', [
             'server' => $this->server,
             'site' => $this->site,
-            'cronJob' => $cronjob,
-        ]));
+        ]), ['cronJob' => $cronjob->id]);
 
         $this->assertDatabaseMissing('cron_jobs', [
             'id' => $cronjob->id,
@@ -185,8 +187,7 @@ class SiteCronjobTest extends TestCase
         $this->post(route('cronjobs.site.enable', [
             'server' => $this->server,
             'site' => $this->site,
-            'cronJob' => $cronjob,
-        ]))
+        ]), ['cronJob' => $cronjob->id])
             ->assertSessionDoesntHaveErrors();
 
         $cronjob->refresh();
@@ -216,8 +217,7 @@ class SiteCronjobTest extends TestCase
         $this->post(route('cronjobs.site.disable', [
             'server' => $this->server,
             'site' => $this->site,
-            'cronJob' => $cronjob,
-        ]))
+        ]), ['cronJob' => $cronjob->id])
             ->assertSessionDoesntHaveErrors();
 
         $cronjob->refresh();
@@ -247,8 +247,8 @@ class SiteCronjobTest extends TestCase
         $this->put(route('cronjobs.site.update', [
             'server' => $this->server,
             'site' => $this->site,
-            'cronJob' => $cronjob,
         ]), [
+            'cronJob' => $cronjob->id,
             'command' => 'php artisan schedule:run',
             'user' => 'vito',
             'frequency' => '0 * * * *',
