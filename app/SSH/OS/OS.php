@@ -456,6 +456,25 @@ class OS
     }
 
     /**
+     * Extract an archive over an existing path, swapping it into place atomically
+     * to avoid leaving the target missing while extraction runs.
+     *
+     * @throws SSHError
+     */
+    public function extractArchiveAtomic(string $backupPath, string $restorePath, ?string $owner = null, ?string $permissions = null): void
+    {
+        $this->server->ssh()->exec(
+            view('ssh.os.extract-archive-atomic', [
+                'backupPath' => $backupPath,
+                'restorePath' => $restorePath,
+                'owner' => $owner,
+                'permissions' => $permissions,
+            ]),
+            'extract-archive-atomic'
+        );
+    }
+
+    /**
      * Clear a remote log file while preserving permissions and ownership
      *
      * @throws SSHError

@@ -3,6 +3,7 @@ import { ServerLog } from '@/types/server-log';
 export interface Deployment {
   id: number;
   site_id: number;
+  server_id: number;
   deployment_script_id: number;
   log_id: number;
   log: ServerLog | null;
@@ -18,6 +19,11 @@ export interface Deployment {
   status_color: 'gray' | 'success' | 'info' | 'warning' | 'danger';
   release?: string;
   active: boolean;
+  has_backups: boolean;
+  backup_files?: {
+    folders: string[];
+    databases: string[];
+  } | null;
   created_at: string;
   updated_at: string;
 

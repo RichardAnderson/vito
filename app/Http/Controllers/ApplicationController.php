@@ -3,10 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Actions\Site\Deploy;
+use App\Actions\Site\RestoreDeploymentBackup;
 use App\Actions\Site\Rollback;
+use App\Actions\Site\UpdateDeploymentBackup;
 use App\Actions\Site\UpdateDeploymentScript;
 use App\Actions\Site\UpdateEnv;
 use App\Actions\Site\UpdateLoadBalancer;
+use App\Enums\DatabaseStatus;
 use App\Exceptions\DeploymentScriptIsEmptyException;
 use App\Exceptions\FailedToDestroyGitHook;
 use App\Exceptions\ReverseProxyNotConfiguredException;
@@ -15,6 +18,7 @@ use App\Exceptions\SSHError;
 use App\Helpers\EnvParser;
 use App\Http\Resources\DeploymentScriptResource;
 use App\Http\Resources\LoadBalancerServerResource;
+use App\Http\Resources\SiteDeploymentBackupResource;
 use App\Http\Resources\WorkerResource;
 use App\Models\Deployment;
 use App\Models\DeploymentScript;
@@ -52,6 +56,8 @@ class ApplicationController extends Controller
         $type = $site->type();
         $bootstrapWorker = $type instanceof AbstractProxiedSiteType ? $type->bootstrapWorker() : null;
 
+        $deploymentBackup = $site->deploymentBackup;
+
         return Inertia::render('application/index', [
             'deployments' => DeploymentTable::make($site->deployments())->paginate(),
             'deploymentScript' => new DeploymentScriptResource($deploymentScript),
@@ -59,6 +65,12 @@ class ApplicationController extends Controller
             'preFlightScript' => $preFlightScript ? new DeploymentScriptResource($preFlightScript) : null,
             'loadBalancerServers' => LoadBalancerServerResource::collection($site->loadBalancerServers),
             'worker' => $bootstrapWorker ? new WorkerResource($bootstrapWorker) : null,
+            'deploymentBackup' => $deploymentBackup ? new SiteDeploymentBackupResource($deploymentBackup) : null,
+            'availableDatabases' => $server->databases()
+                ->where('status', DatabaseStatus::READY)
+                ->get(['id', 'name'])
+                ->map(fn ($database): array => ['id' => $database->id, 'name' => $database->name])
+                ->all(),
         ]);
     }
 
@@ -70,6 +82,30 @@ class ApplicationController extends Controller
         app(UpdateDeploymentScript::class)->update($deploymentScript, $request->input());
 
         return back()->with('success', 'Deployment script updated successfully.');
+    }
+
+    #[Put('/deployment-backup', name: 'application.update-deployment-backup')]
+    public function updateDeploymentBackup(Request $request, Server $server, Site $site): RedirectResponse
+    {
+        $this->authorize('update', [$site, $server]);
+
+        app(UpdateDeploymentBackup::class)->update($site, $request->input());
+
+        return back()->with('success', 'Deployment backup settings updated successfully.');
+    }
+
+    #[Post('/deployments/{deployment}/restore-backup', name: 'application.deployments.restore-backup')]
+    public function restoreDeploymentBackup(Server $server, Site $site, Deployment $deployment): RedirectResponse
+    {
+        $this->authorize('update', [$site, $server]);
+
+        if ($deployment->site_id !== $site->id) {
+            abort(404);
+        }
+
+        app(RestoreDeploymentBackup::class)->restore($deployment);
+
+        return back()->with('info', 'Backup restore started, please wait...');
     }
 
     /**

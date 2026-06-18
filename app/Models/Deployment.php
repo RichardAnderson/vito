@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Actions\Site\DeleteDeploymentBackup;
 use App\Enums\DeploymentStatus;
 use Database\Factories\DeploymentFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -17,6 +18,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property DeploymentStatus $status
  * @property ?string $release
  * @property bool $active
+ * @property bool $has_backups
+ * @property ?array<string, mixed> $backup_manifest
  * @property Site $site
  * @property DeploymentScript $deploymentScript
  * @property ?ServerLog $log
@@ -43,11 +46,19 @@ class Deployment extends AbstractModel
         'log_id' => 'integer',
         'commit_data' => 'json',
         'active' => 'boolean',
+        'has_backups' => 'boolean',
+        'backup_manifest' => 'json',
         'status' => DeploymentStatus::class,
     ];
 
     protected static function booted(): void
     {
+        static::deleting(function (Deployment $deployment): void {
+            if ($deployment->has_backups) {
+                app(DeleteDeploymentBackup::class)->delete($deployment);
+            }
+        });
+
         static::created(function (Deployment $deployment): void {
             $site = $deployment->site;
             $keep = $site->type_data['modern_deployment_history'] ?? 10;
@@ -118,5 +129,33 @@ class Deployment extends AbstractModel
         $this->site->deployments()->update(['active' => false]);
         $this->active = true;
         $this->save();
+    }
+
+    /**
+     * Sanitized summary of what the pre-deployment backup captured.
+     * Never exposes absolute server paths.
+     *
+     * @return ?array{folders: array<int, string>, databases: array<int, string>}
+     */
+    public function backupFilesSummary(): ?array
+    {
+        if (! $this->has_backups || ! $this->backup_manifest) {
+            return null;
+        }
+
+        $folders = array_values(array_map(
+            fn (array $folder): string => basename((string) ($folder['abs_path'] ?? '')),
+            $this->backup_manifest['folders'] ?? []
+        ));
+
+        $databases = array_values(array_map(
+            fn (array $database): string => (string) ($database['name'] ?? ''),
+            $this->backup_manifest['databases'] ?? []
+        ));
+
+        return [
+            'folders' => $folders,
+            'databases' => $databases,
+        ];
     }
 }

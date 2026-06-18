@@ -7,7 +7,7 @@ import HeaderContainer from '@/components/header-container';
 import Heading from '@/components/heading';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { BookOpenIcon, MoreHorizontalIcon, MoreVerticalIcon, RocketIcon } from 'lucide-react';
+import { ArchiveIcon, BookOpenIcon, MoreHorizontalIcon, MoreVerticalIcon, RocketIcon } from 'lucide-react';
 import { Deployment } from '@/types/deployment';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import DeploymentScript from '@/pages/application/components/deployment-script';
@@ -25,6 +25,7 @@ import { useDialog } from '@/hooks/use-dialog';
 import SiteBanners from '@/components/site-banners';
 import ProxiedAppCard from '@/pages/application/components/proxied-app-card';
 import { Worker } from '@/types/worker';
+import { SiteDeploymentBackup } from '@/types/site-deployment-backup';
 
 const commitCell = ({ row }: CellRenderProps) => {
   const commit = (row.commit_data ?? {}) as Deployment['commit_data'];
@@ -47,6 +48,7 @@ const releaseCell = ({ row }: CellRenderProps) => (
   <div className="inline-flex items-center gap-2">
     {(row.release as string | null) ?? ''}
     {(row.active as boolean) && <Badge variant="default">active</Badge>}
+    {(row.has_backups as boolean) && <ArchiveIcon className="text-muted-foreground size-4" aria-label="Has backups" />}
   </div>
 );
 
@@ -59,6 +61,8 @@ export default function AppWithDeployment() {
     buildScript?: DeploymentScriptType;
     preFlightScript?: DeploymentScriptType;
     worker: Worker | null;
+    deploymentBackup: SiteDeploymentBackup | null;
+    availableDatabases: Array<{ id: number; name: string }>;
   }>();
   const dialog = useDialog();
 
@@ -123,6 +127,17 @@ export default function AppWithDeployment() {
                 <Env site={site}>
                   <DropdownMenuItem onSelect={(e) => e.preventDefault()}>Update .env</DropdownMenuItem>
                 </Env>
+                <DropdownMenuItem
+                  onSelect={() =>
+                    dialog.backupConfig.open({
+                      site,
+                      deploymentBackup: page.props.deploymentBackup,
+                      availableDatabases: page.props.availableDatabases,
+                    })
+                  }
+                >
+                  Deployment Backup
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
@@ -160,6 +175,32 @@ export default function AppWithDeployment() {
                         <Download serverLog={deployment.log}>
                           <DropdownMenuItem>Download</DropdownMenuItem>
                         </Download>
+                      </>
+                    )}
+                    {(deployment.has_backups as boolean) && (
+                      <>
+                        <DropdownMenuItem onSelect={() => dialog.backupFiles.open({ files: deployment.backup_files ?? null })}>
+                          Backup files
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          variant="destructive"
+                          onSelect={() =>
+                            dialog.confirm.open({
+                              title: 'Restore backup',
+                              description: `This will OVERWRITE the current folders and databases with the backup taken before release [${deployment.release || deployment.id}]. This cannot be undone. Are you sure?`,
+                              variant: 'destructive',
+                              confirmLabel: 'Restore',
+                              method: 'post',
+                              url: route('application.deployments.restore-backup', {
+                                server: deployment.server_id,
+                                site: deployment.site_id,
+                                deployment: deployment.id,
+                              }),
+                            })
+                          }
+                        >
+                          Restore backup
+                        </DropdownMenuItem>
                       </>
                     )}
                     {!deployment.active && deployment.release && deployment.status === 'finished' && (

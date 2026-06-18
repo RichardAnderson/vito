@@ -1,4 +1,4 @@
-if ! sudo -u postgres pg_dump -d {{ $database }} -f /var/lib/postgresql/{{ $file }}.sql; then
+if ! sudo -u postgres pg_dump -d '{{ $database }}' -f /var/lib/postgresql/{{ $file }}.sql; then
     echo 'VITO_SSH_ERROR' && exit 1
 fi
 

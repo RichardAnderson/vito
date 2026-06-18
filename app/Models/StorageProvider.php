@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\StorageProviders\Dropbox;
 use Database\Factories\StorageProviderFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -51,6 +52,20 @@ class StorageProvider extends AbstractModel
         $provider = new $providerClass($this, new Server);
 
         return $provider;
+    }
+
+    /**
+     * Build the provider-specific absolute destination for a relative key.
+     */
+    public function path(string $relativeKey): string
+    {
+        $relativeKey = ltrim($relativeKey, '/');
+
+        if ($this->provider === Dropbox::id()) {
+            return '/'.$relativeKey;
+        }
+
+        return rtrim((string) ($this->credentials['path'] ?? ''), '/').'/'.$relativeKey;
     }
 
     /**

@@ -355,6 +355,14 @@ class Site extends AbstractModel
         return $this->hasOne(DeploymentScript::class, 'site_id')->where('name', 'pre-flight');
     }
 
+    /**
+     * @return HasOne<SiteDeploymentBackup, covariant $this>
+     */
+    public function deploymentBackup(): HasOne
+    {
+        return $this->hasOne(SiteDeploymentBackup::class, 'site_id');
+    }
+
     public function ensureDeploymentScriptsExist(): void
     {
         if ($this->modernDeploymentEnabled()) {

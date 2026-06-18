@@ -7,11 +7,7 @@ use App\Enums\BackupFileStatus;
 use App\Enums\BackupType;
 use App\Facades\Notifier;
 use App\Notifications\FailedToDeleteBackupFileFromProvider;
-use App\StorageProviders\Dropbox;
-use App\StorageProviders\FTP;
 use App\StorageProviders\Local;
-use App\StorageProviders\S3;
-use App\StorageProviders\SFTP;
 use Carbon\Carbon;
 use Database\Factories\BackupFileFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -97,24 +93,11 @@ class BackupFile extends AbstractModel
 
     public function path(): string
     {
-        $storage = $this->backup->storage;
-
-        // For file backups, use the path field; for database backups, use database name
         $backupName = $this->backup->type === BackupType::FILE
             ? basename($this->backup->path)
             : $this->backup->database->name;
 
-        $extension = $this->getBackupExtension();
-
-        return match ($storage->provider) {
-            Dropbox::id() => '/'.$backupName.'/'.$this->name.$extension,
-            S3::id(), FTP::id(), SFTP::id(), Local::id() => implode('/', [
-                rtrim((string) $storage->credentials['path'], '/'),
-                $backupName,
-                $this->name.$extension,
-            ]),
-            default => '',
-        };
+        return $this->backup->storage->path($backupName.'/'.$this->name.$this->getBackupExtension());
     }
 
     public function deleteFile(): void

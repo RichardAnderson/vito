@@ -30,6 +30,10 @@ interface Database extends ServiceInterface
 
     public function unlink(string $username, string $host): void;
 
+    public function dumpDatabase(string $database, string $name): void;
+
+    public function importDatabase(string $database, string $name): void;
+
     public function runBackup(BackupFile $backupFile): void;
 
     public function restoreBackup(BackupFile $backupFile, string $database): void;

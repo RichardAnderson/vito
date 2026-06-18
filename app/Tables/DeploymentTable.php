@@ -34,6 +34,8 @@ class DeploymentTable extends Table
             Column::data('site_id'),
             Column::data('server_id', fn (Deployment $deployment) => $deployment->site->server_id),
             Column::data('active'),
+            Column::data('has_backups'),
+            Column::data('backup_files', fn (Deployment $deployment) => $deployment->backupFilesSummary()),
             Column::data('commit_data'),
             Column::data('log', fn (Deployment $deployment) => $deployment->log ? ServerLogResource::make($deployment->log) : null),
             ActionsColumn::make(),

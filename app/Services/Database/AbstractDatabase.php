@@ -234,26 +234,49 @@ abstract class AbstractDatabase extends AbstractService implements Database
     }
 
     /**
+     * Dump a database to a zip in the server ssh user's home directory.
+     *
+     * @throws SSHError
+     */
+    public function dumpDatabase(string $database, string $name): void
+    {
+        $this->service->server->ssh()->exec(
+            view($this->getScriptView('backup'), [
+                'file' => $name,
+                'database' => $database,
+            ]),
+            'backup-database'
+        );
+    }
+
+    /**
+     * Import a database from a zip located in the server ssh user's home directory.
+     *
+     * @throws SSHError
+     */
+    public function importDatabase(string $database, string $name): void
+    {
+        $this->service->server->ssh()->exec(
+            view($this->getScriptView('restore'), [
+                'database' => $database,
+                'file' => $name,
+            ]),
+            'restore-database'
+        );
+    }
+
+    /**
      * @throws SSHError
      */
     public function runBackup(BackupFile $backupFile): void
     {
-        // backup
-        $this->service->server->ssh()->exec(
-            view($this->getScriptView('backup'), [
-                'file' => $backupFile->name,
-                'database' => $backupFile->backup->database->name,
-            ]),
-            'backup-database'
-        );
+        $this->dumpDatabase($backupFile->backup->database->name, $backupFile->name);
 
-        // upload to storage
         $upload = $backupFile->backup->storage->provider()->ssh($this->service->server)->upload(
             $backupFile->tempPath(),
             $backupFile->path(),
         );
 
-        // cleanup
         $this->service->server->ssh()->exec('rm '.$backupFile->tempPath(), 'cleanup-backup');
 
         $backupFile->size = $upload['size'];
@@ -265,19 +288,12 @@ abstract class AbstractDatabase extends AbstractService implements Database
      */
     public function restoreBackup(BackupFile $backupFile, string $database): void
     {
-        // download
         $backupFile->backup->storage->provider()->ssh($this->service->server)->download(
             $backupFile->path(),
             $backupFile->tempPath(),
         );
 
-        $this->service->server->ssh()->exec(
-            view($this->getScriptView('restore'), [
-                'database' => $database,
-                'file' => rtrim($backupFile->tempPath(), '.zip'),
-            ]),
-            'restore-database'
-        );
+        $this->importDatabase($database, $backupFile->name);
     }
 
     /**

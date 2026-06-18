@@ -3,6 +3,7 @@
 namespace App\Jobs\Site;
 
 use App\Actions\Site\BroadcastSiteUpdate;
+use App\Actions\Site\RunDeploymentBackup;
 use App\Actions\Worker\RestartSiteWorkers;
 use App\DTOs\SocketEventDTO;
 use App\Enums\DeploymentStatus;
@@ -36,6 +37,10 @@ class DeployJob implements ShouldQueue
         $log = ServerLog::find($this->deployment->log_id);
 
         $this->run("site-{$site->id}", function () use ($site, $log) {
+            if ($site->deploymentBackup?->enabled) {
+                app(RunDeploymentBackup::class)->run($this->deployment);
+            }
+
             if ($this->isModern) {
                 $this->handleModernDeployment($site, $log);
             } else {
