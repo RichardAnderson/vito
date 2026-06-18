@@ -8,8 +8,10 @@ use App\Models\User;
 use App\ServerProviders\DigitalOcean;
 use App\ServerProviders\Hetzner;
 use App\ServerProviders\Linode;
+use App\ServerProviders\Ovh;
 use App\ServerProviders\Vultr;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
 use Inertia\Testing\AssertableInertia;
@@ -512,6 +514,143 @@ class ServerProvidersTest extends TestCase
         $this->assertStringNotContainsString('/mo', $plans['g7-premium-2']['label']);
     }
 
+    public function test_ovh_signs_requests_with_ak_as_ck_scheme(): void
+    {
+        $this->actingAs($this->user);
+
+        Http::fake([
+            '*/auth/time' => Http::response('1700000000', 200),
+            '*/flavor*' => Http::response([
+                ['id' => 'f1', 'name' => 'b2-7', 'osType' => 'linux', 'region' => 'GRA11', 'vcpus' => 2, 'ram' => 7000, 'disk' => 50],
+                ['id' => 'f2', 'name' => 'b2-7', 'osType' => 'linux', 'region' => 'SBG5', 'vcpus' => 2, 'ram' => 7000, 'disk' => 50],
+            ], 200),
+        ]);
+
+        $serverProvider = ServerProvider::factory()->create([
+            'user_id' => $this->user->id,
+            'project_id' => $this->user->current_project_id,
+            'provider' => Ovh::id(),
+            'credentials' => [
+                'endpoint' => 'ovh-eu',
+                'application_key' => 'ak',
+                'application_secret' => 'as',
+                'consumer_key' => 'ck',
+                'project_id' => 'proj',
+            ],
+        ]);
+
+        $regions = $this->get(route('server-providers.regions', $serverProvider))
+            ->assertSuccessful()
+            ->json();
+
+        $this->assertSame([
+            'GRA11' => 'Gravelines, France (GRA11)',
+            'SBG5' => 'Strasbourg, France (SBG5)',
+        ], $regions);
+
+        $url = 'https://eu.api.ovh.com/1.0/cloud/project/proj/flavor';
+        $expectedSignature = '$1$'.sha1('as+ck+GET+'.$url.'++1700000000');
+
+        Http::assertSent(fn ($request): bool => $request->url() === $url
+            && $request->header('X-Ovh-Application')[0] === 'ak'
+            && $request->header('X-Ovh-Consumer')[0] === 'ck'
+            && $request->header('X-Ovh-Timestamp')[0] === '1700000000'
+            && $request->header('X-Ovh-Signature')[0] === $expectedSignature);
+    }
+
+    public function test_ovh_plans_lists_linux_flavors_only_with_pricing(): void
+    {
+        $this->actingAs($this->user);
+        Cache::flush();
+
+        Http::fake([
+            '*/auth/time' => Http::response('1700000000', 200),
+            '*/me' => Http::response(['ovhSubsidiary' => 'FR', 'currency' => ['code' => 'EUR']], 200),
+            '*/order/catalog/public/cloud*' => Http::response([
+                'locale' => ['currencyCode' => 'EUR'],
+                'addons' => [
+                    ['planCode' => 'b2-7.monthly.postpaid', 'pricings' => [['price' => 2517000000, 'intervalUnit' => 'month']]],
+                    ['planCode' => 'b2-7.consumption', 'pricings' => [['price' => 7090000, 'intervalUnit' => 'hour']]],
+                ],
+            ], 200),
+            '*/flavor*' => Http::response([
+                ['id' => 'flavor-1', 'name' => 'b2-7', 'osType' => 'linux', 'region' => 'GRA11', 'vcpus' => 2, 'ram' => 7000, 'disk' => 50,
+                    'planCodes' => ['hourly' => 'b2-7.consumption', 'monthly' => 'b2-7.monthly.postpaid']],
+                ['id' => 'flavor-other-region', 'name' => 'b2-7', 'osType' => 'linux', 'region' => 'SBG5', 'vcpus' => 2, 'ram' => 7000, 'disk' => 50],
+                ['id' => 'flavor-win', 'name' => 'win-2', 'osType' => 'windows', 'region' => 'GRA11', 'vcpus' => 2, 'ram' => 7000, 'disk' => 50],
+            ], 200),
+        ]);
+
+        $serverProvider = ServerProvider::factory()->create([
+            'user_id' => $this->user->id,
+            'project_id' => $this->user->current_project_id,
+            'provider' => Ovh::id(),
+            'credentials' => [
+                'endpoint' => 'ovh-eu',
+                'application_key' => 'ak',
+                'application_secret' => 'as',
+                'consumer_key' => 'ck',
+                'project_id' => 'proj',
+            ],
+        ]);
+
+        $plans = $this->get(route('server-providers.plans', [
+            'serverProvider' => $serverProvider->id,
+            'region' => 'GRA11',
+        ]))
+            ->assertSuccessful()
+            ->json();
+
+        $this->assertArrayHasKey('flavor-1', $plans);
+        $this->assertArrayNotHasKey('flavor-win', $plans);
+        $this->assertArrayNotHasKey('flavor-other-region', $plans);
+        $this->assertTrue($plans['flavor-1']['available']);
+        $this->assertStringContainsString('(51.76 EUR/mo)', $plans['flavor-1']['label']);
+    }
+
+    public function test_ovh_plans_show_prices_when_me_is_forbidden(): void
+    {
+        $this->actingAs($this->user);
+        Cache::flush();
+
+        Http::fake([
+            '*/auth/time' => Http::response('1700000000', 200),
+            '*/me' => Http::response([], 403),
+            '*/order/catalog/public/cloud*' => Http::response([
+                'locale' => ['currencyCode' => 'EUR'],
+                'addons' => [
+                    ['planCode' => 'b2-7.consumption', 'pricings' => [['price' => 7090000, 'intervalUnit' => 'hour']]],
+                ],
+            ], 200),
+            '*/flavor*' => Http::response([
+                ['id' => 'f1', 'name' => 'b2-7', 'osType' => 'linux', 'region' => 'GRA11', 'vcpus' => 2, 'ram' => 7000, 'disk' => 50,
+                    'planCodes' => ['hourly' => 'b2-7.consumption', 'monthly' => null]],
+            ], 200),
+        ]);
+
+        $serverProvider = ServerProvider::factory()->create([
+            'user_id' => $this->user->id,
+            'project_id' => $this->user->current_project_id,
+            'provider' => Ovh::id(),
+            'credentials' => [
+                'endpoint' => 'ovh-eu',
+                'application_key' => 'ak',
+                'application_secret' => 'as',
+                'consumer_key' => 'ck',
+                'project_id' => 'proj',
+            ],
+        ]);
+
+        $plans = $this->get(route('server-providers.plans', [
+            'serverProvider' => $serverProvider->id,
+            'region' => 'GRA11',
+        ]))
+            ->assertSuccessful()
+            ->json();
+
+        $this->assertStringContainsString('(51.76 EUR/mo)', $plans['f1']['label']);
+    }
+
     /**
      * @return array<string, array<int, array<string, mixed>>>
      */
@@ -554,6 +693,16 @@ class ServerProvidersTest extends TestCase
                 Hetzner::id(),
                 [
                     'token' => 'token',
+                ],
+            ],
+            [
+                Ovh::id(),
+                [
+                    'endpoint' => 'ovh-eu',
+                    'application_key' => 'ak',
+                    'application_secret' => 'as',
+                    'consumer_key' => 'ck',
+                    'project_id' => 'proj',
                 ],
             ],
         ];

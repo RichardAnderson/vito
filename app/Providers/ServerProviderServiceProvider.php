@@ -10,6 +10,7 @@ use App\ServerProviders\Custom;
 use App\ServerProviders\DigitalOcean;
 use App\ServerProviders\Hetzner;
 use App\ServerProviders\Linode;
+use App\ServerProviders\Ovh;
 use App\ServerProviders\Vultr;
 use Illuminate\Support\ServiceProvider;
 
@@ -25,6 +26,7 @@ class ServerProviderServiceProvider extends ServiceProvider
         $this->digitalOcean();
         $this->linode();
         $this->vultr();
+        $this->ovh();
     }
 
     private function custom(): void
@@ -116,6 +118,38 @@ class ServerProviderServiceProvider extends ServiceProvider
                 ])
             )
             ->defaultUser('root')
+            ->register();
+    }
+
+    private function ovh(): void
+    {
+        RegisterServerProvider::make(Ovh::id())
+            ->label('OVHcloud')
+            ->handler(Ovh::class)
+            ->form(
+                DynamicForm::make([
+                    DynamicField::make('endpoint')
+                        ->select()
+                        ->label('Endpoint')
+                        ->options(['ovh-eu', 'ovh-ca', 'ovh-us'])
+                        ->default('ovh-eu')
+                        ->description('The API region your OVHcloud account belongs to.'),
+                    DynamicField::make('application_key')
+                        ->text()
+                        ->label('Application Key'),
+                    DynamicField::make('application_secret')
+                        ->password()
+                        ->label('Application Secret'),
+                    DynamicField::make('consumer_key')
+                        ->password()
+                        ->label('Consumer Key'),
+                    DynamicField::make('project_id')
+                        ->text()
+                        ->label('Public Cloud Project ID')
+                        ->description('The service name (project ID) of your Public Cloud project.'),
+                ])
+            )
+            ->defaultUser('ubuntu')
             ->register();
     }
 }
