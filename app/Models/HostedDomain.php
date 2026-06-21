@@ -21,7 +21,7 @@ use Illuminate\Validation\ValidationException;
  * @property ?Site $site
  * @property ?Ssl $ssl
  */
-class HostedDomain extends AbstractModel
+class HostedDomain extends AbstractModel implements \Vito\Plugin\Contracts\HostedDomain
 {
     /** @use HasFactory<HostedDomainFactory> */
     use HasFactory;

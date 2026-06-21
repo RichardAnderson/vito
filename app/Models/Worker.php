@@ -28,7 +28,7 @@ use Throwable;
  * @property Server $server
  * @property ?Site $site
  */
-class Worker extends AbstractModel
+class Worker extends AbstractModel implements \Vito\Plugin\Contracts\Worker
 {
     /** @use HasFactory<WorkerFactory> */
     use HasFactory;

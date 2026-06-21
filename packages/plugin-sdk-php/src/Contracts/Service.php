@@ -10,7 +10,8 @@ namespace Vito\Plugin\Contracts;
  * @property-read string $type
  * @property-read string $name
  * @property-read string $version
- * @property-read \App\Enums\ServiceStatus $status
+ * @property-read \BackedEnum&\Vito\Plugin\Contracts\VitoEnum $status
  * @property-read bool $is_default
+ * @property-read \Vito\Plugin\Contracts\Server|null $server
  */
 interface Service {}

@@ -14,7 +14,7 @@ final readonly class DiscoverPlugins
     public function handle(): void
     {
         $pluginsPath = app_path('Vito'.DIRECTORY_SEPARATOR.'Plugins');
-        $globPath = implode(DIRECTORY_SEPARATOR, [$pluginsPath, '*', '*']);
+        $globPath = implode(DIRECTORY_SEPARATOR, [$pluginsPath, '*']);
         $pluginFolders = collect(File::glob($globPath))
             ->filter(fn ($path) => File::isDirectory($path))
             ->map(fn ($path) => substr($path, strlen($pluginsPath) + 1))

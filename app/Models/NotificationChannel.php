@@ -20,7 +20,7 @@ use Illuminate\Notifications\Notifiable;
  * @property ?Project $project
  * @property User $user
  */
-class NotificationChannel extends AbstractModel
+class NotificationChannel extends AbstractModel implements \Vito\Plugin\Contracts\NotificationChannel
 {
     /** @use HasFactory<NotificationChannelFactory> */
     use HasFactory;

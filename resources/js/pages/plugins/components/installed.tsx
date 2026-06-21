@@ -31,9 +31,7 @@ export default function InstalledPlugins({ plugins }: { plugins: Plugin[] }) {
                     {plugin.username && <Badge variant="outline">by {plugin.username}</Badge>}
                   </div>
                   <div className="text-muted-foreground flex flex-row gap-3 text-xs">
-                    <span>{plugin.repo !== null ? 'GitHub' : 'Local'}</span>
                     <span>{plugin.version}</span>
-                    {plugin.updates_available && <span>Update Available</span>}
                   </div>
                 </div>
               </div>

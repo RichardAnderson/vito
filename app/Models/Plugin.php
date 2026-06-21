@@ -20,7 +20,7 @@ use Illuminate\Support\Collection;
  * @property string $username
  * @property Collection<int, PluginError> $errors
  */
-class Plugin extends Model
+class Plugin extends Model implements \Vito\Plugin\Contracts\Plugin
 {
     protected $fillable = [
         'name',

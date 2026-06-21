@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property ?User $user
  * @property Project $project
  */
-class UserProject extends Model
+class UserProject extends Model implements \Vito\Plugin\Contracts\UserProject
 {
     protected $table = 'user_project';
 

@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property array<string> $services
  * @property User $user
  */
-class ServerTemplate extends AbstractModel
+class ServerTemplate extends AbstractModel implements \Vito\Plugin\Contracts\ServerTemplate
 {
     /** @use HasFactory<ServerTemplateFactory> */
     use HasFactory;

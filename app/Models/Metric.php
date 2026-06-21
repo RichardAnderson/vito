@@ -50,7 +50,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * HasTimezoneTimestamps overhead is not needed here. Do not "fix" this without
  * benchmarking insert throughput against the metrics:get loop.
  */
-class Metric extends Model
+class Metric extends Model implements \Vito\Plugin\Contracts\Metric
 {
     /** @use HasFactory<MetricFactory> */
     use HasFactory;

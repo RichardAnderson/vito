@@ -23,7 +23,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property Server $server
  * @property ?User $user
  */
-class CommandExecution extends AbstractModel
+class CommandExecution extends AbstractModel implements \Vito\Plugin\Contracts\CommandExecution
 {
     /** @use HasFactory<CommandExecutionFactory> */
     use HasFactory;

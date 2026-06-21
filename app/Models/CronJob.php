@@ -20,7 +20,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property Server $server
  * @property ?Site $site
  */
-class CronJob extends AbstractModel
+class CronJob extends AbstractModel implements \Vito\Plugin\Contracts\CronJob
 {
     /** @use HasFactory<CronJobFactory> */
     use HasFactory;

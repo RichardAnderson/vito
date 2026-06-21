@@ -10,6 +10,7 @@ namespace Vito\Plugin\Contracts;
  * @property-read string $name
  * @property-read string $collation
  * @property-read string $charset
- * @property-read \App\Enums\DatabaseStatus $status
+ * @property-read \BackedEnum&\Vito\Plugin\Contracts\VitoEnum $status
+ * @property-read \Vito\Plugin\Contracts\Server|null $server
  */
 interface Database {}

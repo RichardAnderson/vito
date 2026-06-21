@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property User $user
  * @property Server[] $servers
  */
-class SshKey extends AbstractModel
+class SshKey extends AbstractModel implements \Vito\Plugin\Contracts\SshKey
 {
     /** @use HasFactory<SshKeyFactory> */
     use HasFactory;

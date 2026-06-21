@@ -20,7 +20,7 @@ use Throwable;
  * @property Server $server
  * @property Collection<int, Site> $sites
  */
-class IsolatedUser extends AbstractModel
+class IsolatedUser extends AbstractModel implements \Vito\Plugin\Contracts\IsolatedUser
 {
     /** @use HasFactory<IsolatedUserFactory> */
     use HasFactory;

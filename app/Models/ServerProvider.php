@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Cache;
  * @property Server[] $servers
  * @property ?Project $project
  */
-class ServerProvider extends AbstractModel
+class ServerProvider extends AbstractModel implements \Vito\Plugin\Contracts\ServerProvider
 {
     /** @use HasFactory<ServerProviderFactory> */
     use HasFactory;

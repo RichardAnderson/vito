@@ -18,7 +18,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property DatabaseUserStatus $status
  * @property Server $server
  */
-class DatabaseUser extends AbstractModel
+class DatabaseUser extends AbstractModel implements \Vito\Plugin\Contracts\DatabaseUser
 {
     /** @use HasFactory<DatabaseUserFactory> */
     use HasFactory;

@@ -19,7 +19,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property Domain[] $domains
  * @property ?Project $project
  */
-class DNSProvider extends AbstractModel
+class DNSProvider extends AbstractModel implements \Vito\Plugin\Contracts\DNSProvider
 {
     /** @use HasFactory<DNSProviderFactory> */
     use HasFactory;

@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property bool $backup
  * @property Site $loadBalancer
  */
-class LoadBalancerServer extends AbstractModel
+class LoadBalancerServer extends AbstractModel implements \Vito\Plugin\Contracts\LoadBalancerServer
 {
     /** @use HasFactory<LoadBalancerServerFactory> */
     use HasFactory;

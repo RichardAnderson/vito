@@ -19,7 +19,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property FirewallRuleStatus $status
  * @property Server $server
  */
-class FirewallRule extends AbstractModel
+class FirewallRule extends AbstractModel implements \Vito\Plugin\Contracts\FirewallRule
 {
     /** @use HasFactory<FirewallRuleFactory> */
     use HasFactory;

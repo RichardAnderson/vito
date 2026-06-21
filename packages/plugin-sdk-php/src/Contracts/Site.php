@@ -13,7 +13,7 @@ namespace Vito\Plugin\Contracts;
  * @property-read string $php_version
  * @property-read string $repository
  * @property-read string $branch
- * @property-read \App\Enums\SiteStatus $status
+ * @property-read \BackedEnum&\Vito\Plugin\Contracts\VitoEnum $status
  * @property-read int $port
  * @property-read \Vito\Plugin\Contracts\Server|null $server
  */

@@ -25,7 +25,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property ?Database $database
  * @property BackupFile[] $files
  */
-class Backup extends AbstractModel
+class Backup extends AbstractModel implements \Vito\Plugin\Contracts\Backup
 {
     /** @use HasFactory<BackupFactory> */
     use HasFactory;

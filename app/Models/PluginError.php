@@ -19,7 +19,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property Carbon $occurred_at
  * @property Plugin $plugin
  */
-class PluginError extends Model
+class PluginError extends Model implements \Vito\Plugin\Contracts\PluginError
 {
     protected $fillable = [
         'plugin_id',

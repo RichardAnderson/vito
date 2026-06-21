@@ -26,7 +26,7 @@ use Illuminate\Support\Carbon;
  * @property-read Project|null $project
  * @property-read Collection<int, WorkflowRun> $runs
  */
-class Workflow extends Model
+class Workflow extends Model implements \Vito\Plugin\Contracts\Workflow
 {
     /** @use HasFactory<WorkflowFactory> */
     use HasFactory;

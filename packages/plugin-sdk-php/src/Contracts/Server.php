@@ -12,8 +12,8 @@ namespace Vito\Plugin\Contracts;
  * @property-read string $ip
  * @property-read string|null $local_ip
  * @property-read int $port
- * @property-read \App\Enums\OperatingSystem $os
- * @property-read \App\Enums\ServerStatus $status
+ * @property-read \BackedEnum&\Vito\Plugin\Contracts\VitoEnum $os
+ * @property-read \BackedEnum&\Vito\Plugin\Contracts\VitoEnum $status
  * @property-read bool $auto_update
  * @property-read \Vito\Plugin\Contracts\Project|null $project
  */

@@ -21,7 +21,7 @@ use Illuminate\Support\Collection;
  * @property ?CommandExecution $lastExecution
  * @property Site $site
  */
-class Command extends AbstractModel
+class Command extends AbstractModel implements \Vito\Plugin\Contracts\Command
 {
     /** @use HasFactory<CommandFactory> */
     use HasFactory;

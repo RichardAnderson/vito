@@ -135,6 +135,7 @@
     "resources/js/**/*.ts",
     "resources/js/**/*.d.ts",
     "resources/js/**/*.tsx",
-    "packages/plugin-sdk-js/src/**/*.ts"
+    "packages/plugin-sdk-js/src/**/*.ts",
+    "tests/Fixtures/Plugins/**/resources/js/**/*.ts"
   ]
 }

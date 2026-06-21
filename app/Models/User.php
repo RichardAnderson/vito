@@ -44,7 +44,7 @@ use Laravel\Sanctum\HasApiTokens;
  * @property Carbon $created_at
  * @property Carbon $updated_at
  */
-class User extends Authenticatable
+class User extends Authenticatable implements \Vito\Plugin\Contracts\User
 {
     use HasApiTokens;
     use HasFactory;

@@ -18,7 +18,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property array<string, mixed> $metadata
  * @property Domain $domain
  */
-class DNSRecord extends AbstractModel
+class DNSRecord extends AbstractModel implements \Vito\Plugin\Contracts\DNSRecord
 {
     /** @use HasFactory<DNSRecordFactory> */
     use HasFactory;

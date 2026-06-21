@@ -24,7 +24,7 @@ use Illuminate\Support\Collection;
  * @property ?int $project_id
  * @property ?Project $project
  */
-class Script extends AbstractModel
+class Script extends AbstractModel implements \Vito\Plugin\Contracts\Script
 {
     /** @use HasFactory<ScriptFactory> */
     use HasFactory;

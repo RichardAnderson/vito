@@ -18,5 +18,6 @@ final class ServiceData extends Data
         public string $version,
         public ServiceStatus $status,
         public bool $is_default,
+        public ?ServerData $server,
     ) {}
 }

@@ -25,7 +25,7 @@ use Illuminate\Support\Facades\Storage;
  * @property Carbon|null $updated_at
  * @property-read Workflow|null $workflow
  */
-class WorkflowRun extends Model
+class WorkflowRun extends Model implements \Vito\Plugin\Contracts\WorkflowRun
 {
     /** @use HasFactory<WorkflowRunFactory> */
     use HasFactory;

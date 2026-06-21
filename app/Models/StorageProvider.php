@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property User $user
  * @property ?int $project_id
  */
-class StorageProvider extends AbstractModel
+class StorageProvider extends AbstractModel implements \Vito\Plugin\Contracts\StorageProvider
 {
     /** @use HasFactory<StorageProviderFactory> */
     use HasFactory;

@@ -22,7 +22,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property bool $is_dynamic
  * @property Server $server
  */
-class ServerIpAddress extends AbstractModel
+class ServerIpAddress extends AbstractModel implements \Vito\Plugin\Contracts\ServerIpAddress
 {
     /** @use HasFactory<ServerIpAddressFactory> */
     use HasFactory;

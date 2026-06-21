@@ -29,7 +29,7 @@ use Throwable;
  * @property ?Carbon $restored_at
  * @property Backup $backup
  */
-class BackupFile extends AbstractModel
+class BackupFile extends AbstractModel implements \Vito\Plugin\Contracts\BackupFile
 {
     /** @use HasFactory<BackupFileFactory> */
     use HasFactory;

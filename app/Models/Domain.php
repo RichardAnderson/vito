@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\DB;
  * @property Project $project
  * @property DNSRecord[] $records
  */
-class Domain extends AbstractModel
+class Domain extends AbstractModel implements \Vito\Plugin\Contracts\Domain
 {
     /** @use HasFactory<DomainFactory> */
     use HasFactory;

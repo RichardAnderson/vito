@@ -23,7 +23,7 @@ use Illuminate\Validation\Rule;
  * @property ?Project $project
  * @property User $user
  */
-class SourceControl extends AbstractModel
+class SourceControl extends AbstractModel implements \Vito\Plugin\Contracts\SourceControl
 {
     public const string PROVIDER_GITHUB_APP = 'github-app';
 

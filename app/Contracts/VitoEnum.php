@@ -2,9 +2,6 @@
 
 namespace App\Contracts;
 
-interface VitoEnum
-{
-    public function getColor(): string;
+use Vito\Plugin\Contracts\VitoEnum as SdkVitoEnum;
 
-    public function getText(): string;
-}
+interface VitoEnum extends SdkVitoEnum {}

@@ -17,5 +17,6 @@ final class DatabaseData extends Data
         public string $collation,
         public string $charset,
         public DatabaseStatus $status,
+        public ?ServerData $server,
     ) {}
 }

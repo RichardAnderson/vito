@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Log;
  * @property ?Site $site
  * @property SourceControl $sourceControl
  */
-class GitHook extends AbstractModel
+class GitHook extends AbstractModel implements \Vito\Plugin\Contracts\GitHook
 {
     /** @use HasFactory<GitHookFactory> */
     use HasFactory;

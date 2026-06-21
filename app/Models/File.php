@@ -22,7 +22,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property User $user
  * @property Server $server
  */
-class File extends AbstractModel
+class File extends AbstractModel implements \Vito\Plugin\Contracts\File
 {
     /** @use HasFactory<FileFactory> */
     use HasFactory;

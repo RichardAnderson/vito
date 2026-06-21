@@ -17,7 +17,7 @@ final class TypeMapper
      */
     public function __construct(private readonly array $dataClassToContract) {}
 
-    public function map(ReflectionParameter $param): PropertyDescriptor
+    public function map(ReflectionParameter $param, ?string $collectionOf = null): PropertyDescriptor
     {
         $type = $param->getType();
 
@@ -25,10 +25,11 @@ final class TypeMapper
             throw new RuntimeException("Projection property \"{$param->getName()}\" must have a single named type.");
         }
 
-        $name = $type->getName();
         $nullable = $type->allowsNull();
 
-        [$php, $ts] = $this->resolve($name, $param->getName());
+        [$php, $ts] = $collectionOf !== null
+            ? $this->collection($collectionOf, $param->getName())
+            : $this->resolve($type->getName(), $param->getName());
 
         if ($nullable) {
             $php .= '|null';
@@ -36,6 +37,20 @@ final class TypeMapper
         }
 
         return new PropertyDescriptor($param->getName(), $php, $ts);
+    }
+
+    /**
+     * @return array{string, string}
+     */
+    private function collection(string $dataClass, string $property): array
+    {
+        $contract = $this->dataClassToContract[$dataClass] ?? null;
+
+        if ($contract === null) {
+            throw new RuntimeException("Collection element \"{$dataClass}\" on property \"{$property}\" has no #[HostContract].");
+        }
+
+        return ['array<int, \\Vito\\Plugin\\Contracts\\'.$contract.'>', $contract.'[]'];
     }
 
     /**
@@ -48,7 +63,7 @@ final class TypeMapper
             $name === 'string' => ['string', 'string'],
             $name === 'bool' => ['bool', 'boolean'],
             $name === 'array' => ['array<string, mixed>', 'Record<string, unknown>'],
-            enum_exists($name) => [$this->fqcn($name), $this->enumTs($name)],
+            enum_exists($name) => ['\\BackedEnum&\\Vito\\Plugin\\Contracts\\VitoEnum', $this->enumTs($name)],
             is_subclass_of($name, Data::class) => $this->nested($name, $property),
             is_a($name, DateTimeInterface::class, true) => [$this->fqcn($name), 'string'],
             default => throw new RuntimeException("Unsupported projection type \"{$name}\" on property \"{$property}\"."),

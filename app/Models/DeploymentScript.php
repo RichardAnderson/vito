@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string $content
  * @property Site $site
  */
-class DeploymentScript extends AbstractModel
+class DeploymentScript extends AbstractModel implements \Vito\Plugin\Contracts\DeploymentScript
 {
     /** @use HasFactory<DeploymentScriptFactory> */
     use HasFactory;

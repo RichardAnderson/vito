@@ -4,6 +4,7 @@ namespace App\Sdk;
 
 use App\Sdk\Descriptors\ProjectionDescriptor;
 use ReflectionClass;
+use Spatie\LaravelData\Attributes\DataCollectionOf;
 use Spatie\LaravelData\Data;
 use Vito\Plugin\Attributes\ExposesMethods;
 use Vito\Plugin\Attributes\HostContract;
@@ -76,7 +77,7 @@ final class ProjectionRegistry
         $properties = [];
 
         foreach ($constructor?->getParameters() ?? [] as $parameter) {
-            $properties[] = $mapper->map($parameter);
+            $properties[] = $mapper->map($parameter, $this->collectionElement($reflection, $parameter->getName()));
         }
 
         $methods = [];
@@ -95,6 +96,23 @@ final class ProjectionRegistry
             properties: $properties,
             methods: $methods,
         );
+    }
+
+    /**
+     * The `#[DataCollectionOf(X::class)]` element class for a promoted property, if any.
+     *
+     * @param  ReflectionClass<Data>  $reflection
+     * @return class-string|null
+     */
+    private function collectionElement(ReflectionClass $reflection, string $property): ?string
+    {
+        if (! $reflection->hasProperty($property)) {
+            return null;
+        }
+
+        $attributes = $reflection->getProperty($property)->getAttributes(DataCollectionOf::class);
+
+        return $attributes === [] ? null : $attributes[0]->newInstance()->class;
     }
 
     /**

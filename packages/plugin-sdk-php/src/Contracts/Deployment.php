@@ -8,8 +8,9 @@ namespace Vito\Plugin\Contracts;
  * @property-read int $id
  * @property-read int $site_id
  * @property-read string $commit_id
- * @property-read \App\Enums\DeploymentStatus $status
+ * @property-read \BackedEnum&\Vito\Plugin\Contracts\VitoEnum $status
  * @property-read string|null $release
  * @property-read bool $active
+ * @property-read \Vito\Plugin\Contracts\Site|null $site
  */
 interface Deployment {}

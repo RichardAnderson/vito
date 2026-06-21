@@ -38,7 +38,7 @@ use Illuminate\Support\Str;
  * @property ?string $ca_path
  * @property ?ServerLog $log
  */
-class Ssl extends AbstractModel
+class Ssl extends AbstractModel implements \Vito\Plugin\Contracts\Ssl
 {
     /** @use HasFactory<SslFactory> */
     use HasFactory;

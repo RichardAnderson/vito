@@ -22,7 +22,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property ?ServerLog $serverLog
  * @property ?Server $server
  */
-class ScriptExecution extends AbstractModel
+class ScriptExecution extends AbstractModel implements \Vito\Plugin\Contracts\ScriptExecution
 {
     /** @use HasFactory<ScriptExecutionFactory> */
     use HasFactory;

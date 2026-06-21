@@ -102,13 +102,6 @@
       "options": {
         "symlink": true
       }
-    },
-    {
-      "type": "path",
-      "url": "storage/plugins/*/*",
-      "options": {
-        "symlink": true
-      }
     }
   ],
   "extra": {

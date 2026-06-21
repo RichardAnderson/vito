@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property RedirectStatus $status
  * @property Site $site
  */
-class Redirect extends AbstractModel
+class Redirect extends AbstractModel implements \Vito\Plugin\Contracts\Redirect
 {
     /** @use HasFactory<RedirectFactory> */
     use HasFactory;

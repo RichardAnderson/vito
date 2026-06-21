@@ -3,7 +3,6 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuSeparator, DropdownMenuT
 import { MoreVerticalIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import DisablePlugin from '@/pages/plugins/components/disable';
-import UpdatePlugin from '@/pages/plugins/components/update';
 import EnablePlugin from '@/pages/plugins/components/enable';
 import Uninstall from '@/pages/plugins/components/uninstall';
 import ViewLogs from '@/pages/plugins/components/view-logs';
@@ -21,7 +20,6 @@ export default function PluginDropdown({ plugin }: { plugin: Plugin }) {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         {!plugin.is_installed && <InstallPlugin plugin={plugin} />}
-        {plugin.updates_available && <UpdatePlugin plugin={plugin} />}
         {plugin.is_enabled && <DisablePlugin plugin={plugin} />}
         {!plugin.is_enabled && plugin.is_installed && <EnablePlugin plugin={plugin} />}
         {!plugin.is_enabled && <Uninstall plugin={plugin} />}

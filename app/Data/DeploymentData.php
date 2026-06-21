@@ -17,5 +17,6 @@ final class DeploymentData extends Data
         public DeploymentStatus $status,
         public ?string $release,
         public bool $active,
+        public ?SiteData $site,
     ) {}
 }

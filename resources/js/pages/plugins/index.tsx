@@ -9,10 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Plugin } from '@/types/plugin';
 import { Button } from '@/components/ui/button';
 import { BookOpenIcon } from 'lucide-react';
-import InstallDialog from '@/pages/plugins/components/install-dialog';
 import DiscoveredPlugins from '@/pages/plugins/components/discovered';
-import CheckForUpdates from '@/pages/plugins/components/check-updates';
-import OfficialPlugins from '@/pages/plugins/components/official';
 
 export default function Plugins() {
   const [tab, setTab] = useState('installed');
@@ -34,8 +31,6 @@ export default function Plugins() {
                 <span className="hidden lg:block">Docs</span>
               </Button>
             </a>
-            <CheckForUpdates />
-            <InstallDialog />
           </div>
         </div>
 
@@ -43,7 +38,6 @@ export default function Plugins() {
           <TabsList>
             <TabsTrigger value="installed">Installed</TabsTrigger>
             <TabsTrigger value="discovered">Discovered</TabsTrigger>
-            <TabsTrigger value="official">Available</TabsTrigger>
           </TabsList>
           <TabsContent value="installed">
             <Card className="overflow-hidden">
@@ -64,17 +58,6 @@ export default function Plugins() {
               </CardHeader>
               <CardContent className="bg-background">
                 <DiscoveredPlugins plugins={page.props.plugins} />
-              </CardContent>
-            </Card>
-          </TabsContent>
-          <TabsContent value="official">
-            <Card className="overflow-hidden">
-              <CardHeader>
-                <CardTitle>Available plugins</CardTitle>
-                <CardDescription>These plugins are developed and maintained by VitoDeploy's team</CardDescription>
-              </CardHeader>
-              <CardContent className="bg-background">
-                <OfficialPlugins />
               </CardContent>
             </Card>
           </TabsContent>

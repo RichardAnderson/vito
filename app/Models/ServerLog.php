@@ -28,7 +28,7 @@ use Throwable;
  * @property Server $server
  * @property ?Site $site
  */
-class ServerLog extends AbstractModel
+class ServerLog extends AbstractModel implements \Vito\Plugin\Contracts\ServerLog
 {
     /** @use HasFactory<ServerLogFactory> */
     use HasFactory;
