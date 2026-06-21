@@ -1,6 +1,9 @@
 {
     "private": true,
     "type": "module",
+    "workspaces": [
+        "packages/plugin-sdk-js"
+    ],
     "scripts": {
         "build": "vite build",
         "build:ssr": "vite build && vite build --ssr",
@@ -28,6 +31,7 @@
     },
     "dependencies": {
         "@forjedio/inertia-table-react": "^1.2.0",
+        "@vito/plugin-sdk": "*",
         "@headlessui/react": "^2.2.0",
         "@hookform/resolvers": "^5.0.1",
         "@inertiajs/react": "^3.0.0",

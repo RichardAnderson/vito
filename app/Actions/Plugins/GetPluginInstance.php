@@ -4,9 +4,9 @@ namespace App\Actions\Plugins;
 
 use App\Models\Plugin;
 use App\Models\PluginError;
-use App\Plugins\Interfaces\PluginInterface;
 use Exception;
 use Throwable;
+use Vito\Plugin\PluginInterface;
 
 final class GetPluginInstance
 {

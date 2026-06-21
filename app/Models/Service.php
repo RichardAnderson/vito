@@ -32,7 +32,7 @@ use InvalidArgumentException;
  * @property Server $server
  * @property ?ServerLog $log
  */
-class Service extends AbstractModel
+class Service extends AbstractModel implements \Vito\Plugin\Contracts\Service
 {
     /** @use HasFactory<ServiceFactory> */
     use HasFactory;

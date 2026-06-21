@@ -20,7 +20,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property Backup[] $backups
  * @property ?Carbon $deleted_at
  */
-class Database extends AbstractModel
+class Database extends AbstractModel implements \Vito\Plugin\Contracts\Database
 {
     /** @use HasFactory<DatabaseFactory> */
     use HasFactory;

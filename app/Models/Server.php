@@ -72,7 +72,7 @@ use Throwable;
  * @property int $kernel_updates
  * @property ?Carbon $last_update_check
  */
-class Server extends AbstractModel
+class Server extends AbstractModel implements \Vito\Plugin\Contracts\Server
 {
     /** @use HasFactory<ServerFactory> */
     use HasFactory;

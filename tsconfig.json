@@ -124,6 +124,9 @@
       ],
       "ziggy-js": [
         "./vendor/tightenco/ziggy"
+      ],
+      "@vito/plugin-sdk": [
+        "./packages/plugin-sdk-js/src/index.ts"
       ]
     },
     "jsx": "react-jsx"
@@ -131,6 +134,7 @@
   "include": [
     "resources/js/**/*.ts",
     "resources/js/**/*.d.ts",
-    "resources/js/**/*.tsx"
+    "resources/js/**/*.tsx",
+    "packages/plugin-sdk-js/src/**/*.ts"
   ]
 }

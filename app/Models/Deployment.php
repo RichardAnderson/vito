@@ -21,7 +21,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property DeploymentScript $deploymentScript
  * @property ?ServerLog $log
  */
-class Deployment extends AbstractModel
+class Deployment extends AbstractModel implements \Vito\Plugin\Contracts\Deployment
 {
     /** @use HasFactory<DeploymentFactory> */
     use HasFactory;

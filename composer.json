@@ -27,9 +27,11 @@
     "ratchet/rfc6455": "^0.4",
     "react/event-loop": "^1.5",
     "react/socket": "^1.17",
+    "spatie/laravel-data": "^4",
     "spatie/laravel-route-attributes": "^1.24",
     "symfony/yaml": "^8.0",
-    "tightenco/ziggy": "^2.5"
+    "tightenco/ziggy": "^2.5",
+    "vito/plugin-sdk": "@dev"
   },
   "require-dev": {
     "brianium/paratest": "^7.8.5",
@@ -77,6 +79,7 @@
     "pre-commit": [
       "./vendor/bin/pint --parallel",
       "./vendor/bin/phpstan analyze",
+      "@php artisan sdk:check",
       "npm run format",
       "npm run lint",
       "npm run types",
@@ -86,9 +89,20 @@
     "dev": [
       "Composer\\Config::disableProcessTimeout",
       "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74,#fabb74,#86efac\" \"php artisan serve\" \"php artisan horizon\" \"php artisan schedule:work\" \"php artisan pail --timeout=0\" \"npm run dev\" \"php artisan ws:serve\" --names=server,horizon,schedule,logs,vite,websocket"
+    ],
+    "sdk:generate": [
+      "@php artisan sdk:generate",
+      "@composer dump-autoload"
     ]
   },
   "repositories": [
+    {
+      "type": "path",
+      "url": "packages/plugin-sdk-php",
+      "options": {
+        "symlink": true
+      }
+    },
     {
       "type": "path",
       "url": "storage/plugins/*/*",

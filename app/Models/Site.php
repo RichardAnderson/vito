@@ -82,7 +82,7 @@ use RuntimeException;
  * @property Collection<int, Redirect> $redirects
  * @property Collection<int, Redirect> $activeRedirects
  */
-class Site extends AbstractModel
+class Site extends AbstractModel implements \Vito\Plugin\Contracts\Site
 {
     /** @use HasFactory<SiteFactory> */
     use HasFactory;

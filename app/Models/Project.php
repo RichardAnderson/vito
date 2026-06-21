@@ -27,7 +27,7 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
  * @property Collection<int, Workflow> $workflows
  * @property Collection<int, Domain> $domains
  */
-class Project extends Model
+class Project extends Model implements \Vito\Plugin\Contracts\Project
 {
     /** @use HasFactory<ProjectFactory> */
     use HasFactory;

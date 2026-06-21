@@ -1,0 +1,17 @@
+{
+  "name": "@vito/plugin-sdk",
+  "version": "0.0.0",
+  "description": "The Vito Plugin SDK — generated wire types a plugin's frontend builds against.",
+  "license": "AGPL-3.0",
+  "type": "module",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "files": [
+    "src"
+  ]
+}
