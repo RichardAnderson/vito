@@ -2,13 +2,14 @@
 
 namespace App\Providers;
 
+use Vito\Plugin\Facades\Register;
+
 use App\DTOs\DynamicField;
-use App\DTOs\DynamicForm;
+use Vito\Plugin\DTOs\DynamicForm;
 use App\NotificationChannels\Discord;
 use App\NotificationChannels\Email;
 use App\NotificationChannels\Slack;
 use App\NotificationChannels\Telegram;
-use App\Plugins\RegisterNotificationChannel;
 use Illuminate\Support\ServiceProvider;
 
 class NotificationChannelServiceProvider extends ServiceProvider
@@ -25,7 +26,7 @@ class NotificationChannelServiceProvider extends ServiceProvider
 
     private function discord(): void
     {
-        RegisterNotificationChannel::make(Discord::id())
+        Register::notificationChannel(Discord::id())
             ->label('Discord')
             ->handler(Discord::class)
             ->form(
@@ -40,7 +41,7 @@ class NotificationChannelServiceProvider extends ServiceProvider
 
     public function slack(): void
     {
-        RegisterNotificationChannel::make(Slack::id())
+        Register::notificationChannel(Slack::id())
             ->label('Slack')
             ->handler(Slack::class)
             ->form(
@@ -55,7 +56,7 @@ class NotificationChannelServiceProvider extends ServiceProvider
 
     private function email(): void
     {
-        RegisterNotificationChannel::make(Email::id())
+        Register::notificationChannel(Email::id())
             ->label('Email')
             ->handler(Email::class)
             ->form(
@@ -70,7 +71,7 @@ class NotificationChannelServiceProvider extends ServiceProvider
 
     private function telegram(): void
     {
-        RegisterNotificationChannel::make(Telegram::id())
+        Register::notificationChannel(Telegram::id())
             ->label('Telegram')
             ->handler(Telegram::class)
             ->form(

@@ -2,9 +2,11 @@
 
 namespace App\Plugins;
 
-use App\DTOs\DynamicForm;
+use Vito\Plugin\DTOs\DynamicForm;
 
-class RegisterSiteType
+use Vito\Plugin\Contracts\Registrars\SiteTypeRegistrar;
+
+class RegisterSiteType implements SiteTypeRegistrar
 {
     public function __construct(
         public string $name,
@@ -13,26 +15,21 @@ class RegisterSiteType
         public ?DynamicForm $form = null,
     ) {}
 
-    public static function make(string $name): self
-    {
-        return new self($name);
-    }
-
-    public function label(string $label): self
+    public function label(string $label): static
     {
         $this->label = $label;
 
         return $this;
     }
 
-    public function handler(string $handler): self
+    public function handler(string $handler): static
     {
         $this->handler = $handler;
 
         return $this;
     }
 
-    public function form(DynamicForm $form): self
+    public function form(DynamicForm $form): static
     {
         $this->form = $form;
 

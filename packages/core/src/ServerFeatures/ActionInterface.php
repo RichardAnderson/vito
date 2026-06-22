@@ -2,7 +2,7 @@
 
 namespace App\ServerFeatures;
 
-use App\DTOs\DynamicForm;
+use Vito\Plugin\DTOs\DynamicForm;
 use Illuminate\Http\Request;
 
 interface ActionInterface

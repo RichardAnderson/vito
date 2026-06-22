@@ -1,4 +1,20 @@
 {
+    "Vito\\Plugin\\AbstractPlugin": {
+        "kind": "class",
+        "extends": [
+            "Vito\\Plugin\\PluginInterface"
+        ],
+        "methods": {
+            "boot": "(): void",
+            "disable": "(): void",
+            "enable": "(): void",
+            "getDescription": "(): string",
+            "getName": "(): string",
+            "install": "(): void",
+            "uninstall": "(): void"
+        },
+        "properties": []
+    },
     "Vito\\Plugin\\Attributes\\ExposesMethods": {
         "kind": "class",
         "extends": [],
@@ -406,6 +422,186 @@
             "to": "string"
         }
     },
+    "Vito\\Plugin\\Contracts\\Registrar": {
+        "kind": "interface",
+        "extends": [],
+        "methods": {
+            "command": "(string $class): Vito\\Plugin\\Contracts\\Registrars\\CommandRegistrar",
+            "dnsProvider": "(string $id): Vito\\Plugin\\Contracts\\Registrars\\DnsProviderRegistrar",
+            "notificationChannel": "(string $id): Vito\\Plugin\\Contracts\\Registrars\\NotificationChannelRegistrar",
+            "serverFeature": "(string $name): Vito\\Plugin\\Contracts\\Registrars\\ServerFeatureRegistrar",
+            "serverFeatureAction": "(string $feature, string $name): Vito\\Plugin\\Contracts\\Registrars\\ServerFeatureActionRegistrar",
+            "serverProvider": "(string $id): Vito\\Plugin\\Contracts\\Registrars\\ServerProviderRegistrar",
+            "serviceType": "(string $id): Vito\\Plugin\\Contracts\\Registrars\\ServiceTypeRegistrar",
+            "siteFeature": "(string $type, string $name): Vito\\Plugin\\Contracts\\Registrars\\SiteFeatureRegistrar",
+            "siteFeatureAction": "(string $type, string $feature, string $name): Vito\\Plugin\\Contracts\\Registrars\\SiteFeatureActionRegistrar",
+            "siteType": "(string $id): Vito\\Plugin\\Contracts\\Registrars\\SiteTypeRegistrar",
+            "sourceControl": "(string $id): Vito\\Plugin\\Contracts\\Registrars\\SourceControlRegistrar",
+            "storageProvider": "(string $id): Vito\\Plugin\\Contracts\\Registrars\\StorageProviderRegistrar",
+            "views": "(string $name): Vito\\Plugin\\Contracts\\Registrars\\ViewsRegistrar",
+            "workflowAction": "(string $name): Vito\\Plugin\\Contracts\\Registrars\\WorkflowActionRegistrar"
+        },
+        "properties": []
+    },
+    "Vito\\Plugin\\Contracts\\Registrars\\CommandRegistrar": {
+        "kind": "interface",
+        "extends": [],
+        "methods": {
+            "register": "(): void"
+        },
+        "properties": []
+    },
+    "Vito\\Plugin\\Contracts\\Registrars\\DnsProviderRegistrar": {
+        "kind": "interface",
+        "extends": [],
+        "methods": {
+            "editForm": "(Vito\\Plugin\\DTOs\\DynamicForm $editForm): static",
+            "form": "(Vito\\Plugin\\DTOs\\DynamicForm $form): static",
+            "handler": "(string $handler): static",
+            "label": "(string $label): static",
+            "proxyTypes": "(array $proxyTypes): static",
+            "register": "(): void",
+            "supportsCreatedAt": "(bool $supportsCreatedAt): static"
+        },
+        "properties": []
+    },
+    "Vito\\Plugin\\Contracts\\Registrars\\NotificationChannelRegistrar": {
+        "kind": "interface",
+        "extends": [],
+        "methods": {
+            "form": "(Vito\\Plugin\\DTOs\\DynamicForm $form): static",
+            "handler": "(string $handler): static",
+            "label": "(string $label): static",
+            "register": "(): void"
+        },
+        "properties": []
+    },
+    "Vito\\Plugin\\Contracts\\Registrars\\ServerFeatureActionRegistrar": {
+        "kind": "interface",
+        "extends": [],
+        "methods": {
+            "form": "(Vito\\Plugin\\DTOs\\DynamicForm $form): static",
+            "handler": "(string $handler): static",
+            "label": "(string $label): static",
+            "register": "(): void"
+        },
+        "properties": []
+    },
+    "Vito\\Plugin\\Contracts\\Registrars\\ServerFeatureRegistrar": {
+        "kind": "interface",
+        "extends": [],
+        "methods": {
+            "description": "(string $description): static",
+            "label": "(string $label): static",
+            "register": "(): void"
+        },
+        "properties": []
+    },
+    "Vito\\Plugin\\Contracts\\Registrars\\ServerProviderRegistrar": {
+        "kind": "interface",
+        "extends": [],
+        "methods": {
+            "defaultUser": "(string $defaultUser): static",
+            "form": "(Vito\\Plugin\\DTOs\\DynamicForm $form): static",
+            "handler": "(string $handler): static",
+            "label": "(string $label): static",
+            "register": "(): void"
+        },
+        "properties": []
+    },
+    "Vito\\Plugin\\Contracts\\Registrars\\ServiceTypeRegistrar": {
+        "kind": "interface",
+        "extends": [],
+        "methods": {
+            "configPaths": "(array $configPaths): static",
+            "data": "(array $data): static",
+            "form": "(Vito\\Plugin\\DTOs\\DynamicForm $form): static",
+            "handler": "(string $handler): static",
+            "label": "(string $label): static",
+            "register": "(): void",
+            "type": "(string $type): static",
+            "unit": "(string $unit): static",
+            "versions": "(array $versions): static"
+        },
+        "properties": []
+    },
+    "Vito\\Plugin\\Contracts\\Registrars\\SiteFeatureActionRegistrar": {
+        "kind": "interface",
+        "extends": [],
+        "methods": {
+            "form": "(Vito\\Plugin\\DTOs\\DynamicForm $form): static",
+            "handler": "(string $handler): static",
+            "label": "(string $label): static",
+            "register": "(): void"
+        },
+        "properties": []
+    },
+    "Vito\\Plugin\\Contracts\\Registrars\\SiteFeatureRegistrar": {
+        "kind": "interface",
+        "extends": [],
+        "methods": {
+            "description": "(string $description): static",
+            "label": "(string $label): static",
+            "register": "(): void"
+        },
+        "properties": []
+    },
+    "Vito\\Plugin\\Contracts\\Registrars\\SiteTypeRegistrar": {
+        "kind": "interface",
+        "extends": [],
+        "methods": {
+            "form": "(Vito\\Plugin\\DTOs\\DynamicForm $form): static",
+            "handler": "(string $handler): static",
+            "label": "(string $label): static",
+            "register": "(): void"
+        },
+        "properties": []
+    },
+    "Vito\\Plugin\\Contracts\\Registrars\\SourceControlRegistrar": {
+        "kind": "interface",
+        "extends": [],
+        "methods": {
+            "connectable": "(bool $connectable): static",
+            "form": "(Vito\\Plugin\\DTOs\\DynamicForm $form): static",
+            "handler": "(string $handler): static",
+            "label": "(string $label): static",
+            "register": "(): void",
+            "usableForSites": "(bool $usableForSites): static"
+        },
+        "properties": []
+    },
+    "Vito\\Plugin\\Contracts\\Registrars\\StorageProviderRegistrar": {
+        "kind": "interface",
+        "extends": [],
+        "methods": {
+            "form": "(Vito\\Plugin\\DTOs\\DynamicForm $form): static",
+            "handler": "(string $handler): static",
+            "label": "(string $label): static",
+            "register": "(): void"
+        },
+        "properties": []
+    },
+    "Vito\\Plugin\\Contracts\\Registrars\\ViewsRegistrar": {
+        "kind": "interface",
+        "extends": [],
+        "methods": {
+            "path": "(string $path): static",
+            "register": "(): void"
+        },
+        "properties": []
+    },
+    "Vito\\Plugin\\Contracts\\Registrars\\WorkflowActionRegistrar": {
+        "kind": "interface",
+        "extends": [],
+        "methods": {
+            "category": "(string $category): static",
+            "description": "(string $description): static",
+            "handler": "(string $handler): static",
+            "label": "(string $label): static",
+            "register": "(): void"
+        },
+        "properties": []
+    },
     "Vito\\Plugin\\Contracts\\Script": {
         "kind": "interface",
         "extends": [],
@@ -714,6 +910,44 @@
             "workflow_id": "int|null"
         }
     },
+    "Vito\\Plugin\\DTOs\\DynamicField": {
+        "kind": "class",
+        "extends": [],
+        "methods": {
+            "__construct": "(string $name, string $type?, string $label?, mixed $default?, ?string $placeholder?, ?string $description?, ?array $options?, ?array $optionLabels?, ?array $link?, ?string $className?, ?array $componentProps?): mixed",
+            "alert": "(): static",
+            "checkbox": "(): static",
+            "className": "(?string $className): static",
+            "component": "(): static",
+            "componentProps": "(array $props): static",
+            "default": "(mixed $default): static",
+            "description": "(?string $description): static",
+            "label": "(string $label): static",
+            "link": "(string $label, string $url): static",
+            "make": "(string $name): static",
+            "name": "(string $name): static",
+            "options": "(?array $options): static",
+            "password": "(): static",
+            "passwordWithToggle": "(): static",
+            "placeholder": "(?string $placeholder): static",
+            "select": "(): static",
+            "text": "(): static",
+            "textarea": "(): static",
+            "toArray": "(): array"
+        },
+        "properties": []
+    },
+    "Vito\\Plugin\\DTOs\\DynamicForm": {
+        "kind": "class",
+        "extends": [],
+        "methods": {
+            "__construct": "(array $fields?): mixed",
+            "getFieldNames": "(): array",
+            "make": "(array $fields): Vito\\Plugin\\DTOs\\DynamicForm",
+            "toArray": "(): array"
+        },
+        "properties": []
+    },
     "Vito\\Plugin\\Exceptions\\CapabilityBindingUnavailable": {
         "kind": "class",
         "extends": [
@@ -753,6 +987,14 @@
         "properties": []
     },
     "Vito\\Plugin\\Facades\\Notifications": {
+        "kind": "class",
+        "extends": [
+            "Illuminate\\Support\\Facades\\Facade"
+        ],
+        "methods": [],
+        "properties": []
+    },
+    "Vito\\Plugin\\Facades\\Register": {
         "kind": "class",
         "extends": [
             "Illuminate\\Support\\Facades\\Facade"

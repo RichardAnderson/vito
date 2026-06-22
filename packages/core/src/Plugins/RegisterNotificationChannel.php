@@ -2,9 +2,11 @@
 
 namespace App\Plugins;
 
-use App\DTOs\DynamicForm;
+use Vito\Plugin\DTOs\DynamicForm;
 
-class RegisterNotificationChannel
+use Vito\Plugin\Contracts\Registrars\NotificationChannelRegistrar;
+
+class RegisterNotificationChannel implements NotificationChannelRegistrar
 {
     public function __construct(
         private string $name,
@@ -13,33 +15,28 @@ class RegisterNotificationChannel
         private ?DynamicForm $form = null,
     ) {}
 
-    public static function make(string $name): self
-    {
-        return new self($name);
-    }
-
-    public function name(string $name): self
+    public function name(string $name): static
     {
         $this->name = $name;
 
         return $this;
     }
 
-    public function label(string $label): self
+    public function label(string $label): static
     {
         $this->label = $label;
 
         return $this;
     }
 
-    public function handler(string $handler): self
+    public function handler(string $handler): static
     {
         $this->handler = $handler;
 
         return $this;
     }
 
-    public function form(DynamicForm $form): self
+    public function form(DynamicForm $form): static
     {
         $this->form = $form;
 

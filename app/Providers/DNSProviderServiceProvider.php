@@ -2,10 +2,11 @@
 
 namespace App\Providers;
 
+use Vito\Plugin\Facades\Register;
+
 use App\DNSProviders\Cloudflare;
 use App\DTOs\DynamicField;
-use App\DTOs\DynamicForm;
-use App\Plugins\RegisterDNSProvider;
+use Vito\Plugin\DTOs\DynamicForm;
 use Illuminate\Support\ServiceProvider;
 
 class DNSProviderServiceProvider extends ServiceProvider
@@ -19,7 +20,7 @@ class DNSProviderServiceProvider extends ServiceProvider
 
     private function cloudflare(): void
     {
-        RegisterDNSProvider::make(Cloudflare::id())
+        Register::dnsProvider(Cloudflare::id())
             ->label('Cloudflare')
             ->handler(Cloudflare::class)
             ->form(

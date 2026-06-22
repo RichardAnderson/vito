@@ -2,11 +2,13 @@
 
 namespace App\Providers;
 
+use App\Plugins\Registrar;
 use App\Plugins\Sdk\BroadcastAdapter;
 use Illuminate\Support\ServiceProvider;
 use Vito\Plugin\Contracts\Broadcast;
 use Vito\Plugin\Contracts\Http;
 use Vito\Plugin\Contracts\Notifications;
+use Vito\Plugin\Contracts\Registrar as RegistrarContract;
 use Vito\Plugin\Contracts\Ssh;
 use Vito\Plugin\Contracts\Storage;
 use Vito\Plugin\Exceptions\CapabilityBindingUnavailable;
@@ -28,6 +30,7 @@ final class PluginSdkServiceProvider extends ServiceProvider
         $this->app->bind(Ssh::class, fn () => $this->app->make('ssh'));
         $this->app->bind(Notifications::class, fn () => $this->app->make('notifier'));
         $this->app->bind(Broadcast::class, fn () => new BroadcastAdapter);
+        $this->app->bind(RegistrarContract::class, fn () => new Registrar);
 
         $this->app->bind(Http::class, fn () => throw CapabilityBindingUnavailable::for('outbound-http'));
         $this->app->bind(Storage::class, fn () => throw CapabilityBindingUnavailable::for('storage'));

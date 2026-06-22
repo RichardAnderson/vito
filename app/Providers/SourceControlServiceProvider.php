@@ -2,9 +2,10 @@
 
 namespace App\Providers;
 
+use Vito\Plugin\Facades\Register;
+
 use App\DTOs\DynamicField;
-use App\DTOs\DynamicForm;
-use App\Plugins\RegisterSourceControl;
+use Vito\Plugin\DTOs\DynamicForm;
 use App\SourceControlProviders\Bitbucket;
 use App\SourceControlProviders\BitbucketV2;
 use App\SourceControlProviders\Gitea;
@@ -29,7 +30,7 @@ class SourceControlServiceProvider extends ServiceProvider
 
     private function githubApp(): void
     {
-        RegisterSourceControl::make(GithubApp::id())
+        Register::sourceControl(GithubApp::id())
             ->label('GitHub App')
             ->handler(GithubApp::class)
             ->connectable(false)
@@ -38,7 +39,7 @@ class SourceControlServiceProvider extends ServiceProvider
 
     private function github(): void
     {
-        RegisterSourceControl::make(Github::id())
+        Register::sourceControl(Github::id())
             ->label('Github')
             ->handler(Github::class)
             ->form(
@@ -53,7 +54,7 @@ class SourceControlServiceProvider extends ServiceProvider
 
     private function gitlab(): void
     {
-        RegisterSourceControl::make(Gitlab::id())
+        Register::sourceControl(Gitlab::id())
             ->label('Gitlab')
             ->handler(Gitlab::class)
             ->form(
@@ -77,7 +78,7 @@ class SourceControlServiceProvider extends ServiceProvider
 
     private function bitbucket(): void
     {
-        RegisterSourceControl::make(Bitbucket::id())
+        Register::sourceControl(Bitbucket::id())
             ->label('Bitbucket (deprecated)')
             ->handler(Bitbucket::class)
             ->form(
@@ -95,7 +96,7 @@ class SourceControlServiceProvider extends ServiceProvider
 
     private function bitbucketV2(): void
     {
-        RegisterSourceControl::make(BitbucketV2::id())
+        Register::sourceControl(BitbucketV2::id())
             ->label('Bitbucket V2')
             ->handler(BitbucketV2::class)
             ->form(
@@ -113,7 +114,7 @@ class SourceControlServiceProvider extends ServiceProvider
 
     private function gitea(): void
     {
-        RegisterSourceControl::make(Gitea::id())
+        Register::sourceControl(Gitea::id())
             ->label('Gitea')
             ->handler(Gitea::class)
             ->form(

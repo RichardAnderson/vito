@@ -2,7 +2,7 @@
 
 namespace App\SiteFeatures;
 
-use App\DTOs\DynamicForm;
+use Vito\Plugin\DTOs\DynamicForm;
 use App\Models\Site;
 
 abstract class Action implements ActionInterface

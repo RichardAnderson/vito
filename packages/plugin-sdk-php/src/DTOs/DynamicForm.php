@@ -1,6 +1,6 @@
 <?php
 
-namespace App\DTOs;
+namespace Vito\Plugin\DTOs;
 
 readonly class DynamicForm
 {
@@ -32,6 +32,9 @@ readonly class DynamicForm
         return $fields;
     }
 
+    /**
+     * @return array<int, string>
+     */
     public function getFieldNames(): array
     {
         $fields = [];

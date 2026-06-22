@@ -2,7 +2,8 @@
 
 namespace App\Providers;
 
-use App\Plugins\RegisterServiceType;
+use Vito\Plugin\Facades\Register;
+
 use App\Services\Database\Mariadb;
 use App\Services\Database\Mysql;
 use App\Services\Database\Postgresql;
@@ -40,7 +41,7 @@ class ServiceTypeServiceProvider extends ServiceProvider
 
     private function webservers(): void
     {
-        RegisterServiceType::make(Nginx::id())
+        Register::serviceType(Nginx::id())
             ->type(Nginx::type())
             ->label('Nginx')
             ->handler(Nginx::class)
@@ -54,7 +55,7 @@ class ServiceTypeServiceProvider extends ServiceProvider
             ])
             ->register();
 
-        RegisterServiceType::make(Caddy::id())
+        Register::serviceType(Caddy::id())
             ->type(Caddy::type())
             ->label('Caddy (beta)')
             ->handler(Caddy::class)
@@ -71,7 +72,7 @@ class ServiceTypeServiceProvider extends ServiceProvider
 
     private function databases(): void
     {
-        RegisterServiceType::make(Mysql::id())
+        Register::serviceType(Mysql::id())
             ->type(Mysql::type())
             ->label('MySQL')
             ->handler(Mysql::class)
@@ -92,7 +93,7 @@ class ServiceTypeServiceProvider extends ServiceProvider
                 ],
             ])
             ->register();
-        RegisterServiceType::make(Postgresql::id())
+        Register::serviceType(Postgresql::id())
             ->type(Postgresql::type())
             ->label('PostgreSQL')
             ->handler(Postgresql::class)
@@ -120,7 +121,7 @@ class ServiceTypeServiceProvider extends ServiceProvider
                 ],
             ])
             ->register();
-        RegisterServiceType::make(Mariadb::id())
+        Register::serviceType(Mariadb::id())
             ->type(Mariadb::type())
             ->label('MariaDB')
             ->handler(Mariadb::class)
@@ -147,7 +148,7 @@ class ServiceTypeServiceProvider extends ServiceProvider
 
     private function memoryDatabases(): void
     {
-        RegisterServiceType::make(Redis::id())
+        Register::serviceType(Redis::id())
             ->type(Redis::type())
             ->label('Redis')
             ->handler(Redis::class)
@@ -160,7 +161,7 @@ class ServiceTypeServiceProvider extends ServiceProvider
             ])
             ->register();
 
-        RegisterServiceType::make(Valkey::id())
+        Register::serviceType(Valkey::id())
             ->type(Valkey::type())
             ->label('Valkey')
             ->handler(Valkey::class)
@@ -176,7 +177,7 @@ class ServiceTypeServiceProvider extends ServiceProvider
 
     private function firewalls(): void
     {
-        RegisterServiceType::make(Ufw::id())
+        Register::serviceType(Ufw::id())
             ->type(Ufw::type())
             ->label('UFW')
             ->handler(Ufw::class)
@@ -185,7 +186,7 @@ class ServiceTypeServiceProvider extends ServiceProvider
 
     private function fail2ban(): void
     {
-        RegisterServiceType::make(Fail2ban::id())
+        Register::serviceType(Fail2ban::id())
             ->type(Fail2ban::type())
             ->label('Fail2ban')
             ->handler(Fail2ban::class)
@@ -195,7 +196,7 @@ class ServiceTypeServiceProvider extends ServiceProvider
 
     private function processManagers(): void
     {
-        RegisterServiceType::make(Supervisor::id())
+        Register::serviceType(Supervisor::id())
             ->type(Supervisor::type())
             ->label('Supervisor')
             ->handler(Supervisor::class)
@@ -211,13 +212,13 @@ class ServiceTypeServiceProvider extends ServiceProvider
 
     private function monitoring(): void
     {
-        RegisterServiceType::make(VitoAgent::id())
+        Register::serviceType(VitoAgent::id())
             ->type(VitoAgent::type())
             ->label('VitoAgent')
             ->handler(VitoAgent::class)
             ->register();
 
-        RegisterServiceType::make(RemoteMonitor::id())
+        Register::serviceType(RemoteMonitor::id())
             ->type(RemoteMonitor::type())
             ->label('RemoteMonitor')
             ->handler(RemoteMonitor::class)
@@ -226,7 +227,7 @@ class ServiceTypeServiceProvider extends ServiceProvider
 
     private function logAnalysis(): void
     {
-        RegisterServiceType::make(GoAccess::id())
+        Register::serviceType(GoAccess::id())
             ->type(GoAccess::type())
             ->label('GoAccess')
             ->handler(GoAccess::class)
@@ -235,7 +236,7 @@ class ServiceTypeServiceProvider extends ServiceProvider
 
     private function php(): void
     {
-        RegisterServiceType::make(PHP::id())
+        Register::serviceType(PHP::id())
             ->type(PHP::type())
             ->label('PHP')
             ->handler(PHP::class)
@@ -281,7 +282,7 @@ class ServiceTypeServiceProvider extends ServiceProvider
 
     private function node(): void
     {
-        RegisterServiceType::make(NodeJS::id())
+        Register::serviceType(NodeJS::id())
             ->type(NodeJS::type())
             ->label('Node.js (Deprecated)')
             ->handler(NodeJS::class)

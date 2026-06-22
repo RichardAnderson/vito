@@ -2,9 +2,10 @@
 
 namespace App\Providers;
 
+use Vito\Plugin\Facades\Register;
+
 use App\DTOs\DynamicField;
-use App\DTOs\DynamicForm;
-use App\Plugins\RegisterServerProvider;
+use Vito\Plugin\DTOs\DynamicForm;
 use App\ServerProviders\AWS;
 use App\ServerProviders\Custom;
 use App\ServerProviders\DigitalOcean;
@@ -29,7 +30,7 @@ class ServerProviderServiceProvider extends ServiceProvider
 
     private function custom(): void
     {
-        RegisterServerProvider::make(Custom::id())
+        Register::serverProvider(Custom::id())
             ->label('Custom')
             ->handler(Custom::class)
             ->defaultUser('root')
@@ -38,7 +39,7 @@ class ServerProviderServiceProvider extends ServiceProvider
 
     private function aws(): void
     {
-        RegisterServerProvider::make(AWS::id())
+        Register::serverProvider(AWS::id())
             ->label('AWS')
             ->handler(AWS::class)
             ->form(
@@ -57,7 +58,7 @@ class ServerProviderServiceProvider extends ServiceProvider
 
     private function hetzner(): void
     {
-        RegisterServerProvider::make(Hetzner::id())
+        Register::serverProvider(Hetzner::id())
             ->label('Hetzner')
             ->handler(Hetzner::class)
             ->form(
@@ -73,7 +74,7 @@ class ServerProviderServiceProvider extends ServiceProvider
 
     private function digitalOcean(): void
     {
-        RegisterServerProvider::make(DigitalOcean::id())
+        Register::serverProvider(DigitalOcean::id())
             ->label('DigitalOcean')
             ->handler(DigitalOcean::class)
             ->form(
@@ -89,7 +90,7 @@ class ServerProviderServiceProvider extends ServiceProvider
 
     private function linode(): void
     {
-        RegisterServerProvider::make(Linode::id())
+        Register::serverProvider(Linode::id())
             ->label('Linode')
             ->handler(Linode::class)
             ->form(
@@ -105,7 +106,7 @@ class ServerProviderServiceProvider extends ServiceProvider
 
     private function vultr(): void
     {
-        RegisterServerProvider::make(Vultr::id())
+        Register::serverProvider(Vultr::id())
             ->label('Vultr')
             ->handler(Vultr::class)
             ->form(

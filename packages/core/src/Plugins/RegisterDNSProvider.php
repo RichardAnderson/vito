@@ -2,9 +2,11 @@
 
 namespace App\Plugins;
 
-use App\DTOs\DynamicForm;
+use Vito\Plugin\DTOs\DynamicForm;
 
-class RegisterDNSProvider
+use Vito\Plugin\Contracts\Registrars\DnsProviderRegistrar;
+
+class RegisterDNSProvider implements DnsProviderRegistrar
 {
     public function __construct(
         private string $name,
@@ -16,54 +18,49 @@ class RegisterDNSProvider
         private bool $supportsCreatedAt = true,
     ) {}
 
-    public static function make(string $name): self
-    {
-        return new self($name);
-    }
-
-    public function name(string $name): self
+    public function name(string $name): static
     {
         $this->name = $name;
 
         return $this;
     }
 
-    public function label(string $label): self
+    public function label(string $label): static
     {
         $this->label = $label;
 
         return $this;
     }
 
-    public function handler(string $handler): self
+    public function handler(string $handler): static
     {
         $this->handler = $handler;
 
         return $this;
     }
 
-    public function form(DynamicForm $form): self
+    public function form(DynamicForm $form): static
     {
         $this->form = $form;
 
         return $this;
     }
 
-    public function editForm(DynamicForm $editForm): self
+    public function editForm(DynamicForm $editForm): static
     {
         $this->editForm = $editForm;
 
         return $this;
     }
 
-    public function proxyTypes(array $proxyTypes): self
+    public function proxyTypes(array $proxyTypes): static
     {
         $this->proxyTypes = $proxyTypes;
 
         return $this;
     }
 
-    public function supportsCreatedAt(bool $supportsCreatedAt): self
+    public function supportsCreatedAt(bool $supportsCreatedAt): static
     {
         $this->supportsCreatedAt = $supportsCreatedAt;
 

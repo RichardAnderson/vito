@@ -2,9 +2,10 @@
 
 namespace App\Providers;
 
+use Vito\Plugin\Facades\Register;
+
 use App\DTOs\DynamicField;
-use App\DTOs\DynamicForm;
-use App\Plugins\RegisterStorageProvider;
+use Vito\Plugin\DTOs\DynamicForm;
 use App\StorageProviders\Dropbox;
 use App\StorageProviders\FTP;
 use App\StorageProviders\Local;
@@ -27,7 +28,7 @@ class StorageProviderServiceProvider extends ServiceProvider
 
     private function local(): void
     {
-        RegisterStorageProvider::make(Local::id())
+        Register::storageProvider(Local::id())
             ->label('Local')
             ->handler(Local::class)
             ->form(
@@ -42,7 +43,7 @@ class StorageProviderServiceProvider extends ServiceProvider
 
     private function aws(): void
     {
-        RegisterStorageProvider::make(S3::id())
+        Register::storageProvider(S3::id())
             ->label('S3')
             ->handler(S3::class)
             ->form(
@@ -72,7 +73,7 @@ class StorageProviderServiceProvider extends ServiceProvider
 
     private function dropbox(): void
     {
-        RegisterStorageProvider::make(Dropbox::id())
+        Register::storageProvider(Dropbox::id())
             ->label('Dropbox')
             ->handler(Dropbox::class)
             ->form(
@@ -90,7 +91,7 @@ class StorageProviderServiceProvider extends ServiceProvider
 
     private function ftp(): void
     {
-        RegisterStorageProvider::make(FTP::id())
+        Register::storageProvider(FTP::id())
             ->label('FTP')
             ->handler(FTP::class)
             ->form(
@@ -126,7 +127,7 @@ class StorageProviderServiceProvider extends ServiceProvider
 
     private function sftp(): void
     {
-        RegisterStorageProvider::make(SFTP::id())
+        Register::storageProvider(SFTP::id())
             ->label('SFTP')
             ->handler(SFTP::class)
             ->form(

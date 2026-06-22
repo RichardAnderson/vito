@@ -2,7 +2,8 @@
 
 namespace App\Providers;
 
-use App\Plugins\RegisterWorkflowAction;
+use Vito\Plugin\Facades\Register;
+
 use App\WorkflowActions\Database\CreateDatabase;
 use App\WorkflowActions\Database\CreateDatabaseUser;
 use App\WorkflowActions\Domain\CreateDNSRecord;
@@ -38,7 +39,7 @@ class WorkflowServiceProvider extends ServiceProvider
 
     private function server(): void
     {
-        RegisterWorkflowAction::make('create-server')
+        Register::workflowAction('create-server')
             ->label('Create Server')
             ->category('server')
             ->handler(CreateServer::class)
@@ -47,7 +48,7 @@ class WorkflowServiceProvider extends ServiceProvider
 
     private function service(): void
     {
-        RegisterWorkflowAction::make('install-service')
+        Register::workflowAction('install-service')
             ->label('Install Service')
             ->category('service')
             ->handler(InstallService::class)
@@ -56,42 +57,42 @@ class WorkflowServiceProvider extends ServiceProvider
 
     private function site(): void
     {
-        RegisterWorkflowAction::make('create-php-site')
+        Register::workflowAction('create-php-site')
             ->label('Create PHP Site')
             ->category('site')
             ->handler(CreatePHPSite::class)
             ->register();
-        RegisterWorkflowAction::make('create-php-blank-site')
+        Register::workflowAction('create-php-blank-site')
             ->label('Create PHP Blank Site')
             ->category('site')
             ->handler(CreatePHPBlankSite::class)
             ->register();
-        RegisterWorkflowAction::make('create-wordpress-site')
+        Register::workflowAction('create-wordpress-site')
             ->label('Create WordPress Site')
             ->category('site')
             ->handler(CreateWordpressSite::class)
             ->register();
-        RegisterWorkflowAction::make('create-phpmyadmin-site')
+        Register::workflowAction('create-phpmyadmin-site')
             ->label('Create PHPMyAdmin Site')
             ->category('site')
             ->handler(CreatePHPMyAdminSite::class)
             ->register();
-        RegisterWorkflowAction::make('create-laravel-site')
+        Register::workflowAction('create-laravel-site')
             ->label('Create Laravel Site')
             ->category('site')
             ->handler(CreateLaravelSite::class)
             ->register();
-        RegisterWorkflowAction::make('create-nodejs-site')
+        Register::workflowAction('create-nodejs-site')
             ->label('Create NodeJS Site')
             ->category('site')
             ->handler(CreateNodeJsSite::class)
             ->register();
-        RegisterWorkflowAction::make('create-load-balancer-site')
+        Register::workflowAction('create-load-balancer-site')
             ->label('Create Load Balancer Site')
             ->category('site')
             ->handler(CreateLoadBalancerSite::class)
             ->register();
-        RegisterWorkflowAction::make('deploy-site')
+        Register::workflowAction('deploy-site')
             ->label('Deploy Site')
             ->category('site')
             ->handler(DeploySite::class)
@@ -100,17 +101,17 @@ class WorkflowServiceProvider extends ServiceProvider
 
     private function general(): void
     {
-        RegisterWorkflowAction::make('notify')
+        Register::workflowAction('notify')
             ->label('Notify')
             ->category('general')
             ->handler(Notify::class)
             ->register();
-        RegisterWorkflowAction::make('run-command')
+        Register::workflowAction('run-command')
             ->label('Run Command')
             ->category('general')
             ->handler(RunCommand::class)
             ->register();
-        RegisterWorkflowAction::make('http-call')
+        Register::workflowAction('http-call')
             ->label('HTTP Call')
             ->category('general')
             ->handler(HttpCall::class)
@@ -119,12 +120,12 @@ class WorkflowServiceProvider extends ServiceProvider
 
     private function database(): void
     {
-        RegisterWorkflowAction::make('create-database')
+        Register::workflowAction('create-database')
             ->label('Create Database')
             ->category('database')
             ->handler(CreateDatabase::class)
             ->register();
-        RegisterWorkflowAction::make('create-database-user')
+        Register::workflowAction('create-database-user')
             ->label('Create Database User')
             ->category('database')
             ->handler(CreateDatabaseUser::class)
@@ -133,12 +134,12 @@ class WorkflowServiceProvider extends ServiceProvider
 
     private function domain(): void
     {
-        RegisterWorkflowAction::make('create-dns-record')
+        Register::workflowAction('create-dns-record')
             ->label('Create DNS Record')
             ->category('domain')
             ->handler(CreateDNSRecord::class)
             ->register();
-        RegisterWorkflowAction::make('delete-dns-record')
+        Register::workflowAction('delete-dns-record')
             ->label('Delete DNS Record')
             ->category('domain')
             ->handler(DeleteDNSRecord::class)

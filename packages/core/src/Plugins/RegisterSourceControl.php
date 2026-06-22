@@ -2,10 +2,12 @@
 
 namespace App\Plugins;
 
-use App\DTOs\DynamicForm;
+use Vito\Plugin\DTOs\DynamicForm;
 use App\SourceControlProviders\SourceControlProvider;
 
-class RegisterSourceControl
+use Vito\Plugin\Contracts\Registrars\SourceControlRegistrar;
+
+class RegisterSourceControl implements SourceControlRegistrar
 {
     public function __construct(
         private string $name,
@@ -16,47 +18,42 @@ class RegisterSourceControl
         private bool $usableForSites = true,
     ) {}
 
-    public static function make(string $name): self
-    {
-        return new self($name);
-    }
-
-    public function name(string $name): self
+    public function name(string $name): static
     {
         $this->name = $name;
 
         return $this;
     }
 
-    public function label(string $label): self
+    public function label(string $label): static
     {
         $this->label = $label;
 
         return $this;
     }
 
-    public function handler(string $handler): self
+    public function handler(string $handler): static
     {
         $this->handler = $handler;
 
         return $this;
     }
 
-    public function form(DynamicForm $form): self
+    public function form(DynamicForm $form): static
     {
         $this->form = $form;
 
         return $this;
     }
 
-    public function connectable(bool $connectable): self
+    public function connectable(bool $connectable): static
     {
         $this->connectable = $connectable;
 
         return $this;
     }
 
-    public function usableForSites(bool $usableForSites): self
+    public function usableForSites(bool $usableForSites): static
     {
         $this->usableForSites = $usableForSites;
 

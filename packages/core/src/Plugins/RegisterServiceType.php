@@ -2,10 +2,12 @@
 
 namespace App\Plugins;
 
-use App\DTOs\DynamicForm;
+use Vito\Plugin\DTOs\DynamicForm;
 use InvalidArgumentException;
 
-class RegisterServiceType
+use Vito\Plugin\Contracts\Registrars\ServiceTypeRegistrar;
+
+class RegisterServiceType implements ServiceTypeRegistrar
 {
     /**
      * @param  array<string>  $versions
@@ -24,47 +26,42 @@ class RegisterServiceType
         private array $configPaths = []
     ) {}
 
-    public static function make(string $name): self
-    {
-        return new self($name);
-    }
-
-    public function name(string $name): self
+    public function name(string $name): static
     {
         $this->name = $name;
 
         return $this;
     }
 
-    public function type(string $type): self
+    public function type(string $type): static
     {
         $this->type = $type;
 
         return $this;
     }
 
-    public function unit(string $unit): self
+    public function unit(string $unit): static
     {
         $this->unit = $unit;
 
         return $this;
     }
 
-    public function label(string $label): self
+    public function label(string $label): static
     {
         $this->label = $label;
 
         return $this;
     }
 
-    public function handler(string $handler): self
+    public function handler(string $handler): static
     {
         $this->handler = $handler;
 
         return $this;
     }
 
-    public function form(DynamicForm $form): self
+    public function form(DynamicForm $form): static
     {
         $this->form = $form;
 
@@ -74,7 +71,7 @@ class RegisterServiceType
     /**
      * @param  array<string>  $versions
      */
-    public function versions(array $versions): self
+    public function versions(array $versions): static
     {
         $this->versions = $versions;
 
@@ -84,7 +81,7 @@ class RegisterServiceType
     /**
      * @param  array<string, mixed>  $data
      */
-    public function data(array $data): self
+    public function data(array $data): static
     {
         $this->data = $data;
 
@@ -94,7 +91,7 @@ class RegisterServiceType
     /**
      * @param  array<int, array{name: string, path: string, sudo: bool}>  $configPaths
      */
-    public function configPaths(array $configPaths): self
+    public function configPaths(array $configPaths): static
     {
         $this->configPaths = $configPaths;
 

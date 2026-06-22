@@ -4,7 +4,9 @@ namespace App\Plugins;
 
 use RuntimeException;
 
-class RegisterSiteFeature
+use Vito\Plugin\Contracts\Registrars\SiteFeatureRegistrar;
+
+class RegisterSiteFeature implements SiteFeatureRegistrar
 {
     public function __construct(
         public string $type,
@@ -13,19 +15,14 @@ class RegisterSiteFeature
         public string $description = ''
     ) {}
 
-    public static function make(string $type, string $name): self
-    {
-        return new self($type, $name);
-    }
-
-    public function label(string $label): self
+    public function label(string $label): static
     {
         $this->label = $label;
 
         return $this;
     }
 
-    public function description(string $description): self
+    public function description(string $description): static
     {
         $this->description = $description;
 

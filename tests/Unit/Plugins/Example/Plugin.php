@@ -2,7 +2,7 @@
 
 namespace App\Vito\Plugins\Example;
 
-use App\Plugins\AbstractPlugin;
+use Vito\Plugin\AbstractPlugin;
 
 class Plugin extends AbstractPlugin
 {

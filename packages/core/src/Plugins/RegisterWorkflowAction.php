@@ -2,7 +2,9 @@
 
 namespace App\Plugins;
 
-class RegisterWorkflowAction
+use Vito\Plugin\Contracts\Registrars\WorkflowActionRegistrar;
+
+class RegisterWorkflowAction implements WorkflowActionRegistrar
 {
     public function __construct(
         public string $name,
@@ -12,33 +14,28 @@ class RegisterWorkflowAction
         public string $handler = '',
     ) {}
 
-    public static function make(string $name): self
-    {
-        return new self($name);
-    }
-
-    public function label(string $label): self
+    public function label(string $label): static
     {
         $this->label = $label;
 
         return $this;
     }
 
-    public function description(string $description): self
+    public function description(string $description): static
     {
         $this->description = $description;
 
         return $this;
     }
 
-    public function category(string $category): self
+    public function category(string $category): static
     {
         $this->category = $category;
 
         return $this;
     }
 
-    public function handler(string $handler): self
+    public function handler(string $handler): static
     {
         $this->handler = $handler;
 

@@ -2,9 +2,11 @@
 
 namespace App\Plugins;
 
-use App\DTOs\DynamicForm;
+use Vito\Plugin\DTOs\DynamicForm;
 
-class RegisterServerProvider
+use Vito\Plugin\Contracts\Registrars\ServerProviderRegistrar;
+
+class RegisterServerProvider implements ServerProviderRegistrar
 {
     public function __construct(
         private string $name,
@@ -14,40 +16,35 @@ class RegisterServerProvider
         private string $defaultUser = '',
     ) {}
 
-    public static function make(string $name): self
-    {
-        return new self($name);
-    }
-
-    public function name(string $name): self
+    public function name(string $name): static
     {
         $this->name = $name;
 
         return $this;
     }
 
-    public function label(string $label): self
+    public function label(string $label): static
     {
         $this->label = $label;
 
         return $this;
     }
 
-    public function handler(string $handler): self
+    public function handler(string $handler): static
     {
         $this->handler = $handler;
 
         return $this;
     }
 
-    public function form(DynamicForm $form): self
+    public function form(DynamicForm $form): static
     {
         $this->form = $form;
 
         return $this;
     }
 
-    public function defaultUser(string $defaultUser): self
+    public function defaultUser(string $defaultUser): static
     {
         $this->defaultUser = $defaultUser;
 

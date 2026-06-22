@@ -2,10 +2,12 @@
 
 namespace App\Plugins;
 
-use App\DTOs\DynamicForm;
+use Vito\Plugin\DTOs\DynamicForm;
 use RuntimeException;
 
-class RegisterSiteFeatureAction
+use Vito\Plugin\Contracts\Registrars\SiteFeatureActionRegistrar;
+
+class RegisterSiteFeatureAction implements SiteFeatureActionRegistrar
 {
     public function __construct(
         public string $type,
@@ -16,26 +18,21 @@ class RegisterSiteFeatureAction
         public ?DynamicForm $form = null,
     ) {}
 
-    public static function make(string $type, string $feature, string $name): self
-    {
-        return new self($type, $feature, $name);
-    }
-
-    public function label(string $label): self
+    public function label(string $label): static
     {
         $this->label = $label;
 
         return $this;
     }
 
-    public function handler(string $handler): self
+    public function handler(string $handler): static
     {
         $this->handler = $handler;
 
         return $this;
     }
 
-    public function form(DynamicForm $form): self
+    public function form(DynamicForm $form): static
     {
         $this->form = $form;
 

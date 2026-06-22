@@ -1,0 +1,16 @@
+<?php
+
+namespace Vito\Plugin\Contracts\Registrars;
+
+use Vito\Plugin\DTOs\DynamicForm;
+
+interface SiteFeatureActionRegistrar
+{
+    public function label(string $label): static;
+
+    public function handler(string $handler): static;
+
+    public function form(DynamicForm $form): static;
+
+    public function register(): void;
+}

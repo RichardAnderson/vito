@@ -2,7 +2,9 @@
 
 namespace App\Plugins;
 
-class RegisterViews
+use Vito\Plugin\Contracts\Registrars\ViewsRegistrar;
+
+class RegisterViews implements ViewsRegistrar
 {
     private const string CONFIG_KEY = 'plugins.views';
 
@@ -11,12 +13,7 @@ class RegisterViews
         private string $path = '',
     ) {}
 
-    public static function make(string $name): self
-    {
-        return new self($name);
-    }
-
-    public function path(string $path): self
+    public function path(string $path): static
     {
         $this->path = $path;
 

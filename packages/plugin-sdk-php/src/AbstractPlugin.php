@@ -1,8 +1,6 @@
 <?php
 
-namespace App\Plugins;
-
-use App\Plugins\Interfaces\PluginInterface;
+namespace Vito\Plugin;
 
 abstract class AbstractPlugin implements PluginInterface
 {

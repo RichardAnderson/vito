@@ -3,7 +3,7 @@
 namespace App\SiteFeatures\ModernDeployment;
 
 use App\DTOs\DynamicField;
-use App\DTOs\DynamicForm;
+use Vito\Plugin\DTOs\DynamicForm;
 use App\Exceptions\SSHError;
 use App\SiteFeatures\Action;
 use Illuminate\Http\Request;

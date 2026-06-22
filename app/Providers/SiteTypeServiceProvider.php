@@ -2,12 +2,11 @@
 
 namespace App\Providers;
 
+use Vito\Plugin\Facades\Register;
+
 use App\DTOs\DynamicField;
-use App\DTOs\DynamicForm;
+use Vito\Plugin\DTOs\DynamicForm;
 use App\Enums\LoadBalancerMethod;
-use App\Plugins\RegisterSiteFeature;
-use App\Plugins\RegisterSiteFeatureAction;
-use App\Plugins\RegisterSiteType;
 use App\SiteFeatures\ModernDeployment\Configuration;
 use App\SiteFeatures\ModernDeployment\Disable;
 use App\SiteFeatures\ModernDeployment\Enable;
@@ -46,7 +45,7 @@ class SiteTypeServiceProvider extends ServiceProvider
 
     private function php(): void
     {
-        RegisterSiteType::make(PHPSite::id())
+        Register::siteType(PHPSite::id())
             ->label('PHP')
             ->handler(PHPSite::class)
             ->form(DynamicForm::make([
@@ -87,7 +86,7 @@ class SiteTypeServiceProvider extends ServiceProvider
 
     private function phpBlank(): void
     {
-        RegisterSiteType::make(PHPBlank::id())
+        Register::siteType(PHPBlank::id())
             ->label('PHP Blank')
             ->handler(PHPBlank::class)
             ->form(DynamicForm::make([
@@ -114,7 +113,7 @@ class SiteTypeServiceProvider extends ServiceProvider
 
     private function laravel(): void
     {
-        RegisterSiteType::make(Laravel::id())
+        Register::siteType(Laravel::id())
             ->label('Laravel')
             ->handler(Laravel::class)
             ->form(DynamicForm::make([
@@ -152,19 +151,19 @@ class SiteTypeServiceProvider extends ServiceProvider
                     ->description('JavaScript package manager used to build front-end assets during deployment.'),
             ]))
             ->register();
-        RegisterSiteFeature::make(Laravel::id(), 'modern-deployment')
+        Register::siteFeature(Laravel::id(), 'modern-deployment')
             ->label('Modern Deployment (beta)')
             ->description('Enables zero downtime deployment and deployment rollbacks')
             ->register();
-        RegisterSiteFeatureAction::make(Laravel::id(), 'modern-deployment', 'enable')
+        Register::siteFeatureAction(Laravel::id(), 'modern-deployment', 'enable')
             ->label('Enable')
             ->handler(Enable::class)
             ->register();
-        RegisterSiteFeatureAction::make(Laravel::id(), 'modern-deployment', 'disable')
+        Register::siteFeatureAction(Laravel::id(), 'modern-deployment', 'disable')
             ->label('Disable')
             ->handler(Disable::class)
             ->register();
-        RegisterSiteFeatureAction::make(Laravel::id(), 'modern-deployment', 'configuration')
+        Register::siteFeatureAction(Laravel::id(), 'modern-deployment', 'configuration')
             ->label('Configure')
             ->handler(Configuration::class)
             ->register();
@@ -172,7 +171,7 @@ class SiteTypeServiceProvider extends ServiceProvider
 
     private function nodeJS(): void
     {
-        RegisterSiteType::make(NodeJS::id())
+        Register::siteType(NodeJS::id())
             ->label('NodeJS (Deprecated - Do Not Use)')
             ->handler(NodeJS::class)
             ->form(DynamicForm::make([]))
@@ -181,7 +180,7 @@ class SiteTypeServiceProvider extends ServiceProvider
 
     private function nodeSite(): void
     {
-        RegisterSiteType::make(NodeSite::id())
+        Register::siteType(NodeSite::id())
             ->label('Node.js')
             ->handler(NodeSite::class)
             ->form(DynamicForm::make(NodeSite::formFields()))
@@ -190,7 +189,7 @@ class SiteTypeServiceProvider extends ServiceProvider
 
     private function bunSite(): void
     {
-        RegisterSiteType::make(BunSite::id())
+        Register::siteType(BunSite::id())
             ->label('Bun')
             ->handler(BunSite::class)
             ->form(DynamicForm::make(BunSite::formFields()))
@@ -199,7 +198,7 @@ class SiteTypeServiceProvider extends ServiceProvider
 
     private function blank(): void
     {
-        RegisterSiteType::make(Blank::id())
+        Register::siteType(Blank::id())
             ->label('Blank (Reverse Proxy)')
             ->handler(Blank::class)
             ->form(DynamicForm::make(Blank::formFields()))
@@ -208,7 +207,7 @@ class SiteTypeServiceProvider extends ServiceProvider
 
     public function loadBalancer(): void
     {
-        RegisterSiteType::make(LoadBalancer::id())
+        Register::siteType(LoadBalancer::id())
             ->label('Load Balancer')
             ->handler(LoadBalancer::class)
             ->form(DynamicForm::make([
@@ -226,7 +225,7 @@ class SiteTypeServiceProvider extends ServiceProvider
 
     public function phpMyAdmin(): void
     {
-        RegisterSiteType::make(PHPMyAdmin::id())
+        Register::siteType(PHPMyAdmin::id())
             ->label('PHPMyAdmin')
             ->handler(PHPMyAdmin::class)
             ->form(DynamicForm::make([
@@ -239,7 +238,7 @@ class SiteTypeServiceProvider extends ServiceProvider
 
     public function wordpress(): void
     {
-        RegisterSiteType::make(Wordpress::id())
+        Register::siteType(Wordpress::id())
             ->label('WordPress')
             ->handler(Wordpress::class)
             ->form(DynamicForm::make([
