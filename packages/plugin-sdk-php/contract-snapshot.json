@@ -13,7 +13,8 @@
             "install": "(): void",
             "uninstall": "(): void"
         },
-        "properties": []
+        "properties": [],
+        "hook": null
     },
     "Vito\\Plugin\\Attributes\\ExposesMethods": {
         "kind": "class",
@@ -21,7 +22,8 @@
         "methods": {
             "__construct": "(array $methods?): mixed"
         },
-        "properties": []
+        "properties": [],
+        "hook": null
     },
     "Vito\\Plugin\\Attributes\\HostContract": {
         "kind": "class",
@@ -29,7 +31,8 @@
         "methods": {
             "__construct": "(string $model): mixed"
         },
-        "properties": []
+        "properties": [],
+        "hook": null
     },
     "Vito\\Plugin\\Contracts\\Backup": {
         "kind": "interface",
@@ -49,7 +52,8 @@
             "status": "\\BackedEnum&\\Vito\\Plugin\\Contracts\\VitoEnum|null",
             "storage_id": "int",
             "type": "\\BackedEnum&\\Vito\\Plugin\\Contracts\\VitoEnum"
-        }
+        },
+        "hook": null
     },
     "Vito\\Plugin\\Contracts\\BackupFile": {
         "kind": "interface",
@@ -66,7 +70,8 @@
             "restored_to": "string|null",
             "size": "int|null",
             "status": "\\BackedEnum&\\Vito\\Plugin\\Contracts\\VitoEnum"
-        }
+        },
+        "hook": null
     },
     "Vito\\Plugin\\Contracts\\Broadcast": {
         "kind": "interface",
@@ -74,7 +79,8 @@
         "methods": {
             "dispatch": "(int $projectId, string $type, array $data): void"
         },
-        "properties": []
+        "properties": [],
+        "hook": null
     },
     "Vito\\Plugin\\Contracts\\Command": {
         "kind": "interface",
@@ -87,7 +93,8 @@
             "name": "string",
             "site": "\\Vito\\Plugin\\Contracts\\Site|null",
             "site_id": "int"
-        }
+        },
+        "hook": null
     },
     "Vito\\Plugin\\Contracts\\CommandExecution": {
         "kind": "interface",
@@ -103,7 +110,8 @@
             "server_log_id": "int|null",
             "status": "\\BackedEnum&\\Vito\\Plugin\\Contracts\\VitoEnum",
             "user_id": "int"
-        }
+        },
+        "hook": null
     },
     "Vito\\Plugin\\Contracts\\CronJob": {
         "kind": "interface",
@@ -125,7 +133,8 @@
             "site_id": "int|null",
             "status": "\\BackedEnum&\\Vito\\Plugin\\Contracts\\VitoEnum",
             "user": "string"
-        }
+        },
+        "hook": null
     },
     "Vito\\Plugin\\Contracts\\DNSProvider": {
         "kind": "interface",
@@ -139,7 +148,8 @@
             "project_id": "int|null",
             "provider": "string",
             "user_id": "int"
-        }
+        },
+        "hook": null
     },
     "Vito\\Plugin\\Contracts\\DNSRecord": {
         "kind": "interface",
@@ -155,7 +165,8 @@
             "proxied": "bool",
             "ttl": "int",
             "type": "string"
-        }
+        },
+        "hook": null
     },
     "Vito\\Plugin\\Contracts\\Database": {
         "kind": "interface",
@@ -169,7 +180,8 @@
             "server": "\\Vito\\Plugin\\Contracts\\Server|null",
             "server_id": "int",
             "status": "\\BackedEnum&\\Vito\\Plugin\\Contracts\\VitoEnum"
-        }
+        },
+        "hook": null
     },
     "Vito\\Plugin\\Contracts\\DatabaseUser": {
         "kind": "interface",
@@ -183,7 +195,8 @@
             "server_id": "int",
             "status": "\\BackedEnum&\\Vito\\Plugin\\Contracts\\VitoEnum",
             "username": "string"
-        }
+        },
+        "hook": null
     },
     "Vito\\Plugin\\Contracts\\Deployment": {
         "kind": "interface",
@@ -197,7 +210,8 @@
             "site": "\\Vito\\Plugin\\Contracts\\Site|null",
             "site_id": "int",
             "status": "\\BackedEnum&\\Vito\\Plugin\\Contracts\\VitoEnum"
-        }
+        },
+        "hook": null
     },
     "Vito\\Plugin\\Contracts\\DeploymentScript": {
         "kind": "interface",
@@ -211,7 +225,8 @@
             "name": "string",
             "site": "\\Vito\\Plugin\\Contracts\\Site|null",
             "site_id": "int"
-        }
+        },
+        "hook": null
     },
     "Vito\\Plugin\\Contracts\\Domain": {
         "kind": "interface",
@@ -225,7 +240,8 @@
             "project_id": "int",
             "provider_domain_id": "string",
             "user_id": "int"
-        }
+        },
+        "hook": null
     },
     "Vito\\Plugin\\Contracts\\File": {
         "kind": "interface",
@@ -247,7 +263,8 @@
             "size": "int",
             "type": "string",
             "user_id": "int"
-        }
+        },
+        "hook": null
     },
     "Vito\\Plugin\\Contracts\\FirewallRule": {
         "kind": "interface",
@@ -265,7 +282,8 @@
             "source": "string",
             "status": "\\BackedEnum&\\Vito\\Plugin\\Contracts\\VitoEnum",
             "type": "string"
-        }
+        },
+        "hook": null
     },
     "Vito\\Plugin\\Contracts\\GitHook": {
         "kind": "interface",
@@ -277,7 +295,19 @@
             "site": "\\Vito\\Plugin\\Contracts\\Site|null",
             "site_id": "int",
             "source_control_id": "int"
-        }
+        },
+        "hook": null
+    },
+    "Vito\\Plugin\\Contracts\\HookRegistry": {
+        "kind": "interface",
+        "extends": [],
+        "methods": {
+            "listeners": "(string $hook): array",
+            "register": "(string $hook, callable $listener): void",
+            "report": "(Throwable $exception, ?object $source): void"
+        },
+        "properties": [],
+        "hook": null
     },
     "Vito\\Plugin\\Contracts\\HostedDomain": {
         "kind": "interface",
@@ -293,13 +323,15 @@
             "ssl_method": "\\BackedEnum&\\Vito\\Plugin\\Contracts\\VitoEnum",
             "status": "\\BackedEnum&\\Vito\\Plugin\\Contracts\\VitoEnum",
             "type": "\\BackedEnum&\\Vito\\Plugin\\Contracts\\VitoEnum"
-        }
+        },
+        "hook": null
     },
     "Vito\\Plugin\\Contracts\\Http": {
         "kind": "interface",
         "extends": [],
         "methods": [],
-        "properties": []
+        "properties": [],
+        "hook": null
     },
     "Vito\\Plugin\\Contracts\\IsolatedUser": {
         "kind": "interface",
@@ -310,7 +342,8 @@
             "server": "\\Vito\\Plugin\\Contracts\\Server|null",
             "server_id": "int",
             "username": "string"
-        }
+        },
+        "hook": null
     },
     "Vito\\Plugin\\Contracts\\LoadBalancerServer": {
         "kind": "interface",
@@ -323,7 +356,8 @@
             "load_balancer_id": "int",
             "port": "int",
             "weight": "int"
-        }
+        },
+        "hook": null
     },
     "Vito\\Plugin\\Contracts\\Metric": {
         "kind": "interface",
@@ -341,7 +375,8 @@
             "reboot_required": "bool|null",
             "server": "\\Vito\\Plugin\\Contracts\\Server|null",
             "server_id": "int"
-        }
+        },
+        "hook": null
     },
     "Vito\\Plugin\\Contracts\\NotificationChannel": {
         "kind": "interface",
@@ -355,7 +390,8 @@
             "project_id": "int|null",
             "provider": "string",
             "user_id": "int"
-        }
+        },
+        "hook": null
     },
     "Vito\\Plugin\\Contracts\\Notifications": {
         "kind": "interface",
@@ -363,7 +399,8 @@
         "methods": {
             "send": "(object $notifiable, object $notification): void"
         },
-        "properties": []
+        "properties": [],
+        "hook": null
     },
     "Vito\\Plugin\\Contracts\\Plugin": {
         "kind": "interface",
@@ -381,7 +418,8 @@
             "updates_available": "bool",
             "username": "string",
             "version": "string|null"
-        }
+        },
+        "hook": null
     },
     "Vito\\Plugin\\Contracts\\PluginError": {
         "kind": "interface",
@@ -397,7 +435,8 @@
             "plugin": "\\Vito\\Plugin\\Contracts\\Plugin|null",
             "plugin_id": "int",
             "stack_trace": "string|null"
-        }
+        },
+        "hook": null
     },
     "Vito\\Plugin\\Contracts\\Project": {
         "kind": "interface",
@@ -406,7 +445,8 @@
         "properties": {
             "id": "int",
             "name": "string"
-        }
+        },
+        "hook": null
     },
     "Vito\\Plugin\\Contracts\\Redirect": {
         "kind": "interface",
@@ -420,7 +460,8 @@
             "site_id": "int",
             "status": "\\BackedEnum&\\Vito\\Plugin\\Contracts\\VitoEnum",
             "to": "string"
-        }
+        },
+        "hook": null
     },
     "Vito\\Plugin\\Contracts\\Registrar": {
         "kind": "interface",
@@ -441,7 +482,8 @@
             "views": "(string $name): Vito\\Plugin\\Contracts\\Registrars\\ViewsRegistrar",
             "workflowAction": "(string $name): Vito\\Plugin\\Contracts\\Registrars\\WorkflowActionRegistrar"
         },
-        "properties": []
+        "properties": [],
+        "hook": null
     },
     "Vito\\Plugin\\Contracts\\Registrars\\CommandRegistrar": {
         "kind": "interface",
@@ -449,7 +491,8 @@
         "methods": {
             "register": "(): void"
         },
-        "properties": []
+        "properties": [],
+        "hook": null
     },
     "Vito\\Plugin\\Contracts\\Registrars\\DnsProviderRegistrar": {
         "kind": "interface",
@@ -463,7 +506,8 @@
             "register": "(): void",
             "supportsCreatedAt": "(bool $supportsCreatedAt): static"
         },
-        "properties": []
+        "properties": [],
+        "hook": null
     },
     "Vito\\Plugin\\Contracts\\Registrars\\NotificationChannelRegistrar": {
         "kind": "interface",
@@ -474,7 +518,8 @@
             "label": "(string $label): static",
             "register": "(): void"
         },
-        "properties": []
+        "properties": [],
+        "hook": null
     },
     "Vito\\Plugin\\Contracts\\Registrars\\ServerFeatureActionRegistrar": {
         "kind": "interface",
@@ -485,7 +530,8 @@
             "label": "(string $label): static",
             "register": "(): void"
         },
-        "properties": []
+        "properties": [],
+        "hook": null
     },
     "Vito\\Plugin\\Contracts\\Registrars\\ServerFeatureRegistrar": {
         "kind": "interface",
@@ -495,7 +541,8 @@
             "label": "(string $label): static",
             "register": "(): void"
         },
-        "properties": []
+        "properties": [],
+        "hook": null
     },
     "Vito\\Plugin\\Contracts\\Registrars\\ServerProviderRegistrar": {
         "kind": "interface",
@@ -507,7 +554,8 @@
             "label": "(string $label): static",
             "register": "(): void"
         },
-        "properties": []
+        "properties": [],
+        "hook": null
     },
     "Vito\\Plugin\\Contracts\\Registrars\\ServiceTypeRegistrar": {
         "kind": "interface",
@@ -523,7 +571,8 @@
             "unit": "(string $unit): static",
             "versions": "(array $versions): static"
         },
-        "properties": []
+        "properties": [],
+        "hook": null
     },
     "Vito\\Plugin\\Contracts\\Registrars\\SiteFeatureActionRegistrar": {
         "kind": "interface",
@@ -534,7 +583,8 @@
             "label": "(string $label): static",
             "register": "(): void"
         },
-        "properties": []
+        "properties": [],
+        "hook": null
     },
     "Vito\\Plugin\\Contracts\\Registrars\\SiteFeatureRegistrar": {
         "kind": "interface",
@@ -544,7 +594,8 @@
             "label": "(string $label): static",
             "register": "(): void"
         },
-        "properties": []
+        "properties": [],
+        "hook": null
     },
     "Vito\\Plugin\\Contracts\\Registrars\\SiteTypeRegistrar": {
         "kind": "interface",
@@ -555,7 +606,8 @@
             "label": "(string $label): static",
             "register": "(): void"
         },
-        "properties": []
+        "properties": [],
+        "hook": null
     },
     "Vito\\Plugin\\Contracts\\Registrars\\SourceControlRegistrar": {
         "kind": "interface",
@@ -568,7 +620,8 @@
             "register": "(): void",
             "usableForSites": "(bool $usableForSites): static"
         },
-        "properties": []
+        "properties": [],
+        "hook": null
     },
     "Vito\\Plugin\\Contracts\\Registrars\\StorageProviderRegistrar": {
         "kind": "interface",
@@ -579,7 +632,8 @@
             "label": "(string $label): static",
             "register": "(): void"
         },
-        "properties": []
+        "properties": [],
+        "hook": null
     },
     "Vito\\Plugin\\Contracts\\Registrars\\ViewsRegistrar": {
         "kind": "interface",
@@ -588,7 +642,8 @@
             "path": "(string $path): static",
             "register": "(): void"
         },
-        "properties": []
+        "properties": [],
+        "hook": null
     },
     "Vito\\Plugin\\Contracts\\Registrars\\WorkflowActionRegistrar": {
         "kind": "interface",
@@ -600,7 +655,8 @@
             "label": "(string $label): static",
             "register": "(): void"
         },
-        "properties": []
+        "properties": [],
+        "hook": null
     },
     "Vito\\Plugin\\Contracts\\Script": {
         "kind": "interface",
@@ -613,7 +669,8 @@
             "name": "string",
             "project_id": "int|null",
             "user_id": "int"
-        }
+        },
+        "hook": null
     },
     "Vito\\Plugin\\Contracts\\ScriptExecution": {
         "kind": "interface",
@@ -629,7 +686,8 @@
             "server_log_id": "int",
             "status": "\\BackedEnum&\\Vito\\Plugin\\Contracts\\VitoEnum",
             "user": "string"
-        }
+        },
+        "hook": null
     },
     "Vito\\Plugin\\Contracts\\Server": {
         "kind": "interface",
@@ -650,7 +708,8 @@
             "project_id": "int",
             "ssh_user": "string",
             "status": "\\BackedEnum&\\Vito\\Plugin\\Contracts\\VitoEnum"
-        }
+        },
+        "hook": null
     },
     "Vito\\Plugin\\Contracts\\ServerIpAddress": {
         "kind": "interface",
@@ -669,7 +728,8 @@
             "server_id": "int",
             "status": "\\BackedEnum&\\Vito\\Plugin\\Contracts\\VitoEnum",
             "type": "\\BackedEnum&\\Vito\\Plugin\\Contracts\\VitoEnum"
-        }
+        },
+        "hook": null
     },
     "Vito\\Plugin\\Contracts\\ServerLog": {
         "kind": "interface",
@@ -685,7 +745,8 @@
             "site": "\\Vito\\Plugin\\Contracts\\Site|null",
             "site_id": "int|null",
             "type": "string"
-        }
+        },
+        "hook": null
     },
     "Vito\\Plugin\\Contracts\\ServerProvider": {
         "kind": "interface",
@@ -699,7 +760,8 @@
             "project_id": "int|null",
             "provider": "string",
             "user_id": "int"
-        }
+        },
+        "hook": null
     },
     "Vito\\Plugin\\Contracts\\ServerTemplate": {
         "kind": "interface",
@@ -709,7 +771,8 @@
             "id": "int",
             "name": "string",
             "user_id": "int"
-        }
+        },
+        "hook": null
     },
     "Vito\\Plugin\\Contracts\\Service": {
         "kind": "interface",
@@ -724,7 +787,8 @@
             "status": "\\BackedEnum&\\Vito\\Plugin\\Contracts\\VitoEnum",
             "type": "string",
             "version": "string"
-        }
+        },
+        "hook": null
     },
     "Vito\\Plugin\\Contracts\\Site": {
         "kind": "interface",
@@ -745,7 +809,8 @@
             "server_id": "int",
             "status": "\\BackedEnum&\\Vito\\Plugin\\Contracts\\VitoEnum",
             "web_directory": "string"
-        }
+        },
+        "hook": null
     },
     "Vito\\Plugin\\Contracts\\SourceControl": {
         "kind": "interface",
@@ -762,7 +827,8 @@
             "provider": "string",
             "url": "string|null",
             "user_id": "int"
-        }
+        },
+        "hook": null
     },
     "Vito\\Plugin\\Contracts\\Ssh": {
         "kind": "interface",
@@ -774,7 +840,8 @@
             "upload": "(string $local, string $remote, ?string $owner?): void",
             "write": "(string $remotePath, Illuminate\\Contracts\\View\\View|string $content, ?string $owner?): void"
         },
-        "properties": []
+        "properties": [],
+        "hook": null
     },
     "Vito\\Plugin\\Contracts\\SshKey": {
         "kind": "interface",
@@ -784,7 +851,8 @@
             "id": "int",
             "name": "string",
             "user_id": "int"
-        }
+        },
+        "hook": null
     },
     "Vito\\Plugin\\Contracts\\Ssl": {
         "kind": "interface",
@@ -803,13 +871,15 @@
             "site_id": "int|null",
             "status": "\\BackedEnum&\\Vito\\Plugin\\Contracts\\VitoEnum",
             "type": "string"
-        }
+        },
+        "hook": null
     },
     "Vito\\Plugin\\Contracts\\Storage": {
         "kind": "interface",
         "extends": [],
         "methods": [],
-        "properties": []
+        "properties": [],
+        "hook": null
     },
     "Vito\\Plugin\\Contracts\\StorageProvider": {
         "kind": "interface",
@@ -822,7 +892,8 @@
             "project_id": "int|null",
             "provider": "string",
             "user_id": "int"
-        }
+        },
+        "hook": null
     },
     "Vito\\Plugin\\Contracts\\User": {
         "kind": "interface",
@@ -837,7 +908,8 @@
             "is_admin": "bool",
             "name": "string",
             "timezone": "string"
-        }
+        },
+        "hook": null
     },
     "Vito\\Plugin\\Contracts\\UserProject": {
         "kind": "interface",
@@ -850,7 +922,8 @@
             "project_id": "int",
             "role": "\\BackedEnum&\\Vito\\Plugin\\Contracts\\VitoEnum",
             "user_id": "int|null"
-        }
+        },
+        "hook": null
     },
     "Vito\\Plugin\\Contracts\\VitoEnum": {
         "kind": "interface",
@@ -859,7 +932,8 @@
             "getColor": "(): string",
             "getText": "(): string"
         },
-        "properties": []
+        "properties": [],
+        "hook": null
     },
     "Vito\\Plugin\\Contracts\\Worker": {
         "kind": "interface",
@@ -881,7 +955,8 @@
             "site_id": "int",
             "status": "\\BackedEnum&\\Vito\\Plugin\\Contracts\\VitoEnum",
             "user": "string"
-        }
+        },
+        "hook": null
     },
     "Vito\\Plugin\\Contracts\\Workflow": {
         "kind": "interface",
@@ -893,7 +968,8 @@
             "project_id": "int|null",
             "runs": "array<int, \\Vito\\Plugin\\Contracts\\WorkflowRun>",
             "user_id": "int|null"
-        }
+        },
+        "hook": null
     },
     "Vito\\Plugin\\Contracts\\WorkflowRun": {
         "kind": "interface",
@@ -908,7 +984,8 @@
             "status": "\\BackedEnum&\\Vito\\Plugin\\Contracts\\VitoEnum",
             "user_id": "int|null",
             "workflow_id": "int|null"
-        }
+        },
+        "hook": null
     },
     "Vito\\Plugin\\DTOs\\DynamicField": {
         "kind": "class",
@@ -926,6 +1003,7 @@
             "link": "(string $label, string $url): static",
             "make": "(string $name): static",
             "name": "(string $name): static",
+            "optionLabels": "(?array $optionLabels): static",
             "options": "(?array $options): static",
             "password": "(): static",
             "passwordWithToggle": "(): static",
@@ -935,7 +1013,8 @@
             "textarea": "(): static",
             "toArray": "(): array"
         },
-        "properties": []
+        "properties": [],
+        "hook": null
     },
     "Vito\\Plugin\\DTOs\\DynamicForm": {
         "kind": "class",
@@ -943,10 +1022,11 @@
         "methods": {
             "__construct": "(array $fields?): mixed",
             "getFieldNames": "(): array",
-            "make": "(array $fields): Vito\\Plugin\\DTOs\\DynamicForm",
+            "make": "(array $fields): static",
             "toArray": "(): array"
         },
-        "properties": []
+        "properties": [],
+        "hook": null
     },
     "Vito\\Plugin\\Exceptions\\CapabilityBindingUnavailable": {
         "kind": "class",
@@ -968,7 +1048,8 @@
             "getTrace": "(): array",
             "getTraceAsString": "(): string"
         },
-        "properties": []
+        "properties": [],
+        "hook": null
     },
     "Vito\\Plugin\\Facades\\Broadcast": {
         "kind": "class",
@@ -976,7 +1057,17 @@
             "Illuminate\\Support\\Facades\\Facade"
         ],
         "methods": [],
-        "properties": []
+        "properties": [],
+        "hook": null
+    },
+    "Vito\\Plugin\\Facades\\Hooks": {
+        "kind": "class",
+        "extends": [
+            "Illuminate\\Support\\Facades\\Facade"
+        ],
+        "methods": [],
+        "properties": [],
+        "hook": null
     },
     "Vito\\Plugin\\Facades\\Http": {
         "kind": "class",
@@ -984,7 +1075,8 @@
             "Illuminate\\Support\\Facades\\Facade"
         ],
         "methods": [],
-        "properties": []
+        "properties": [],
+        "hook": null
     },
     "Vito\\Plugin\\Facades\\Notifications": {
         "kind": "class",
@@ -992,7 +1084,8 @@
             "Illuminate\\Support\\Facades\\Facade"
         ],
         "methods": [],
-        "properties": []
+        "properties": [],
+        "hook": null
     },
     "Vito\\Plugin\\Facades\\Register": {
         "kind": "class",
@@ -1000,7 +1093,8 @@
             "Illuminate\\Support\\Facades\\Facade"
         ],
         "methods": [],
-        "properties": []
+        "properties": [],
+        "hook": null
     },
     "Vito\\Plugin\\Facades\\Ssh": {
         "kind": "class",
@@ -1008,7 +1102,8 @@
             "Illuminate\\Support\\Facades\\Facade"
         ],
         "methods": [],
-        "properties": []
+        "properties": [],
+        "hook": null
     },
     "Vito\\Plugin\\Facades\\Storage": {
         "kind": "class",
@@ -1016,7 +1111,87 @@
             "Illuminate\\Support\\Facades\\Facade"
         ],
         "methods": [],
-        "properties": []
+        "properties": [],
+        "hook": null
+    },
+    "Vito\\Plugin\\Hooks\\ActionHook": {
+        "kind": "class",
+        "extends": [],
+        "methods": {
+            "execute": "(mixed ...$args?): void",
+            "register": "(callable $listener): void"
+        },
+        "properties": [],
+        "hook": null
+    },
+    "Vito\\Plugin\\Hooks\\Decision": {
+        "kind": "class",
+        "extends": [],
+        "methods": {
+            "allow": "(?string $reason?): Vito\\Plugin\\Hooks\\Decision",
+            "deny": "(string $reason): Vito\\Plugin\\Hooks\\Decision"
+        },
+        "properties": [],
+        "hook": null
+    },
+    "Vito\\Plugin\\Hooks\\DecisionHook": {
+        "kind": "class",
+        "extends": [],
+        "methods": {
+            "evaluate": "(mixed ...$args?): Vito\\Plugin\\Hooks\\DecisionResult",
+            "execute": "(mixed ...$args?): bool",
+            "register": "(callable $listener): void"
+        },
+        "properties": [],
+        "hook": null
+    },
+    "Vito\\Plugin\\Hooks\\DecisionResult": {
+        "kind": "class",
+        "extends": [],
+        "methods": {
+            "__construct": "(bool $allowed, ?string $reason?, ?object $deniedBy?): mixed"
+        },
+        "properties": [],
+        "hook": null
+    },
+    "Vito\\Plugin\\Hooks\\HookListener": {
+        "kind": "class",
+        "extends": [],
+        "methods": {
+            "__construct": "(mixed $callback, ?object $source?): mixed"
+        },
+        "properties": [],
+        "hook": null
+    },
+    "Vito\\Plugin\\Hooks\\PreDeploy": {
+        "kind": "class",
+        "extends": [
+            "Vito\\Plugin\\Hooks\\ActionHook"
+        ],
+        "methods": {
+            "__construct": "(Vito\\Plugin\\Contracts\\Site $site): mixed"
+        },
+        "properties": [],
+        "hook": {
+            "kind": "action",
+            "default": true,
+            "safeValue": null
+        }
+    },
+    "Vito\\Plugin\\Hooks\\ShouldDeploy": {
+        "kind": "class",
+        "extends": [
+            "Vito\\Plugin\\Hooks\\DecisionHook"
+        ],
+        "methods": {
+            "__construct": "(Vito\\Plugin\\Contracts\\Site $site): mixed"
+        },
+        "properties": [],
+        "hook": {
+            "kind": "decision",
+            "default": true,
+            "safeValue": null
+        }
     },
     "Vito\\Plugin\\PluginInterface": {
         "kind": "interface",
@@ -1030,6 +1205,7 @@
             "install": "(): void",
             "uninstall": "(): void"
         },
-        "properties": []
+        "properties": [],
+        "hook": null
     }
 }

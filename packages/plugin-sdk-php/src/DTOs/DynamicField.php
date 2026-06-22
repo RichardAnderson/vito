@@ -121,6 +121,16 @@ class DynamicField
         return $this;
     }
 
+    /**
+     * @param  array<string, string>|null  $optionLabels
+     */
+    public function optionLabels(?array $optionLabels): static
+    {
+        $this->optionLabels = $optionLabels;
+
+        return $this;
+    }
+
     public function link(string $label, string $url): static
     {
         $this->link = [

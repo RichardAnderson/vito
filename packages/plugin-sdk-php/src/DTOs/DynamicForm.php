@@ -14,9 +14,9 @@ readonly class DynamicForm
     /**
      * @param  array<int, DynamicField>  $fields
      */
-    public static function make(array $fields): self
+    public static function make(array $fields): static
     {
-        return new self($fields);
+        return new static($fields);
     }
 
     /**

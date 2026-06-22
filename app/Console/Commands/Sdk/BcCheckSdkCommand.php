@@ -43,6 +43,10 @@ class BcCheckSdkCommand extends Command
             }
             $this->classifyMembers($type, 'method', $old['methods'], $new['methods'], $breaking, $additive);
             $this->classifyMembers($type, 'property', $old['properties'], $new['properties'], $breaking, $additive);
+
+            if (($old['hook'] ?? null) != ($new['hook'] ?? null)) {
+                $breaking[] = "{$type}: hook semantics changed ".json_encode($old['hook'] ?? null).' => '.json_encode($new['hook'] ?? null);
+            }
         }
 
         foreach (array_diff_key($current, $committed) as $type => $_) {

@@ -17,6 +17,8 @@ use App\Traits\UniqueQueue;
 use Exception;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Vito\Plugin\Hooks\PreDeploy;
+use Vito\Plugin\Hooks\ShouldDeploy;
 
 class DeployJob implements ShouldQueue
 {
@@ -34,6 +36,18 @@ class DeployJob implements ShouldQueue
     {
         $site = $this->deployment->site;
         $log = ServerLog::find($this->deployment->log_id);
+
+        $decision = ShouldDeploy::evaluate($site);
+        if (! $decision->allowed) {
+            $this->deployment->status = DeploymentStatus::FAILED;
+            $this->deployment->save();
+            $this->deployment->log?->write('Deployment blocked by a plugin'.($decision->reason !== null ? ': '.$decision->reason : '.'));
+            $this->broadcastDeploymentUpdate();
+
+            return;
+        }
+
+        PreDeploy::execute($site);
 
         $this->run("site-{$site->id}", function () use ($site, $log) {
             if ($this->isModern) {

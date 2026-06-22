@@ -26,7 +26,7 @@ final class SurfaceSnapshot
     }
 
     /**
-     * @return array<string, array{kind: string, extends: list<string>, methods: array<string, string>, properties: array<string, string>}>
+     * @return array<string, array{kind: string, extends: list<string>, methods: array<string, string>, properties: array<string, string>, hook: array{kind: string, default: bool, safeValue: bool|null}|null}>
      */
     public function build(): array
     {
@@ -39,6 +39,7 @@ final class SurfaceSnapshot
                 'extends' => $this->parents($reflection),
                 'methods' => $this->methods($reflection),
                 'properties' => $this->propertyReads($reflection),
+                'hook' => $this->hook($reflection),
             ];
         }
 
@@ -161,6 +162,41 @@ final class SurfaceSnapshot
         }
 
         return 'mixed';
+    }
+
+    /**
+     * Hook semantics that live in protected props (not methods/docblocks) and so are invisible to the
+     * rest of the snapshot — yet are the most security-relevant part of a hook. Flipping a decision
+     * hook's default (fail-open ↔ fail-closed polarity) or its safe value must register as a change.
+     *
+     * @param  ReflectionClass<object>  $reflection
+     * @return array{kind: string, default: bool, safeValue: bool|null}|null
+     */
+    private function hook(ReflectionClass $reflection): ?array
+    {
+        if ($reflection->isAbstract()) {
+            return null;
+        }
+
+        if ($reflection->isSubclassOf('Vito\\Plugin\\Hooks\\DecisionHook')) {
+            $properties = $reflection->getDefaultProperties();
+
+            return [
+                'kind' => 'decision',
+                'default' => (bool) ($properties['default'] ?? true),
+                'safeValue' => $properties['safeValue'] ?? null,
+            ];
+        }
+
+        if ($reflection->isSubclassOf('Vito\\Plugin\\Hooks\\ActionHook')) {
+            return [
+                'kind' => 'action',
+                'default' => true,
+                'safeValue' => null,
+            ];
+        }
+
+        return null;
     }
 
     /**

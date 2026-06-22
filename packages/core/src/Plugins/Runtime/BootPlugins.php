@@ -3,6 +3,7 @@
 namespace App\Plugins\Runtime;
 
 use App\Models\PluginError;
+use App\Plugins\Hooks\HookRegistry;
 use Throwable;
 
 final readonly class BootPlugins
@@ -10,17 +11,27 @@ final readonly class BootPlugins
     public function __construct(
         private GetPluginInstance $getInstance,
         private PluginCache $cache,
+        private HookRegistry $hooks,
     ) {}
 
     public function handle(): void
     {
+        $this->hooks->flush();
+
         $plugins = $this->cache->get();
         $booted = [];
 
         foreach ($plugins as $plugin) {
             try {
                 $instance = $this->getInstance->handle($plugin);
-                $instance->boot();
+
+                $this->hooks->usingSource($plugin);
+                try {
+                    $instance->boot();
+                } finally {
+                    $this->hooks->usingSource(null);
+                }
+
                 $booted[] = $plugin;
             } catch (Throwable $exception) {
                 $plugin->is_enabled = false;

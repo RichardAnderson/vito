@@ -2,10 +2,12 @@
 
 namespace App\Providers;
 
+use App\Plugins\Hooks\HookRegistry;
 use App\Plugins\Registrar;
 use App\Plugins\Sdk\BroadcastAdapter;
 use Illuminate\Support\ServiceProvider;
 use Vito\Plugin\Contracts\Broadcast;
+use Vito\Plugin\Contracts\HookRegistry as HookRegistryContract;
 use Vito\Plugin\Contracts\Http;
 use Vito\Plugin\Contracts\Notifications;
 use Vito\Plugin\Contracts\Registrar as RegistrarContract;
@@ -31,6 +33,13 @@ final class PluginSdkServiceProvider extends ServiceProvider
         $this->app->bind(Notifications::class, fn () => $this->app->make('notifier'));
         $this->app->bind(Broadcast::class, fn () => new BroadcastAdapter);
         $this->app->bind(RegistrarContract::class, fn () => new Registrar);
+
+        // Singleton (not scoped): listeners are stateless closures registered once when BootPlugins runs
+        // at app->booted — exactly like the plugin catalog (config('site.types') etc.). A scoped binding
+        // would be emptied by the queue worker's forgetScopedInstances() before every job (which fires
+        // AFTER the Looping event), leaving hooks dead for queued jobs like DeployJob.
+        $this->app->singleton(HookRegistry::class);
+        $this->app->bind(HookRegistryContract::class, fn ($app) => $app->make(HookRegistry::class));
 
         $this->app->bind(Http::class, fn () => throw CapabilityBindingUnavailable::for('outbound-http'));
         $this->app->bind(Storage::class, fn () => throw CapabilityBindingUnavailable::for('storage'));
