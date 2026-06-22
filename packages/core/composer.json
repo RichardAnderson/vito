@@ -1,0 +1,46 @@
+{
+  "name": "vito/core",
+  "description": "Vito core — the framework, models, and plugin runtime a Vito plugin builds and tests against.",
+  "license": "AGPL-3.0",
+  "type": "library",
+  "require": {
+    "php": "^8.4",
+    "vito/plugin-sdk": "@dev",
+    "laravel/framework": "^13.0",
+    "spatie/laravel-data": "^4",
+    "spatie/laravel-route-attributes": "^1.24",
+    "laravel/sanctum": "^4.0",
+    "laravel/fortify": "^1.17",
+    "forjedio/inertia-table": "^1.2",
+    "phpseclib/phpseclib": "^3.0.52",
+    "aws/aws-sdk-php": "^3.158",
+    "symfony/yaml": "^8.0",
+    "phpunit/phpunit": "^12.0",
+    "mockery/mockery": "^1.4.4",
+    "fakerphp/faker": "^1.9.1",
+    "brianium/paratest": "^7.8.5"
+  },
+  "autoload": {
+    "psr-4": {
+      "App\\": "src/",
+      "Database\\Factories\\": "database/factories/",
+      "Database\\Seeders\\": "database/seeders/",
+      "Vito\\Core\\Testing\\": "testing/"
+    },
+    "files": [
+      "src/Support/helpers.php"
+    ]
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-feat/5.x": "5.x-dev"
+    },
+    "laravel": {
+      "providers": [
+        "App\\Providers\\CoreServiceProvider"
+      ]
+    }
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true
+}

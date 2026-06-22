@@ -1,0 +1,4 @@
+* text=auto eol=lf
+
+# Files excluded from the published Packagist distribution (kept in the monorepo only).
+/.gitattributes export-ignore

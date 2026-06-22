@@ -31,6 +31,7 @@
     "spatie/laravel-route-attributes": "^1.24",
     "symfony/yaml": "^8.0",
     "tightenco/ziggy": "^2.5",
+    "vito/core": "@dev",
     "vito/plugin-sdk": "@dev"
   },
   "require-dev": {
@@ -49,13 +50,8 @@
   },
   "autoload": {
     "psr-4": {
-      "App\\": "app/",
-      "Database\\Factories\\": "database/factories/",
-      "Database\\Seeders\\": "database/seeders/"
-    },
-    "files": [
-      "app/Support/helpers.php"
-    ]
+      "App\\": "app/"
+    }
   },
   "autoload-dev": {
     "psr-4": {
@@ -80,6 +76,7 @@
       "./vendor/bin/pint --parallel",
       "./vendor/bin/phpstan analyze",
       "@php artisan sdk:check",
+      "@php artisan sdk:bc-check",
       "npm run format",
       "npm run lint",
       "npm run types",
@@ -99,6 +96,13 @@
     {
       "type": "path",
       "url": "packages/plugin-sdk-php",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "packages/core",
       "options": {
         "symlink": true
       }

@@ -73,7 +73,7 @@ class IsolatedUserMigrationTest extends TestCase
 
     private function runIsolatedUserMigration(): void
     {
-        $path = base_path('database/migrations/2026_05_24_100123_create_isolated_users_table.php');
+        $path = base_path('packages/core/database/migrations/2026_05_24_100123_create_isolated_users_table.php');
         $migration = require $path;
         $migration->up();
     }

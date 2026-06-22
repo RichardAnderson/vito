@@ -2,17 +2,25 @@
 
 namespace App\Providers;
 
+use App\Contracts\ServerConnectionChecker;
 use App\Events\SiteCreatedEvent;
 use App\Events\SiteDeletedEvent;
 use App\Events\SocketEvent;
-use App\Helpers\FTP;
-use App\Helpers\Notifier;
-use App\Helpers\SFTP;
-use App\Helpers\SSH;
+use App\Contracts\ServiceManager;
+use App\Contracts\SiteProgressBroadcaster as SiteProgressBroadcasterContract;
+use App\Contracts\WorkerCreator;
 use App\Listeners\HandleSiteCreatedStats;
 use App\Listeners\HandleSiteDeletedStats;
 use App\Listeners\SocketEventListener;
+use App\Models\BackupFile;
+use App\Models\Metric;
 use App\Models\PersonalAccessToken;
+use App\Models\ServerLog;
+use App\Models\Site;
+use App\Observers\BackupFileObserver;
+use App\Observers\MetricObserver;
+use App\Observers\ServerLogObserver;
+use App\Observers\SiteSslObserver;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\URL;
@@ -24,17 +32,24 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Register any application services.
      */
-    public function register(): void {}
+    public function register(): void
+    {
+        // Core binding-seam: core models/site-types depend on these contracts; the app binds the Actions.
+        $this->app->bind(ServerConnectionChecker::class, \App\Actions\Server\CheckConnection::class);
+        $this->app->bind(ServiceManager::class, \App\Actions\Service\Manage::class);
+        $this->app->bind(WorkerCreator::class, \App\Actions\Worker\CreateWorker::class);
+        $this->app->bind(SiteProgressBroadcasterContract::class, \App\Broadcasting\SiteProgressBroadcaster::class);
+    }
 
     public function boot(): void
     {
         ResourceCollection::withoutWrapping();
 
-        // facades
-        $this->app->bind('ssh', fn (): SSH => new SSH);
-        $this->app->bind('notifier', fn (): Notifier => new Notifier);
-        $this->app->bind('ftp', fn (): FTP => new FTP);
-        $this->app->bind('sftp', fn (): SFTP => new SFTP);
+        // App-side model side effects that core models must not own (broadcasts / app Jobs / Actions).
+        BackupFile::observe(BackupFileObserver::class);
+        Metric::observe(MetricObserver::class);
+        ServerLog::observe(ServerLogObserver::class);
+        Site::observe(SiteSslObserver::class);
 
         Sanctum::usePersonalAccessTokenModel(PersonalAccessToken::class);
 

@@ -18,4 +18,9 @@ final class SdkPaths
     {
         return base_path('packages/plugin-sdk-js/src/types/generated.ts');
     }
+
+    public static function snapshotFile(): string
+    {
+        return base_path('packages/plugin-sdk-php/contract-snapshot.json');
+    }
 }

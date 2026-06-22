@@ -42,7 +42,8 @@ final class ProjectionRegistry
      */
     private function discover(): array
     {
-        $directory = app_path('Data');
+        // App\Data projections live in the vito/core package (App\ namespace, core path).
+        $directory = base_path('packages/core/src/Data');
 
         if (! is_dir($directory)) {
             return [];

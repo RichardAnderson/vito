@@ -5,5 +5,8 @@ parameters:
     paths:
         - app
         - bootstrap
-        - database/factories
+        - packages/core/src
+        - packages/core/database/factories
+    databaseMigrationsPath:
+        - packages/core/database/migrations
     level: 5

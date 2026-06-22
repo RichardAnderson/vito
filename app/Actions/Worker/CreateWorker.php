@@ -2,6 +2,7 @@
 
 namespace App\Actions\Worker;
 
+use App\Contracts\WorkerCreator;
 use App\Enums\WorkerStatus;
 use App\Jobs\Worker\CreateJob;
 use App\Models\Server;
@@ -11,7 +12,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
-class CreateWorker
+class CreateWorker implements WorkerCreator
 {
     /**
      * @param  array<string, mixed>  $input

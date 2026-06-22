@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Actions\Plugins\ClearLogs;
-use App\Actions\Plugins\DisablePlugin;
-use App\Actions\Plugins\DiscoverPlugins;
-use App\Actions\Plugins\EnablePlugin;
-use App\Actions\Plugins\InstallPlugin;
-use App\Actions\Plugins\UninstallPlugin;
+use App\Plugins\Runtime\ClearLogs;
+use App\Plugins\Runtime\DisablePlugin;
+use App\Plugins\Runtime\DiscoverPlugins;
+use App\Plugins\Runtime\EnablePlugin;
+use App\Plugins\Runtime\InstallPlugin;
+use App\Plugins\Runtime\UninstallPlugin;
 use App\Http\Controllers\Controller;
 use App\Models\Plugin;
 use Illuminate\Http\RedirectResponse;

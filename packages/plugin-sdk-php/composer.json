@@ -13,6 +13,11 @@
       "Vito\\Plugin\\": "src/"
     }
   },
+  "extra": {
+    "branch-alias": {
+      "dev-feat/5.x": "5.x-dev"
+    }
+  },
   "minimum-stability": "stable",
   "prefer-stable": true
 }

@@ -2,12 +2,13 @@
 
 namespace App\Actions\Service;
 
+use App\Contracts\ServiceManager;
 use App\Enums\ServiceStatus;
 use App\Jobs\Service\ManageJob;
 use App\Models\Service;
 use Illuminate\Validation\ValidationException;
 
-class Manage
+class Manage implements ServiceManager
 {
     public function start(Service $service): void
     {

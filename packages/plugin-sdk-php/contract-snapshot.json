@@ -1,0 +1,793 @@
+{
+    "Vito\\Plugin\\Attributes\\ExposesMethods": {
+        "kind": "class",
+        "extends": [],
+        "methods": {
+            "__construct": "(array $methods?): mixed"
+        },
+        "properties": []
+    },
+    "Vito\\Plugin\\Attributes\\HostContract": {
+        "kind": "class",
+        "extends": [],
+        "methods": {
+            "__construct": "(string $model): mixed"
+        },
+        "properties": []
+    },
+    "Vito\\Plugin\\Contracts\\Backup": {
+        "kind": "interface",
+        "extends": [],
+        "methods": {
+            "isCustomInterval": "(): bool"
+        },
+        "properties": {
+            "database_id": "int|null",
+            "enabled": "bool",
+            "id": "int",
+            "interval": "string",
+            "keep_backups": "int",
+            "path": "string",
+            "server": "\\Vito\\Plugin\\Contracts\\Server|null",
+            "server_id": "int",
+            "status": "\\BackedEnum&\\Vito\\Plugin\\Contracts\\VitoEnum|null",
+            "storage_id": "int",
+            "type": "\\BackedEnum&\\Vito\\Plugin\\Contracts\\VitoEnum"
+        }
+    },
+    "Vito\\Plugin\\Contracts\\BackupFile": {
+        "kind": "interface",
+        "extends": [],
+        "methods": {
+            "isAvailable": "(): bool",
+            "isLocal": "(): bool",
+            "path": "(): string"
+        },
+        "properties": {
+            "backup_id": "int",
+            "id": "int",
+            "name": "string",
+            "restored_to": "string|null",
+            "size": "int|null",
+            "status": "\\BackedEnum&\\Vito\\Plugin\\Contracts\\VitoEnum"
+        }
+    },
+    "Vito\\Plugin\\Contracts\\Broadcast": {
+        "kind": "interface",
+        "extends": [],
+        "methods": {
+            "dispatch": "(int $projectId, string $type, array $data): void"
+        },
+        "properties": []
+    },
+    "Vito\\Plugin\\Contracts\\Command": {
+        "kind": "interface",
+        "extends": [],
+        "methods": [],
+        "properties": {
+            "command": "string",
+            "executions": "array<int, \\Vito\\Plugin\\Contracts\\CommandExecution>",
+            "id": "int",
+            "name": "string",
+            "site": "\\Vito\\Plugin\\Contracts\\Site|null",
+            "site_id": "int"
+        }
+    },
+    "Vito\\Plugin\\Contracts\\CommandExecution": {
+        "kind": "interface",
+        "extends": [],
+        "methods": {
+            "getContent": "(): string"
+        },
+        "properties": {
+            "command_id": "int",
+            "id": "int",
+            "server": "\\Vito\\Plugin\\Contracts\\Server|null",
+            "server_id": "int",
+            "server_log_id": "int|null",
+            "status": "\\BackedEnum&\\Vito\\Plugin\\Contracts\\VitoEnum",
+            "user_id": "int"
+        }
+    },
+    "Vito\\Plugin\\Contracts\\CronJob": {
+        "kind": "interface",
+        "extends": [],
+        "methods": {
+            "frequencyLabel": "(): string",
+            "isDisabled": "(): bool",
+            "isEnabled": "(): bool"
+        },
+        "properties": {
+            "command": "string",
+            "frequency": "string",
+            "hidden": "bool",
+            "id": "int",
+            "name": "string|null",
+            "server": "\\Vito\\Plugin\\Contracts\\Server|null",
+            "server_id": "int",
+            "site": "\\Vito\\Plugin\\Contracts\\Site|null",
+            "site_id": "int|null",
+            "status": "\\BackedEnum&\\Vito\\Plugin\\Contracts\\VitoEnum",
+            "user": "string"
+        }
+    },
+    "Vito\\Plugin\\Contracts\\DNSProvider": {
+        "kind": "interface",
+        "extends": [],
+        "methods": [],
+        "properties": {
+            "connected": "bool",
+            "id": "int",
+            "name": "string",
+            "project": "\\Vito\\Plugin\\Contracts\\Project|null",
+            "project_id": "int|null",
+            "provider": "string",
+            "user_id": "int"
+        }
+    },
+    "Vito\\Plugin\\Contracts\\DNSRecord": {
+        "kind": "interface",
+        "extends": [],
+        "methods": [],
+        "properties": {
+            "content": "string",
+            "domain": "\\Vito\\Plugin\\Contracts\\Domain|null",
+            "domain_id": "int",
+            "id": "int",
+            "name": "string",
+            "priority": "int|null",
+            "proxied": "bool",
+            "ttl": "int",
+            "type": "string"
+        }
+    },
+    "Vito\\Plugin\\Contracts\\Database": {
+        "kind": "interface",
+        "extends": [],
+        "methods": [],
+        "properties": {
+            "charset": "string",
+            "collation": "string",
+            "id": "int",
+            "name": "string",
+            "server": "\\Vito\\Plugin\\Contracts\\Server|null",
+            "server_id": "int",
+            "status": "\\BackedEnum&\\Vito\\Plugin\\Contracts\\VitoEnum"
+        }
+    },
+    "Vito\\Plugin\\Contracts\\DatabaseUser": {
+        "kind": "interface",
+        "extends": [],
+        "methods": [],
+        "properties": {
+            "host": "string",
+            "id": "int",
+            "permission": "\\BackedEnum&\\Vito\\Plugin\\Contracts\\VitoEnum",
+            "server": "\\Vito\\Plugin\\Contracts\\Server|null",
+            "server_id": "int",
+            "status": "\\BackedEnum&\\Vito\\Plugin\\Contracts\\VitoEnum",
+            "username": "string"
+        }
+    },
+    "Vito\\Plugin\\Contracts\\Deployment": {
+        "kind": "interface",
+        "extends": [],
+        "methods": [],
+        "properties": {
+            "active": "bool",
+            "commit_id": "string",
+            "id": "int",
+            "release": "string|null",
+            "site": "\\Vito\\Plugin\\Contracts\\Site|null",
+            "site_id": "int",
+            "status": "\\BackedEnum&\\Vito\\Plugin\\Contracts\\VitoEnum"
+        }
+    },
+    "Vito\\Plugin\\Contracts\\DeploymentScript": {
+        "kind": "interface",
+        "extends": [],
+        "methods": {
+            "shouldRestartWorkers": "(): bool"
+        },
+        "properties": {
+            "content": "string",
+            "id": "int",
+            "name": "string",
+            "site": "\\Vito\\Plugin\\Contracts\\Site|null",
+            "site_id": "int"
+        }
+    },
+    "Vito\\Plugin\\Contracts\\Domain": {
+        "kind": "interface",
+        "extends": [],
+        "methods": [],
+        "properties": {
+            "dns_provider_id": "int",
+            "domain": "string",
+            "id": "int",
+            "project": "\\Vito\\Plugin\\Contracts\\Project|null",
+            "project_id": "int",
+            "provider_domain_id": "string",
+            "user_id": "int"
+        }
+    },
+    "Vito\\Plugin\\Contracts\\File": {
+        "kind": "interface",
+        "extends": [],
+        "methods": {
+            "getFilePath": "(): string",
+            "isExtractable": "(): bool"
+        },
+        "properties": {
+            "group": "string",
+            "id": "int",
+            "links": "int",
+            "name": "string",
+            "owner": "string",
+            "path": "string",
+            "permissions": "string",
+            "server_id": "int",
+            "server_user": "string",
+            "size": "int",
+            "type": "string",
+            "user_id": "int"
+        }
+    },
+    "Vito\\Plugin\\Contracts\\FirewallRule": {
+        "kind": "interface",
+        "extends": [],
+        "methods": [],
+        "properties": {
+            "id": "int",
+            "mask": "string|null",
+            "name": "string",
+            "note": "string",
+            "port": "string",
+            "protocol": "string",
+            "server": "\\Vito\\Plugin\\Contracts\\Server|null",
+            "server_id": "int",
+            "source": "string",
+            "status": "\\BackedEnum&\\Vito\\Plugin\\Contracts\\VitoEnum",
+            "type": "string"
+        }
+    },
+    "Vito\\Plugin\\Contracts\\GitHook": {
+        "kind": "interface",
+        "extends": [],
+        "methods": [],
+        "properties": {
+            "hook_id": "string",
+            "id": "int",
+            "site": "\\Vito\\Plugin\\Contracts\\Site|null",
+            "site_id": "int",
+            "source_control_id": "int"
+        }
+    },
+    "Vito\\Plugin\\Contracts\\HostedDomain": {
+        "kind": "interface",
+        "extends": [],
+        "methods": [],
+        "properties": {
+            "domain": "string",
+            "error": "string|null",
+            "id": "int",
+            "site": "\\Vito\\Plugin\\Contracts\\Site|null",
+            "site_id": "int",
+            "ssl_id": "int|null",
+            "ssl_method": "\\BackedEnum&\\Vito\\Plugin\\Contracts\\VitoEnum",
+            "status": "\\BackedEnum&\\Vito\\Plugin\\Contracts\\VitoEnum",
+            "type": "\\BackedEnum&\\Vito\\Plugin\\Contracts\\VitoEnum"
+        }
+    },
+    "Vito\\Plugin\\Contracts\\Http": {
+        "kind": "interface",
+        "extends": [],
+        "methods": [],
+        "properties": []
+    },
+    "Vito\\Plugin\\Contracts\\IsolatedUser": {
+        "kind": "interface",
+        "extends": [],
+        "methods": [],
+        "properties": {
+            "id": "int",
+            "server": "\\Vito\\Plugin\\Contracts\\Server|null",
+            "server_id": "int",
+            "username": "string"
+        }
+    },
+    "Vito\\Plugin\\Contracts\\LoadBalancerServer": {
+        "kind": "interface",
+        "extends": [],
+        "methods": [],
+        "properties": {
+            "backup": "bool",
+            "id": "int",
+            "ip": "string",
+            "load_balancer_id": "int",
+            "port": "int",
+            "weight": "int"
+        }
+    },
+    "Vito\\Plugin\\Contracts\\Metric": {
+        "kind": "interface",
+        "extends": [],
+        "methods": [],
+        "properties": {
+            "cpu_cores": "int|null",
+            "cpu_usage_percent": "float|null",
+            "disk_total": "float|null",
+            "disk_used": "float|null",
+            "id": "int",
+            "load": "float|null",
+            "memory_total": "float|null",
+            "memory_used": "float|null",
+            "reboot_required": "bool|null",
+            "server": "\\Vito\\Plugin\\Contracts\\Server|null",
+            "server_id": "int"
+        }
+    },
+    "Vito\\Plugin\\Contracts\\NotificationChannel": {
+        "kind": "interface",
+        "extends": [],
+        "methods": [],
+        "properties": {
+            "connected": "bool",
+            "id": "int",
+            "label": "string",
+            "project": "\\Vito\\Plugin\\Contracts\\Project|null",
+            "project_id": "int|null",
+            "provider": "string",
+            "user_id": "int"
+        }
+    },
+    "Vito\\Plugin\\Contracts\\Notifications": {
+        "kind": "interface",
+        "extends": [],
+        "methods": {
+            "send": "(object $notifiable, object $notification): void"
+        },
+        "properties": []
+    },
+    "Vito\\Plugin\\Contracts\\Plugin": {
+        "kind": "interface",
+        "extends": [],
+        "methods": [],
+        "properties": {
+            "description": "string|null",
+            "folder": "string",
+            "id": "int",
+            "is_enabled": "bool",
+            "is_installed": "bool",
+            "name": "string|null",
+            "namespace": "string",
+            "repo": "string|null",
+            "updates_available": "bool",
+            "username": "string",
+            "version": "string|null"
+        }
+    },
+    "Vito\\Plugin\\Contracts\\PluginError": {
+        "kind": "interface",
+        "extends": [],
+        "methods": [],
+        "properties": {
+            "error_message": "string",
+            "error_type": "string",
+            "file": "string|null",
+            "id": "int",
+            "is_fatal": "bool",
+            "line": "int|null",
+            "plugin": "\\Vito\\Plugin\\Contracts\\Plugin|null",
+            "plugin_id": "int",
+            "stack_trace": "string|null"
+        }
+    },
+    "Vito\\Plugin\\Contracts\\Project": {
+        "kind": "interface",
+        "extends": [],
+        "methods": [],
+        "properties": {
+            "id": "int",
+            "name": "string"
+        }
+    },
+    "Vito\\Plugin\\Contracts\\Redirect": {
+        "kind": "interface",
+        "extends": [],
+        "methods": [],
+        "properties": {
+            "from": "string",
+            "id": "int",
+            "mode": "string",
+            "site": "\\Vito\\Plugin\\Contracts\\Site|null",
+            "site_id": "int",
+            "status": "\\BackedEnum&\\Vito\\Plugin\\Contracts\\VitoEnum",
+            "to": "string"
+        }
+    },
+    "Vito\\Plugin\\Contracts\\Script": {
+        "kind": "interface",
+        "extends": [],
+        "methods": [],
+        "properties": {
+            "content": "string",
+            "executions": "array<int, \\Vito\\Plugin\\Contracts\\ScriptExecution>",
+            "id": "int",
+            "name": "string",
+            "project_id": "int|null",
+            "user_id": "int"
+        }
+    },
+    "Vito\\Plugin\\Contracts\\ScriptExecution": {
+        "kind": "interface",
+        "extends": [],
+        "methods": {
+            "getContent": "(): string"
+        },
+        "properties": {
+            "id": "int",
+            "script_id": "int",
+            "server": "\\Vito\\Plugin\\Contracts\\Server|null",
+            "server_id": "int|null",
+            "server_log_id": "int",
+            "status": "\\BackedEnum&\\Vito\\Plugin\\Contracts\\VitoEnum",
+            "user": "string"
+        }
+    },
+    "Vito\\Plugin\\Contracts\\Server": {
+        "kind": "interface",
+        "extends": [],
+        "methods": {
+            "getSshUser": "(): string",
+            "isReady": "(): bool"
+        },
+        "properties": {
+            "auto_update": "bool",
+            "id": "int",
+            "ip": "string",
+            "local_ip": "string|null",
+            "name": "string",
+            "os": "\\BackedEnum&\\Vito\\Plugin\\Contracts\\VitoEnum",
+            "port": "int",
+            "project": "\\Vito\\Plugin\\Contracts\\Project|null",
+            "project_id": "int",
+            "ssh_user": "string",
+            "status": "\\BackedEnum&\\Vito\\Plugin\\Contracts\\VitoEnum"
+        }
+    },
+    "Vito\\Plugin\\Contracts\\ServerIpAddress": {
+        "kind": "interface",
+        "extends": [],
+        "methods": [],
+        "properties": {
+            "family": "\\BackedEnum&\\Vito\\Plugin\\Contracts\\VitoEnum",
+            "id": "int",
+            "interface": "string|null",
+            "ip": "string",
+            "is_dynamic": "bool",
+            "is_managed": "bool",
+            "is_primary": "bool",
+            "prefix_length": "int",
+            "server": "\\Vito\\Plugin\\Contracts\\Server|null",
+            "server_id": "int",
+            "status": "\\BackedEnum&\\Vito\\Plugin\\Contracts\\VitoEnum",
+            "type": "\\BackedEnum&\\Vito\\Plugin\\Contracts\\VitoEnum"
+        }
+    },
+    "Vito\\Plugin\\Contracts\\ServerLog": {
+        "kind": "interface",
+        "extends": [],
+        "methods": [],
+        "properties": {
+            "disk": "string",
+            "id": "int",
+            "is_remote": "bool",
+            "name": "string",
+            "server": "\\Vito\\Plugin\\Contracts\\Server|null",
+            "server_id": "int",
+            "site": "\\Vito\\Plugin\\Contracts\\Site|null",
+            "site_id": "int|null",
+            "type": "string"
+        }
+    },
+    "Vito\\Plugin\\Contracts\\ServerProvider": {
+        "kind": "interface",
+        "extends": [],
+        "methods": [],
+        "properties": {
+            "connected": "bool",
+            "id": "int",
+            "profile": "string",
+            "project": "\\Vito\\Plugin\\Contracts\\Project|null",
+            "project_id": "int|null",
+            "provider": "string",
+            "user_id": "int"
+        }
+    },
+    "Vito\\Plugin\\Contracts\\ServerTemplate": {
+        "kind": "interface",
+        "extends": [],
+        "methods": [],
+        "properties": {
+            "id": "int",
+            "name": "string",
+            "user_id": "int"
+        }
+    },
+    "Vito\\Plugin\\Contracts\\Service": {
+        "kind": "interface",
+        "extends": [],
+        "methods": [],
+        "properties": {
+            "id": "int",
+            "is_default": "bool",
+            "name": "string",
+            "server": "\\Vito\\Plugin\\Contracts\\Server|null",
+            "server_id": "int",
+            "status": "\\BackedEnum&\\Vito\\Plugin\\Contracts\\VitoEnum",
+            "type": "string",
+            "version": "string"
+        }
+    },
+    "Vito\\Plugin\\Contracts\\Site": {
+        "kind": "interface",
+        "extends": [],
+        "methods": {
+            "getUrl": "(): string",
+            "isReady": "(): bool"
+        },
+        "properties": {
+            "branch": "string",
+            "domain": "string",
+            "id": "int",
+            "path": "string",
+            "php_version": "string",
+            "port": "int",
+            "repository": "string",
+            "server": "\\Vito\\Plugin\\Contracts\\Server|null",
+            "server_id": "int",
+            "status": "\\BackedEnum&\\Vito\\Plugin\\Contracts\\VitoEnum",
+            "web_directory": "string"
+        }
+    },
+    "Vito\\Plugin\\Contracts\\SourceControl": {
+        "kind": "interface",
+        "extends": [],
+        "methods": {
+            "isGithubApp": "(): bool"
+        },
+        "properties": {
+            "external_identifier": "string|null",
+            "id": "int",
+            "profile": "string",
+            "project": "\\Vito\\Plugin\\Contracts\\Project|null",
+            "project_id": "int|null",
+            "provider": "string",
+            "url": "string|null",
+            "user_id": "int"
+        }
+    },
+    "Vito\\Plugin\\Contracts\\Ssh": {
+        "kind": "interface",
+        "extends": [],
+        "methods": {
+            "download": "(string $local, string $remote): void",
+            "exec": "(Illuminate\\Contracts\\View\\View|string $command, string $log?, ?int $siteId?): string",
+            "init": "(Vito\\Plugin\\Contracts\\Server $server, ?string $asUser?): Vito\\Plugin\\Contracts\\Ssh",
+            "upload": "(string $local, string $remote, ?string $owner?): void",
+            "write": "(string $remotePath, Illuminate\\Contracts\\View\\View|string $content, ?string $owner?): void"
+        },
+        "properties": []
+    },
+    "Vito\\Plugin\\Contracts\\SshKey": {
+        "kind": "interface",
+        "extends": [],
+        "methods": [],
+        "properties": {
+            "id": "int",
+            "name": "string",
+            "user_id": "int"
+        }
+    },
+    "Vito\\Plugin\\Contracts\\Ssl": {
+        "kind": "interface",
+        "extends": [],
+        "methods": [],
+        "properties": {
+            "domain": "\\Vito\\Plugin\\Contracts\\Domain|null",
+            "domain_id": "int|null",
+            "email": "string",
+            "has_csr": "bool",
+            "id": "int",
+            "is_wildcard": "bool",
+            "server": "\\Vito\\Plugin\\Contracts\\Server|null",
+            "server_id": "int|null",
+            "site": "\\Vito\\Plugin\\Contracts\\Site|null",
+            "site_id": "int|null",
+            "status": "\\BackedEnum&\\Vito\\Plugin\\Contracts\\VitoEnum",
+            "type": "string"
+        }
+    },
+    "Vito\\Plugin\\Contracts\\Storage": {
+        "kind": "interface",
+        "extends": [],
+        "methods": [],
+        "properties": []
+    },
+    "Vito\\Plugin\\Contracts\\StorageProvider": {
+        "kind": "interface",
+        "extends": [],
+        "methods": [],
+        "properties": {
+            "id": "int",
+            "profile": "string",
+            "project": "\\Vito\\Plugin\\Contracts\\Project|null",
+            "project_id": "int|null",
+            "provider": "string",
+            "user_id": "int"
+        }
+    },
+    "Vito\\Plugin\\Contracts\\User": {
+        "kind": "interface",
+        "extends": [],
+        "methods": {
+            "isAdmin": "(): bool"
+        },
+        "properties": {
+            "current_project_id": "int|null",
+            "email": "string",
+            "id": "int",
+            "is_admin": "bool",
+            "name": "string",
+            "timezone": "string"
+        }
+    },
+    "Vito\\Plugin\\Contracts\\UserProject": {
+        "kind": "interface",
+        "extends": [],
+        "methods": [],
+        "properties": {
+            "email": "string|null",
+            "id": "int",
+            "project": "\\Vito\\Plugin\\Contracts\\Project|null",
+            "project_id": "int",
+            "role": "\\BackedEnum&\\Vito\\Plugin\\Contracts\\VitoEnum",
+            "user_id": "int|null"
+        }
+    },
+    "Vito\\Plugin\\Contracts\\VitoEnum": {
+        "kind": "interface",
+        "extends": [],
+        "methods": {
+            "getColor": "(): string",
+            "getText": "(): string"
+        },
+        "properties": []
+    },
+    "Vito\\Plugin\\Contracts\\Worker": {
+        "kind": "interface",
+        "extends": [],
+        "methods": {
+            "isSiteBootstrap": "(): bool"
+        },
+        "properties": {
+            "auto_restart": "bool",
+            "auto_start": "bool",
+            "command": "string",
+            "error": "string|null",
+            "id": "int",
+            "name": "string",
+            "numprocs": "int",
+            "server": "\\Vito\\Plugin\\Contracts\\Server|null",
+            "server_id": "int",
+            "site": "\\Vito\\Plugin\\Contracts\\Site|null",
+            "site_id": "int",
+            "status": "\\BackedEnum&\\Vito\\Plugin\\Contracts\\VitoEnum",
+            "user": "string"
+        }
+    },
+    "Vito\\Plugin\\Contracts\\Workflow": {
+        "kind": "interface",
+        "extends": [],
+        "methods": [],
+        "properties": {
+            "id": "int",
+            "name": "string",
+            "project_id": "int|null",
+            "runs": "array<int, \\Vito\\Plugin\\Contracts\\WorkflowRun>",
+            "user_id": "int|null"
+        }
+    },
+    "Vito\\Plugin\\Contracts\\WorkflowRun": {
+        "kind": "interface",
+        "extends": [],
+        "methods": {
+            "getLogContent": "(): string"
+        },
+        "properties": {
+            "current_node_id": "string|null",
+            "current_node_label": "string|null",
+            "id": "int",
+            "status": "\\BackedEnum&\\Vito\\Plugin\\Contracts\\VitoEnum",
+            "user_id": "int|null",
+            "workflow_id": "int|null"
+        }
+    },
+    "Vito\\Plugin\\Exceptions\\CapabilityBindingUnavailable": {
+        "kind": "class",
+        "extends": [
+            "RuntimeException",
+            "Stringable",
+            "Throwable"
+        ],
+        "methods": {
+            "__construct": "(string $message?, int $code?, ?Throwable $previous?): mixed",
+            "__toString": "(): string",
+            "__wakeup": "(): mixed",
+            "for": "(string $capability): Vito\\Plugin\\Exceptions\\CapabilityBindingUnavailable",
+            "getCode": "(): mixed",
+            "getFile": "(): string",
+            "getLine": "(): int",
+            "getMessage": "(): string",
+            "getPrevious": "(): ?Throwable",
+            "getTrace": "(): array",
+            "getTraceAsString": "(): string"
+        },
+        "properties": []
+    },
+    "Vito\\Plugin\\Facades\\Broadcast": {
+        "kind": "class",
+        "extends": [
+            "Illuminate\\Support\\Facades\\Facade"
+        ],
+        "methods": [],
+        "properties": []
+    },
+    "Vito\\Plugin\\Facades\\Http": {
+        "kind": "class",
+        "extends": [
+            "Illuminate\\Support\\Facades\\Facade"
+        ],
+        "methods": [],
+        "properties": []
+    },
+    "Vito\\Plugin\\Facades\\Notifications": {
+        "kind": "class",
+        "extends": [
+            "Illuminate\\Support\\Facades\\Facade"
+        ],
+        "methods": [],
+        "properties": []
+    },
+    "Vito\\Plugin\\Facades\\Ssh": {
+        "kind": "class",
+        "extends": [
+            "Illuminate\\Support\\Facades\\Facade"
+        ],
+        "methods": [],
+        "properties": []
+    },
+    "Vito\\Plugin\\Facades\\Storage": {
+        "kind": "class",
+        "extends": [
+            "Illuminate\\Support\\Facades\\Facade"
+        ],
+        "methods": [],
+        "properties": []
+    },
+    "Vito\\Plugin\\PluginInterface": {
+        "kind": "interface",
+        "extends": [],
+        "methods": {
+            "boot": "(): void",
+            "disable": "(): void",
+            "enable": "(): void",
+            "getDescription": "(): string",
+            "getName": "(): string",
+            "install": "(): void",
+            "uninstall": "(): void"
+        },
+        "properties": []
+    }
+}

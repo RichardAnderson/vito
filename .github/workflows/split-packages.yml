@@ -1,0 +1,64 @@
+name: split packages
+
+# Publishes vito/core and vito/plugin-sdk to their standalone read-only repositories
+# (which Packagist watches) whenever a 5.x+ release tag is pushed. Core and the SDK are
+# released in lockstep with the application, so the same tag drives all three.
+#
+# One-time setup required before this works:
+#   1. Create the two target repositories (e.g. vitodeploy/core, vitodeploy/plugin-sdk).
+#   2. Register both with Packagist as vito/core and vito/plugin-sdk.
+#   3. Add a repo/org secret MONOREPO_SPLIT_TOKEN — a PAT with push access to both targets.
+#   4. Update repository_organization / repository_name below if the targets differ.
+#
+# Each split keeps /src, /config, /database, /testing and composer.json; files marked
+# `export-ignore` in each package's .gitattributes are stripped from the distribution.
+
+on:
+  push:
+    tags:
+      - '5.*'
+      - '6.*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to (re)split, e.g. 5.0.0'
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  split:
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - package_directory: packages/core
+            repository_name: core
+          - package_directory: packages/plugin-sdk-php
+            repository_name: plugin-sdk
+
+    name: Split ${{ matrix.repository_name }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Resolve tag
+        id: tag
+        run: echo "value=${{ github.event.inputs.tag || github.ref_name }}" >> "$GITHUB_OUTPUT"
+
+      - name: Split ${{ matrix.repository_name }} to its standalone repository
+        uses: danharrin/monorepo-split-github-action@v2.3.0
+        with:
+          tag: ${{ steps.tag.outputs.value }}
+          package_directory: ${{ matrix.package_directory }}
+          repository_organization: vitodeploy
+          repository_name: ${{ matrix.repository_name }}
+          user_name: 'vito-bot'
+          user_email: 'bot@vitodeploy.com'
+        env:
+          GITHUB_TOKEN: ${{ secrets.MONOREPO_SPLIT_TOKEN }}

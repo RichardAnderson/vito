@@ -54,8 +54,8 @@ class DemoServiceProvider extends ServiceProvider
             return;
         }
 
-        // get all classes inside App\Models namespace
-        $files = scandir(app_path('Models')) ?: [];
+        // get all classes inside App\Models namespace (App\Models lives in the vito/core package)
+        $files = scandir(base_path('packages/core/src/Models')) ?: [];
         $models = collect($files)
             ->filter(fn ($file): bool => ! in_array($file, ['.', '..']))
             ->map(fn ($file) => 'App\\Models\\'.str_replace('.php', '', $file));

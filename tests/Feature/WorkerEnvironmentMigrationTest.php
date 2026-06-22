@@ -70,7 +70,7 @@ class WorkerEnvironmentMigrationTest extends TestCase
 
     private function runMigration(): void
     {
-        $paths = glob(database_path('migrations/*_add_worker_environment_support.php')) ?: [];
+        $paths = glob(base_path('packages/core/database/migrations/*_add_worker_environment_support.php')) ?: [];
         $this->assertNotEmpty($paths, 'Worker environment migration not found.');
 
         $migration = require $paths[0];

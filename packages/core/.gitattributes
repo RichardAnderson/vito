@@ -1,0 +1,5 @@
+* text=auto eol=lf
+
+# Files excluded from the published Packagist distribution (kept in the monorepo only).
+/CLOSURE.md export-ignore
+/.gitattributes export-ignore

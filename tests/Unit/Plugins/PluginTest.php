@@ -2,13 +2,13 @@
 
 namespace Tests\Unit\Plugins;
 
-use App\Actions\Plugins\BootPlugins;
-use App\Actions\Plugins\DisablePlugin;
-use App\Actions\Plugins\DiscoverPlugins;
-use App\Actions\Plugins\EnablePlugin;
-use App\Actions\Plugins\GetPluginInstance;
-use App\Actions\Plugins\InstallPlugin;
-use App\Actions\Plugins\UninstallPlugin;
+use App\Plugins\Runtime\BootPlugins;
+use App\Plugins\Runtime\DisablePlugin;
+use App\Plugins\Runtime\DiscoverPlugins;
+use App\Plugins\Runtime\EnablePlugin;
+use App\Plugins\Runtime\GetPluginInstance;
+use App\Plugins\Runtime\InstallPlugin;
+use App\Plugins\Runtime\UninstallPlugin;
 use App\Models\Plugin;
 use App\Models\PluginError;
 use Illuminate\Foundation\Testing\RefreshDatabase;

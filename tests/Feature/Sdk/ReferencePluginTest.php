@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Sdk;
 
-use App\Actions\Plugins\GetPluginInstance;
+use App\Plugins\Runtime\GetPluginInstance;
 use App\Events\SocketEvent;
 use App\Facades\SSH;
 use App\Models\Plugin;
