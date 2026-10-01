@@ -4,6 +4,7 @@ namespace App\Actions\Worker;
 
 use App\Enums\WorkerStatus;
 use App\Jobs\Worker\CreateJob;
+use App\Models\Component;
 use App\Models\Server;
 use App\Models\Site;
 use App\Models\Worker;
@@ -18,7 +19,7 @@ class CreateWorker
      *
      * @throws ValidationException
      */
-    public function create(Server $server, array $input, ?Site $site = null): Worker
+    public function create(Server $server, array $input, ?Site $site = null, ?Component $component = null): Worker
     {
         $this->validate($server, $input, $site);
 
@@ -28,9 +29,14 @@ class CreateWorker
             $siteId = (int) $input['site_id'];
         }
 
+        $componentId = $component !== null
+            ? $component->id
+            : (isset($input['component_id']) && $input['component_id'] ? (int) $input['component_id'] : null);
+
         $worker = new Worker([
             'server_id' => $server->id,
             'site_id' => $siteId,
+            'component_id' => $componentId,
             'name' => $input['name'],
             'command' => $input['command'],
             'user' => $input['user'],

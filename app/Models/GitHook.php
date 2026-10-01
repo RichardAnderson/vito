@@ -9,7 +9,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Log;
 
 /**
- * @property int $site_id
+ * @property ?int $site_id
+ * @property ?int $environment_id
+ * @property ?Environment $environment
  * @property int $source_control_id
  * @property string $secret
  * @property array<string> $events
@@ -26,6 +28,7 @@ class GitHook extends AbstractModel
 
     protected $fillable = [
         'site_id',
+        'environment_id',
         'source_control_id',
         'secret',
         'events',
@@ -58,10 +61,31 @@ class GitHook extends AbstractModel
         return $this->belongsTo(SourceControl::class);
     }
 
+    /**
+     * @return BelongsTo<Environment, covariant $this>
+     */
+    public function environment(): BelongsTo
+    {
+        return $this->belongsTo(Environment::class);
+    }
+
+    /**
+     * A hook belongs to either a Site or an Environment, so the repository is resolved from
+     * whichever owner is set rather than assumed to be a Site.
+     */
+    public function repository(): ?string
+    {
+        if ($this->site_id !== null) {
+            return $this->site->repository;
+        }
+
+        return $this->environment?->application->repository;
+    }
+
     public function deployHook(): void
     {
         $this->update(
-            $this->sourceControl->provider()->deployHook($this->site->repository, $this->events, $this->secret)
+            $this->sourceControl->provider()->deployHook((string) $this->repository(), $this->events, $this->secret)
         );
     }
 
@@ -69,7 +93,7 @@ class GitHook extends AbstractModel
     {
         try {
             if ($this->hook_id) {
-                $this->sourceControl->provider()->destroyHook($this->site->repository, $this->hook_id);
+                $this->sourceControl->provider()->destroyHook((string) $this->repository(), $this->hook_id);
             }
         } catch (FailedToDestroyGitHook $e) {
             Log::warning('Failed to destroy git hook', ['error' => $e->getMessage()]);

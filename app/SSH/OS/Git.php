@@ -3,6 +3,7 @@
 namespace App\SSH\OS;
 
 use App\Exceptions\SSHError;
+use App\Models\Server;
 use App\Models\Site;
 
 class Git
@@ -12,26 +13,55 @@ class Git
      */
     public function clone(Site $site, ?string $path = null): void
     {
-        $usesToken = $site->sourceControl?->isGithubApp() ?? false;
-        $ssh = $site->server->ssh($site->user);
+        $this->cloneRepository(
+            server: $site->server,
+            user: (string) $site->user,
+            repoUrl: (string) $site->getFullRepositoryUrl(),
+            branch: (string) $site->branch,
+            path: (string) ($path ?? $site->path),
+            keyName: $site->getSshKeyName(),
+            port: $site->sourceControl?->provider()?->getSshPort() ?? 22,
+            usesToken: $site->sourceControl?->isGithubApp() ?? false,
+            variables: $site->environmentVariables(),
+            siteId: $site->id,
+        );
+    }
+
+    /**
+     * @param  array<string, string>  $variables
+     *
+     * @throws SSHError
+     */
+    public function cloneRepository(
+        Server $server,
+        string $user,
+        string $repoUrl,
+        string $branch,
+        string $path,
+        string $keyName,
+        int $port,
+        bool $usesToken,
+        array $variables = [],
+        ?int $siteId = null,
+    ): void {
+        $ssh = $server->ssh($user);
 
         if ($usesToken) {
-            $ssh = $ssh->variables($site->environmentVariables());
+            $ssh = $ssh->variables($variables);
         }
 
-        $repoUrl = (string) $site->getFullRepositoryUrl();
         $ssh->exec(
             view('ssh.git.clone', [
                 'host' => $usesToken ? '' : str($repoUrl)->after('@')->before('-'),
                 'repo' => escapeshellarg($repoUrl),
-                'path' => escapeshellarg((string) ($path ?? $site->path)),
-                'branch' => escapeshellarg((string) $site->branch),
-                'key' => $site->getSshKeyName(),
-                'port' => $site->sourceControl?->provider()?->getSshPort() ?? 22,
+                'path' => escapeshellarg($path),
+                'branch' => escapeshellarg($branch),
+                'key' => $keyName,
+                'port' => $port,
                 'usesToken' => $usesToken,
             ]),
             'clone-repository',
-            $site->id
+            $siteId
         );
     }
 

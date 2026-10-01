@@ -40,6 +40,14 @@ import EditNetworkServer from '@/pages/networks/components/edit-network-server';
 import NetworkFirewallRuleForm from '@/pages/networks/components/firewall-rule-form';
 import AddNetworkPeer from '@/pages/networks/components/add-peer';
 import PeerConfigDialog from '@/pages/networks/components/peer-config';
+import CreateApplication from '@/pages/applications/components/create-application';
+import DeleteApplication from '@/pages/applications/components/delete-application';
+import CreateEnvironment from '@/pages/applications/components/create-environment';
+import AddComponent from '@/pages/applications/components/add-component';
+import DomainFormDialog from '@/pages/applications/components/domain-form';
+import AttachResource from '@/pages/applications/components/attach-resource';
+import VariableForm from '@/pages/applications/components/variable-form';
+import DeployScriptEditor from '@/pages/applications/components/deploy-script-editor';
 
 export type DialogControlProps = { open: boolean; onOpenChange: (open: boolean) => void };
 
@@ -97,6 +105,14 @@ export const dialogs = {
   networkFirewallForm: NetworkFirewallRuleForm,
   networkAddPeer: AddNetworkPeer,
   networkPeerConfig: PeerConfigDialog,
+  applicationCreate: CreateApplication,
+  applicationDelete: DeleteApplication,
+  environmentCreate: CreateEnvironment,
+  componentCreate: AddComponent,
+  domainCreate: DomainFormDialog,
+  resourceAttach: AttachResource,
+  variableForm: VariableForm,
+  deployScriptEditor: DeployScriptEditor,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 } as const satisfies Record<string, ComponentType<any>>;
 

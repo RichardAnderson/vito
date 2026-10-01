@@ -20,7 +20,7 @@ class DeploymentTable extends Table
     protected function query(): void
     {
         $this->perPage = config('web.pagination_size');
-        $this->query->with('log', 'site');
+        $this->query->with(['log', 'site', 'component']);
     }
 
     protected function columns(): array
@@ -32,7 +32,9 @@ class DeploymentTable extends Table
             EnumColumn::make('status', 'Status')->sortable(),
             Column::make('release', 'Release'),
             Column::data('site_id'),
-            Column::data('server_id', fn (Deployment $deployment) => $deployment->site->server_id),
+            Column::data('server_id', fn (Deployment $deployment) => $deployment->component_id !== null
+                ? $deployment->component?->server_id
+                : $deployment->site?->server_id),
             Column::data('active'),
             Column::data('commit_data'),
             Column::data('log', fn (Deployment $deployment) => $deployment->log ? ServerLogResource::make($deployment->log) : null),

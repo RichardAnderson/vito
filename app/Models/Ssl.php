@@ -116,11 +116,23 @@ class Ssl extends AbstractModel
     }
 
     /**
+     * Domain-owned certificates share the server-level row shape (`site_id` null, `server_id`
+     * set), so every server-level surface excludes them explicitly.
+     *
+     * @return HasMany<EnvironmentDomain, covariant $this>
+     */
+    public function environmentDomains(): HasMany
+    {
+        return $this->hasMany(EnvironmentDomain::class);
+    }
+
+    /**
      * @return Builder<Ssl>
      */
     public static function activeServerLevel(int $serverId): Builder
     {
         return self::query()
+            ->whereDoesntHave('environmentDomains')
             ->whereNull('site_id')
             ->where('server_id', $serverId)
             ->where('status', SslStatus::CREATED)
@@ -151,6 +163,10 @@ class Ssl extends AbstractModel
     {
         if (! empty($this->domains) && is_array($this->domains)) {
             return $this->domains;
+        }
+
+        if ($this->site === null) {
+            return [];
         }
 
         $this->domains = [$this->site->domain];

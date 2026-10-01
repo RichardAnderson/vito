@@ -13,7 +13,8 @@ use Throwable;
 
 /**
  * @property int $server_id
- * @property int $site_id
+ * @property ?int $site_id
+ * @property ?int $component_id
  * @property string $command
  * @property string $user
  * @property bool $auto_start
@@ -27,6 +28,7 @@ use Throwable;
  * @property string $name
  * @property Server $server
  * @property ?Site $site
+ * @property ?Component $component
  */
 class Worker extends AbstractModel
 {
@@ -36,6 +38,7 @@ class Worker extends AbstractModel
     protected $fillable = [
         'server_id',
         'site_id',
+        'component_id',
         'command',
         'user',
         'auto_start',
@@ -51,6 +54,7 @@ class Worker extends AbstractModel
     protected $casts = [
         'server_id' => 'integer',
         'site_id' => 'integer',
+        'component_id' => 'integer',
         'auto_start' => 'boolean',
         'auto_restart' => 'boolean',
         'numprocs' => 'integer',
@@ -104,6 +108,14 @@ class Worker extends AbstractModel
         return $this->belongsTo(Site::class);
     }
 
+    /**
+     * @return BelongsTo<Component, covariant $this>
+     */
+    public function component(): BelongsTo
+    {
+        return $this->belongsTo(Component::class);
+    }
+
     public function getLogDirectory(): string
     {
         if ($this->user === 'root') {
@@ -143,6 +155,8 @@ class Worker extends AbstractModel
             return array_merge($base, SiteShellEnvironment::collect($this->site));
         }
 
+        // A component worker carries its resolved variables in `environment`, written by the
+        // install job — the model resolves nothing itself.
         return $base;
     }
 

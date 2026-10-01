@@ -16,6 +16,8 @@ class DeploymentResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'component_id' => $this->component_id,
+            'current_stage' => $this->current_stage?->getText(),
             'site_id' => $this->site_id,
             'deployment_script_id' => $this->deployment_script_id,
             'log_id' => $this->log_id,

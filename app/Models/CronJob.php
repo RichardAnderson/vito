@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 /**
  * @property int $server_id
  * @property ?int $site_id
+ * @property ?int $component_id
  * @property string $command
  * @property string $user
  * @property string $frequency
@@ -19,6 +20,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string $crontab
  * @property Server $server
  * @property ?Site $site
+ * @property ?Component $component
  */
 class CronJob extends AbstractModel
 {
@@ -28,6 +30,7 @@ class CronJob extends AbstractModel
     protected $fillable = [
         'server_id',
         'site_id',
+        'component_id',
         'command',
         'user',
         'frequency',
@@ -38,6 +41,7 @@ class CronJob extends AbstractModel
     protected $casts = [
         'server_id' => 'integer',
         'site_id' => 'integer',
+        'component_id' => 'integer',
         'hidden' => 'boolean',
         'status' => CronjobStatus::class,
     ];
@@ -56,6 +60,14 @@ class CronJob extends AbstractModel
     public function site(): BelongsTo
     {
         return $this->belongsTo(Site::class);
+    }
+
+    /**
+     * @return BelongsTo<Component, covariant $this>
+     */
+    public function component(): BelongsTo
+    {
+        return $this->belongsTo(Component::class);
     }
 
     public function getServerIdAttribute(?int $value): ?int

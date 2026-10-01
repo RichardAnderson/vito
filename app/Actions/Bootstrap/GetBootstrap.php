@@ -94,6 +94,9 @@ final class GetBootstrap
             'github_app' => [
                 'installed' => GithubApp::query()->exists(),
             ],
+            'component' => [
+                'functions' => config('component.functions'),
+            ],
             'tooling' => $this->tooling(),
         ];
     }

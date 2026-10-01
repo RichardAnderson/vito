@@ -5,6 +5,7 @@ namespace App\Actions\CronJob;
 use App\Enums\CronjobStatus;
 use App\Exceptions\SSHError;
 use App\Models\CronJob;
+use App\Models\Component;
 use App\Models\Server;
 use App\Models\Site;
 use App\ValidationRules\CronRule;
@@ -18,7 +19,7 @@ class CreateCronJob
      *
      * @throws SSHError
      */
-    public function create(Server $server, array $input, ?Site $site = null): CronJob
+    public function create(Server $server, array $input, ?Site $site = null, ?Component $component = null): CronJob
     {
         $this->validate($input, $server, $site);
 
@@ -28,10 +29,15 @@ class CreateCronJob
             $siteId = (int) $input['site_id'];
         }
 
+        $componentId = $component !== null
+            ? $component->id
+            : (isset($input['component_id']) && $input['component_id'] ? (int) $input['component_id'] : null);
+
         $cronJob = new CronJob([
             'name' => $input['name'] ?? null,
             'server_id' => $server->id,
             'site_id' => $siteId,
+            'component_id' => $componentId,
             'user' => $input['user'],
             'command' => $input['command'],
             'frequency' => $input['frequency'] == 'custom' ? $input['custom'] : $input['frequency'],

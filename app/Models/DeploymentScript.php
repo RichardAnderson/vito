@@ -7,10 +7,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @property int $site_id
+ * @property ?int $site_id
+ * @property ?int $environment_id
+ * @property ?int $component_id
  * @property string $name
  * @property string $content
- * @property Site $site
+ * @property ?Site $site
+ * @property ?Environment $environment
+ * @property ?Component $component
  */
 class DeploymentScript extends AbstractModel
 {
@@ -28,6 +32,8 @@ class DeploymentScript extends AbstractModel
 
     protected $fillable = [
         'site_id',
+        'environment_id',
+        'component_id',
         'name',
         'content',
         'configs',
@@ -35,6 +41,8 @@ class DeploymentScript extends AbstractModel
 
     protected $casts = [
         'site_id' => 'integer',
+        'environment_id' => 'integer',
+        'component_id' => 'integer',
         'configs' => 'array',
     ];
 
@@ -44,6 +52,22 @@ class DeploymentScript extends AbstractModel
     public function site(): BelongsTo
     {
         return $this->belongsTo(Site::class);
+    }
+
+    /**
+     * @return BelongsTo<Environment, covariant $this>
+     */
+    public function environment(): BelongsTo
+    {
+        return $this->belongsTo(Environment::class);
+    }
+
+    /**
+     * @return BelongsTo<Component, covariant $this>
+     */
+    public function component(): BelongsTo
+    {
+        return $this->belongsTo(Component::class);
     }
 
     public function shouldRestartWorkers(): bool

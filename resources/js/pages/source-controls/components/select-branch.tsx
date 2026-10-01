@@ -4,15 +4,25 @@ import { Combobox } from '@/components/ui/combobox';
 import { Button } from '@/components/ui/button';
 import { RefreshCw } from 'lucide-react';
 
+const NONE = '__none__';
+
 interface SelectBranchProps {
   sourceControlId: string;
   repository: string;
   value: string;
   onValueChange: (value: string) => void;
   placeholder?: string;
+  allowClear?: boolean;
 }
 
-export default function SelectBranch({ sourceControlId, repository, value, onValueChange, placeholder = 'Enter branch' }: SelectBranchProps) {
+export default function SelectBranch({
+  sourceControlId,
+  repository,
+  value,
+  onValueChange,
+  placeholder = 'Enter branch',
+  allowClear = false,
+}: SelectBranchProps) {
   const [branches, setBranches] = useState<string[]>([]);
   const [gettingBranches, setGettingBranches] = useState(false);
 
@@ -41,7 +51,7 @@ export default function SelectBranch({ sourceControlId, repository, value, onVal
       const data = await response.json();
       setBranches(data);
 
-      if (data.length === 1) {
+      if (data.length === 1 && !allowClear) {
         onValueChange(data[0]);
       } else if (data.length > 0 && !data.includes(value)) {
         onValueChange('');
@@ -58,10 +68,13 @@ export default function SelectBranch({ sourceControlId, repository, value, onVal
     fetchBranches();
   }, [sourceControlId, repository]);
 
-  const comboboxItems = branches.map((branch) => ({
-    value: branch,
-    label: branch,
-  }));
+  const comboboxItems = [
+    ...(allowClear ? [{ value: NONE, label: 'None' }] : []),
+    ...branches.map((branch) => ({
+      value: branch,
+      label: branch,
+    })),
+  ];
 
   return (
     <div className="flex items-center gap-2">
@@ -73,9 +86,10 @@ export default function SelectBranch({ sourceControlId, repository, value, onVal
         <Combobox
           items={comboboxItems}
           value={value}
+          placeholder={allowClear ? 'None' : ''}
           searchText="Filter branches..."
           noneFoundText="No branches found..."
-          onValueChange={onValueChange}
+          onValueChange={(selected) => onValueChange(selected === NONE ? '' : selected)}
         />
       )}
       <Button variant="outline" type="button" disabled={gettingBranches || !sourceControlId || !repository} onClick={refresh}>

@@ -156,7 +156,7 @@ class PHP extends AbstractService implements HasLogs
     /**
      * @throws SSHError
      */
-    public function removeFpmPool(string $user, string $version, ?int $siteId): void
+    public function removeFpmPool(string $user, string $version, ?int $siteId = null): void
     {
         $this->service->server->ssh()->exec(
             view('ssh.services.php.remove-fpm-pool', [

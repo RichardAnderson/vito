@@ -117,7 +117,7 @@ class OS
     /**
      * @throws SSHError
      */
-    public function createIsolatedUser(string $user, string $password, int $site_id): void
+    public function createIsolatedUser(string $user, string $password, ?int $siteId = null): void
     {
         $this->server->ssh()->exec(
             view('ssh.os.create-isolated-user', [
@@ -127,7 +127,7 @@ class OS
                 'key' => escapeshellarg(trim($this->server->sshKey()['public_key'])),
             ]),
             'create-isolated-user',
-            $site_id
+            $siteId
         );
     }
 

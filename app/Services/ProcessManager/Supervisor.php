@@ -78,7 +78,9 @@ class Supervisor extends AbstractProcessManager implements HasLogs
             "/etc/supervisor/conf.d/{$worker->id}.conf",
             view('ssh.services.process-manager.supervisor.worker', [
                 'name' => (string) $worker->id,
-                'directory' => $worker->site?->path,
+                'directory' => $worker->component_id !== null
+                    ? $worker->component?->currentPath()
+                    : $worker->site?->path,
                 'command' => $worker->command,
                 'user' => $worker->user,
                 'autoStart' => var_export($worker->auto_start, true),

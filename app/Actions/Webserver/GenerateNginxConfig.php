@@ -106,8 +106,8 @@ class GenerateNginxConfig extends AbstractGenerateConfig
             'ssl_certificate_path' => $hasSsl ? $hd->ssl->certificate_path : '',
             'ssl_certificate_key_path' => $hasSsl ? $hd->ssl->pk_path : '',
             'domains' => [['name' => $hd->domain]],
-            'redirect_target' => $primaryDomain,
-            'redirect_scheme' => $redirectScheme,
+            'redirect_target' => $redirectScheme.'://'.$primaryDomain,
+            'redirect_status' => 301,
         ];
     }
 

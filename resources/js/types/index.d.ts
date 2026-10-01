@@ -73,6 +73,16 @@ export interface Configs {
       };
     };
   };
+  component: {
+    functions: {
+      [id: string]: {
+        label: string;
+        description: string;
+        color: string;
+        unlocks: string[];
+      };
+    };
+  };
   dns_provider: {
     providers: {
       [provider: string]: {

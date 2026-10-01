@@ -22,6 +22,7 @@ import {
   CogIcon,
   Folder,
   Globe,
+  LayersIcon,
   ListEndIcon,
   LogsIcon,
   MousePointerClickIcon,
@@ -49,6 +50,11 @@ export function AppSidebar({ secondNavItems, secondNavTitle }: { secondNavItems?
       title: 'Servers',
       href: route('servers'),
       icon: ServerIcon,
+    },
+    {
+      title: 'Applications',
+      href: route('applications'),
+      icon: LayersIcon,
     },
     {
       title: 'Sites',

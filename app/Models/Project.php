@@ -135,4 +135,12 @@ class Project extends Model
     {
         return $this->hasMany(Network::class);
     }
+
+    /**
+     * @return HasMany<Application, covariant $this>
+     */
+    public function applications(): HasMany
+    {
+        return $this->hasMany(Application::class);
+    }
 }

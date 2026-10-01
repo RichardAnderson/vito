@@ -39,7 +39,11 @@ class ServerSslController extends Controller
 
         return Inertia::render('server-ssls/index', [
             'ssls' => SslResource::collection(
-                $server->ssls()->whereNull('site_id')->latest()->simplePaginate(config('web.pagination_size'))
+                $server->ssls()
+                    ->whereDoesntHave('environmentDomains')
+                    ->whereNull('site_id')
+                    ->latest()
+                    ->simplePaginate(config('web.pagination_size'))
             ),
             'domains' => $domains,
         ]);

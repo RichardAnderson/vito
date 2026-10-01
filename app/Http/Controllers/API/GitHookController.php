@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Actions\Site\Deploy;
 use App\Exceptions\FailedToDestroyGitHook;
 use App\Http\Controllers\Controller;
+use App\Actions\Environment\TriggerAutoDeploy;
 use App\Models\GitHook;
 use App\Models\ServerLog;
 use App\Models\SourceControl;
@@ -30,6 +31,10 @@ class GitHookController extends Controller
         $gitHook = GitHook::query()
             ->where('secret', $request->input('secret'))
             ->firstOrFail();
+
+        if ($gitHook->environment_id !== null) {
+            return $this->handleEnvironment($gitHook, $request);
+        }
 
         if (! $gitHook->site) {
             $gitHook->destroyHook();
@@ -61,5 +66,27 @@ class GitHookController extends Controller
         return response()->json([
             'success' => true,
         ]);
+    }
+
+    /**
+     * The environment branch queues the deploy rather than running it in the request.
+     */
+    private function handleEnvironment(GitHook $gitHook, Request $request): JsonResponse
+    {
+        $environment = $gitHook->environment;
+
+        if ($environment === null) {
+            $gitHook->destroyHook();
+
+            return response()->json(['success' => true]);
+        }
+
+        $webhookBranch = $gitHook->sourceControl->provider()->getWebhookBranch($request->array());
+
+        if (in_array('deploy', (array) $gitHook->actions, true)) {
+            app(TriggerAutoDeploy::class)->forBranch($environment, $webhookBranch);
+        }
+
+        return response()->json(['success' => true]);
     }
 }

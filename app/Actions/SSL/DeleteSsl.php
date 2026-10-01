@@ -58,6 +58,14 @@ class DeleteSsl
      */
     private function ensureNotInUse(Ssl $ssl): void
     {
+        $hosts = $ssl->environmentDomains()->pluck('host');
+
+        if ($hosts->isNotEmpty()) {
+            throw ValidationException::withMessages([
+                'ssl' => 'Currently in use on the following domain(s): '.$hosts->implode(', ').'. Remove the references to delete this certificate.',
+            ]);
+        }
+
         $hostedDomains = $ssl->hostedDomains()->with('site')->get();
 
         if ($hostedDomains->isEmpty()) {
