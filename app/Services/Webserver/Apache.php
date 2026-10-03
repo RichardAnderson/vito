@@ -178,7 +178,7 @@ class Apache extends AbstractWebserver implements HasLogs
     {
         $domains = '';
         foreach ($ssl->getDomains() as $domain) {
-            $domains .= ' -d '.$domain;
+            $domains .= ' -d '.escapeshellarg($domain);
         }
         $command = view('ssh.services.webserver.apache.create-letsencrypt-ssl', [
             'email' => $ssl->email,

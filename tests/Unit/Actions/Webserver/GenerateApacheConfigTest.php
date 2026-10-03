@@ -3,6 +3,7 @@
 namespace Tests\Unit\Actions\Webserver;
 
 use App\Enums\SslStatus;
+use App\Facades\SSH;
 use App\Models\HostedDomain;
 use App\Models\Ssl;
 use App\Services\Webserver\Apache;
@@ -39,6 +40,35 @@ class GenerateApacheConfigTest extends TestCase
         $this->assertStringContainsString('RewriteRule ^ index.php [L]', $vhost);
         $this->assertStringContainsString('RewriteCond %{REQUEST_URI} !^/\.well-known/acme-challenge/', $vhost);
         $this->assertStringContainsString('<Location "/.well-known/acme-challenge/">', $vhost);
+    }
+
+    public function test_apache_letsencrypt_command_escapes_shell_arguments(): void
+    {
+        SSH::fake('Successfully received certificate');
+
+        $this->site->update([
+            'path' => '/home/vito/example site',
+            'web_directory' => 'public; touch /tmp/apache-ssl-injection',
+        ]);
+
+        $email = 'owner@example.com; touch /tmp/apache-email-injection';
+        $domain = 'example.com; touch /tmp/apache-domain-injection';
+        $ssl = Ssl::factory()->create([
+            'site_id' => $this->site->id,
+            'server_id' => $this->server->id,
+            'type' => 'letsencrypt',
+            'email' => $email,
+            'domains' => [$domain],
+        ]);
+
+        $this->site->webserver()->setupSSL($ssl);
+
+        SSH::assertExecutedContains("-w '/home/vito/example site/public; touch /tmp/apache-ssl-injection'");
+        SSH::assertExecutedContains("-m 'owner@example.com; touch /tmp/apache-email-injection'");
+        SSH::assertExecutedContains("-d 'example.com; touch /tmp/apache-domain-injection'");
+        SSH::assertNotExecutedContains('sudo certbot certonly --webroot -w /home/vito/example');
+
+        $this->addToAssertionCount(4);
     }
 
     public function test_acme_challenge_remains_public_when_basic_auth_enabled(): void
